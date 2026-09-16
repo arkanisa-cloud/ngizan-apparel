@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --canvas: #EFEDE8;       /* Warm linen bone */
+  --canvas-card: #E4E1DC;  /* Subtle darker tone for cards */
+  --ink: #101010;          /* Deep rich organic black */
+  --ink-muted: #6B6862;    /* Balanced warm gray */
+  --border: rgba(16, 16, 16, 0.12);
+  --border-strong: rgba(16, 16, 16, 0.28);
+  --nav: 76px;
+}
+
+@layer base {
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+}
+
+.font-jersey { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; }
+.font-display { font-family: 'Archivo', 'Outfit', sans-serif; }
+
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 clamp(18px, 3.4vw, 44px); }
+.lbl { font: 700 10.5px/1 'Archivo', sans-serif; letter-spacing: .22em; text-transform: uppercase; }
+
+/* ── Minimal Top Navigation Link Hover ── */
+.nav-link {
+  font: 700 11.5px/1 'Archivo', sans-serif;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  position: relative;
+  padding: 6px 0;
+  color: var(--ink);
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .35s cubic-bezier(.65,0,.35,1);
+}
+.nav-link:hover::after, .nav-link.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ── Hero Section Wordmark ── */
+#hero .word b {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 900;
+  font-size: clamp(75px, 20vw, 290px);
+  letter-spacing: -.03em;
+  line-height: .8;
+  white-space: nowrap;
+  display: block;
+  color: var(--ink);
+  opacity: 0.95;
+  user-select: none;
+}
+
+/* ── Buttons (Curtain Sweep Hover) ── */
+.btn-curtain {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--ink);
+  color: var(--canvas);
+  padding: 15px 34px;
+  font: 700 11px/1 'Archivo', sans-serif;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  border: none;
+  transition: color 0.3s ease;
+}
+.btn-curtain span { position: relative; z-index: 2; display: flex; align-items: center; gap: 8px; }
+.btn-curtain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #2A2A2A;
+  z-index: 1;
+  transform: translateY(101%);
+  transition: transform .4s cubic-bezier(.6,0,.2,1);
+}
+.btn-curtain:hover::before { transform: translateY(0); }
+
+.btn-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 11px/1 'Archivo', sans-serif;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  background: transparent;
+  transition: all .3s ease;
+}
+.btn-line:hover { background: var(--ink); color: var(--canvas); }
+
+/* ── Product Card Dual POV Hover ── */
+.product-card { position: relative; }
+.product-card .image-frame {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: var(--canvas-card);
+  border-radius: 2px;
+}
+.product-card .img-front, .product-card .img-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.product-card .img-back { opacity: 0; }
+.product-card:hover .img-front { opacity: 0; transform: scale(1.05); }
+.product-card:hover .img-back { opacity: 1; transform: scale(1.05); }
+
+.product-card .quick-add {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 10;
+  background: rgba(16, 16, 16, 0.95);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  padding: 12px;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.product-card:hover .quick-add { opacity: 1; transform: translateY(0); }
+
+/* ── Live Nameset Mockup Container ── */
+.nameset-stage {
+  position: relative;
+  aspect-ratio: 4/5;
+  max-width: 440px;
+  margin: 0 auto;
+  background: #181818;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+}
+.nameset-stage img { width: 100%; height: 100%; object-fit: cover; opacity: 0.94; }
+.nameset-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  padding-top: 14%;
+}
+.nameset-text-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(30px, 4vw, 42px);
+  color: #FFFFFF;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+}
+.nameset-text-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(86px, 12vw, 140px);
+  color: #FFFFFF;
+  line-height: 0.85;
+  margin-top: 2px;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.75);
+}
+
+/* ── Toastr.js Custom Dark Luxury Overrides ── */
+#toast-container > div {
+  opacity: 1 !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.3) !important;
+  border-radius: 4px !important;
+  padding: 15px 15px 15px 50px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+}
+.toast-success { background-color: #101010 !important; border-left: 4px solid #10b981 !important; color: #EFEDE8 !important; }
+.toast-error   { background-color: #101010 !important; border-left: 4px solid #ef4444 !important; color: #EFEDE8 !important; }
+.toast-info    { background-color: #101010 !important; border-left: 4px solid #0284c7 !important; color: #EFEDE8 !important; }
+.toast-warning { background-color: #101010 !important; border-left: 4px solid #f59e0b !important; color: #EFEDE8 !important; }

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGIZAN APPAREL · Bespoke Football Kits & Archive Store</title>
+<meta name="description" content="Ngizan Apparel - Toko jersey sepak bola autentik, edisi retro, dan studio kustomisasi sablon nama resmi.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Alpine.js CDN -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+
+<style>
+:root {
+  --canvas: #EFEDE8;       /* Warm linen bone */
+  --canvas-card: #E4E1DC;  /* Subtle darker tone for cards */
+  --ink: #101010;          /* Deep rich black */
+  --ink-muted: #6B6862;    /* Balanced warm gray */
+  --border: rgba(16, 16, 16, 0.12);
+  --border-strong: rgba(16, 16, 16, 0.28);
+  --nav: 76px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; overflow-x: clip; }
+body {
+  background-color: var(--canvas);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+.font-jersey { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; }
+.font-display { font-family: 'Archivo', 'Outfit', sans-serif; }
+
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 clamp(18px, 3.4vw, 44px); }
+.lbl { font: 600 10.5px/1 'Archivo', sans-serif; letter-spacing: .22em; text-transform: uppercase; }
+
+/* ── Minimal Top Navigation (Clean without ticker) ── */
+nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(239, 237, 232, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+nav .bar {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px;
+  height: var(--nav);
+}
+nav ul { display: flex; gap: 28px; list-style: none; }
+nav ul a {
+  font: 600 11.5px/1 'Archivo', sans-serif; letter-spacing: .16em; text-transform: uppercase;
+  position: relative; padding: 6px 0; color: var(--ink);
+}
+nav ul a::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px;
+  background: var(--ink); transform: scaleX(0); transform-origin: right;
+  transition: transform .35s cubic-bezier(.65,0,.35,1);
+}
+nav ul a:hover::after { transform: scaleX(1); transform-origin: left; }
+nav .mk {
+  font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 24px; letter-spacing: .28em;
+  text-align: center; padding-left: .28em; color: var(--ink); text-transform: uppercase;
+}
+
+/* ── Hero Section: Model Cutout in Typography Wordmark ── */
+#hero {
+  position: relative; min-height: calc(90vh - var(--nav)); display: flex;
+  flex-direction: column; justify-content: center; overflow: hidden;
+  padding: clamp(20px, 3vh, 40px) 0 clamp(24px, 4vh, 50px);
+  border-bottom: 1px solid var(--border);
+}
+#hero > .wrap { position: relative; width: 100%; }
+#hero .stage {
+  position: relative; width: 100%; display: grid; place-items: center;
+  min-height: min(58vh, 560px);
+}
+#hero .word { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+#hero .word b {
+  font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(75px, 20vw, 290px);
+  letter-spacing: -.03em; line-height: .8; white-space: nowrap; display: block;
+  color: var(--ink); opacity: 0.95; user-select: none;
+}
+#hero .model-wrap {
+  position: relative; z-index: 2; height: min(62vh, 600px); display: flex; align-items: flex-end;
+}
+#hero .model-img {
+  height: 100%; width: auto; object-fit: contain;
+  filter: drop-shadow(0 26px 46px rgba(16,16,16,.25));
+}
+
+/* ── Buttons (Curtain Sweep Hover) ── */
+.btn-curtain {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--ink); color: var(--canvas); padding: 15px 34px;
+  font: 600 11px/1 'Archivo', sans-serif; letter-spacing: .2em; text-transform: uppercase;
+  position: relative; overflow: hidden; isolation: isolate; cursor: pointer; border: none;
+}
+.btn-curtain span { position: relative; z-index: 2; display: flex; align-items: center; gap: 8px; }
+.btn-curtain::before {
+  content: ''; position: absolute; inset: 0; background: #2A2A2A; z-index: 1;
+  transform: translateY(101%); transition: transform .4s cubic-bezier(.6,0,.2,1);
+}
+.btn-curtain:hover::before { transform: translateY(0); }
+
+.btn-line {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: 600 11px/1 'Archivo', sans-serif; letter-spacing: .2em; text-transform: uppercase;
+  padding: 14px 28px; border: 1px solid var(--ink); color: var(--ink); background: transparent;
+  transition: all .3s ease;
+}
+.btn-line:hover { background: var(--ink); color: var(--canvas); }
+
+/* ── Product Card Dual POV Hover ── */
+.product-card { position: relative; }
+.product-card .image-frame {
+  position: relative; aspect-ratio: 3/4; overflow: hidden;
+  background: var(--canvas-card); border-radius: 2px;
+}
+.product-card .img-front, .product-card .img-back {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.product-card .img-back { opacity: 0; }
+.product-card:hover .img-front { opacity: 0; transform: scale(1.05); }
+.product-card:hover .img-back { opacity: 1; transform: scale(1.05); }
+
+.product-card .quick-add {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 10;
+  background: rgba(16, 16, 16, 0.95); backdrop-filter: blur(6px); color: #fff;
+  padding: 12px; text-align: center; font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; border-radius: 2px;
+  opacity: 0; transform: translateY(10px);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.product-card:hover .quick-add { opacity: 1; transform: translateY(0); }
+
+/* ── Live Nameset Mockup Container ── */
+.nameset-stage {
+  position: relative; aspect-ratio: 4/5; max-width: 440px; margin: 0 auto;
+  background: #181818; border-radius: 4px; overflow: hidden;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+}
+.nameset-stage img { width: 100%; height: 100%; object-fit: cover; opacity: 0.94; }
+.nameset-layer {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; pointer-events: none;
+  padding-top: 14%;
+}
+.nameset-text-name {
+  font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 4vw, 42px);
+  color: #FFFFFF; letter-spacing: 0.16em; line-height: 1;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+}
+.nameset-text-number {
+  font-family: 'Bebas Neue', sans-serif; font-size: clamp(86px, 12vw, 140px);
+  color: #FFFFFF; line-height: 0.85; margin-top: 2px;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.75);
+}
+</style>
+</head>
+
+<body x-data="{
+  customModal: false,
+  checkoutModal: false,
+  activeJersey: {
+    name: 'MANCHESTER UNITED 24/25 HOME',
+    type: 'AUTHENTIC PLAYER ISSUE',
+    basePrice: 285000,
+    frontImg: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80',
+    backImg: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80'
+  },
+  customName: 'BRUNO',
+  customNumber: '8',
+  selectedSize: 'L',
+  selectedPatch: 'ucl',
+  namesetFee: 35000,
+  patchFee: 20000,
+  get grandTotal() {
+    let sum = this.activeJersey.basePrice;
+    if (this.customName.trim() !== '' || this.customNumber.trim() !== '') sum += this.namesetFee;
+    if (this.selectedPatch) sum += this.patchFee;
+    return sum;
+  }
+}">
+
+<!-- ── 1. Minimal Top Navigation (Clean) ── -->
+<nav>
+  <div class="wrap bar">
+    <ul>
+      <li><a href="#katalog">Klub</a></li>
+      <li><a href="#katalog">Tim Nasional</a></li>
+      <li><a href="#katalog">Retro Archive</a></li>
+      <li><a href="#custom-studio">Custom Studio</a></li>
+    </ul>
+
+    <a href="#" class="mk">NGIZAN</a>
+
+    <div class="flex items-center justify-end gap-6 text-[11px] font-semibold tracking-[0.16em] uppercase">
+      <!-- Search Input -->
+      <button class="flex items-center gap-1.5 hover:opacity-70 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <span class="hidden md:inline">Cari</span>
+      </button>
+
+      <!-- Google / Auth -->
+      <button class="flex items-center gap-2 px-3 py-1.5 border border-neutral-300 rounded-full hover:bg-neutral-900 hover:text-white transition">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+        <span>Masuk</span>
+      </button>
+
+      <!-- Cart Button -->
+      <button @click="checkoutModal = true" class="flex items-center gap-1.5 bg-neutral-900 text-[#EFEDE8] px-3.5 py-1.5 rounded-full hover:bg-neutral-800 transition">
+        <span>Tas</span>
+        <span class="w-4 h-4 rounded-full bg-cyan-500 text-[9px] font-bold text-white flex items-center justify-center">2</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── 2. HERO: Model Cutout in Typography Wordmark ── -->
+<section id="hero">
+  <div class="wrap">
+    <!-- Top Left Sub-label -->
+    <div class="absolute left-6 top-2 z-10 hidden md:block">
+      <p class="lbl text-neutral-600">EDISI MUSIM 2024/2025</p>
+      <div class="w-12 h-[1.5px] bg-neutral-900 mt-2"></div>
+    </div>
+
+    <!-- Bottom Right Details -->
+    <div class="absolute right-6 bottom-4 z-10 text-right hidden md:block">
+      <p class="lbl text-neutral-600">STANDAR PRESTASI & ELEGANSI</p>
+      <p class="text-xs text-neutral-500 mt-1">Sablon DTF High-Density & Patch Resmi</p>
+    </div>
+
+    <!-- Stage Center Wordmark & Model Cutout -->
+    <div class="stage">
+      <div class="word">
+        <b>NGIZAN</b>
+      </div>
+
+      <div class="model-wrap">
+        <!-- Cutout Model Image -->
+        <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=700&q=80" 
+             alt="Ngizan Model Cutout" 
+             class="model-img rounded-t-xl" />
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="flex items-center justify-center gap-4 mt-6 flex-wrap z-20 relative">
+      <a href="#katalog" class="btn-curtain">
+        <span>Jelajahi Koleksi Jersey</span>
+      </a>
+      <a href="#custom-studio" class="btn-line">
+        <span>Studio Kustomisasi</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 3. Category Strip (Dark Block) ── -->
+<section class="bg-neutral-950 text-[#EFEDE8] py-12 border-b border-neutral-800">
+  <div class="wrap">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <a href="#katalog" class="group flex items-center gap-4 p-2 rounded hover:bg-neutral-900 transition">
+        <div class="w-14 h-16 bg-neutral-900 overflow-hidden rounded flex-shrink-0">
+          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
+        </div>
+        <div>
+          <h3 class="font-bold uppercase tracking-wider text-xs">Klub Eropa</h3>
+          <p class="text-[11px] text-neutral-400 mt-0.5">EPL, La Liga, Serie A</p>
+        </div>
+      </a>
+
+      <a href="#katalog" class="group flex items-center gap-4 p-2 rounded hover:bg-neutral-900 transition">
+        <div class="w-14 h-16 bg-neutral-900 overflow-hidden rounded flex-shrink-0">
+          <img src="https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
+        </div>
+        <div>
+          <h3 class="font-bold uppercase tracking-wider text-xs">Tim Nasional</h3>
+          <p class="text-[11px] text-neutral-400 mt-0.5">Garuda & World Cups</p>
+        </div>
+      </a>
+
+      <a href="#katalog" class="group flex items-center gap-4 p-2 rounded hover:bg-neutral-900 transition">
+        <div class="w-14 h-16 bg-neutral-900 overflow-hidden rounded flex-shrink-0">
+          <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
+        </div>
+        <div>
+          <h3 class="font-bold uppercase tracking-wider text-xs">Retro Classics</h3>
+          <p class="text-[11px] text-neutral-400 mt-0.5">Edisi 90s & 2000s</p>
+        </div>
+      </a>
+
+      <a href="#custom-studio" class="group flex items-center gap-4 p-2 rounded hover:bg-neutral-900 transition">
+        <div class="w-14 h-16 bg-neutral-900 overflow-hidden rounded flex-shrink-0">
+          <img src="https://images.unsplash.com/photo-1544698310-74ea9d1c8258?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
+        </div>
+        <div>
+          <h3 class="font-bold uppercase tracking-wider text-xs text-lime-400">Custom Nameset</h3>
+          <p class="text-[11px] text-neutral-400 mt-0.5">Nama & Nomor Font Resmi</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 4. Product Catalog with Dual POV Hover ── -->
+<section id="katalog" class="py-16">
+  <div class="wrap">
+    <div class="flex items-end justify-between mb-10">
+      <div>
+        <span class="lbl text-neutral-500">KOLEKSI UNGGULAN</span>
+        <h2 class="font-display font-black text-2xl md:text-3xl text-neutral-950 mt-1 uppercase tracking-tight">Katalog Paling Dicari</h2>
+      </div>
+      <p class="text-xs text-neutral-500 hidden sm:block">Hover jersey untuk melihat tampak belakang (Back POV)</p>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- Item 1 -->
+      <div class="product-card group">
+        <div class="image-frame">
+          <img src="https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=700&q=80" alt="Jersey 1 Front" class="img-front">
+          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=700&q=80" alt="Jersey 1 Back" class="img-back">
+          
+          <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
+            <span class="px-2 py-0.5 bg-neutral-900 text-white text-[9px] font-bold tracking-wider uppercase rounded">PLAYER ISSUE</span>
+          </div>
+
+          <button @click="customModal = true" class="quick-add">
+            ⚡ Custom Sablon & Beli
+          </button>
+        </div>
+
+        <div class="pt-3">
+          <div class="flex justify-between items-start">
+            <h3 class="font-bold text-sm text-neutral-900 uppercase">MU Home 24/25</h3>
+            <span class="font-bold text-sm text-neutral-900 tabular-nums">Rp 285.000</span>
+          </div>
+          <p class="text-xs text-neutral-500 mt-0.5">Premier League Official</p>
+          <div class="flex gap-1.5 mt-2">
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">S</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">M</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-900 bg-neutral-900 text-white rounded font-semibold">L (Sisa 3)</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">XL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="product-card group">
+        <div class="image-frame">
+          <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=700&q=80" alt="Jersey 2 Front" class="img-front">
+          <img src="https://images.unsplash.com/photo-1544698310-74ea9d1c8258?auto=format&fit=crop&w=700&q=80" alt="Jersey 2 Back" class="img-back">
+          
+          <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
+            <span class="px-2 py-0.5 bg-neutral-800 text-white text-[9px] font-bold tracking-wider uppercase rounded">FANS ISSUE</span>
+          </div>
+
+          <button @click="customModal = true" class="quick-add">
+            ⚡ Custom Sablon & Beli
+          </button>
+        </div>
+
+        <div class="pt-3">
+          <div class="flex justify-between items-start">
+            <h3 class="font-bold text-sm text-neutral-900 uppercase">Real Madrid 24/25</h3>
+            <span class="font-bold text-sm text-neutral-900 tabular-nums">Rp 220.000</span>
+          </div>
+          <p class="text-xs text-neutral-500 mt-0.5">Champions League Edition</p>
+          <div class="flex gap-1.5 mt-2">
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">S</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">M</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">L</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="product-card group">
+        <div class="image-frame">
+          <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=700&q=80" alt="Jersey 3 Front" class="img-front">
+          <img src="https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=700&q=80" alt="Jersey 3 Back" class="img-back">
+          
+          <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
+            <span class="px-2 py-0.5 bg-amber-800 text-white text-[9px] font-bold tracking-wider uppercase rounded">RETRO 2007</span>
+          </div>
+
+          <button @click="customModal = true" class="quick-add">
+            ⚡ Custom Sablon & Beli
+          </button>
+        </div>
+
+        <div class="pt-3">
+          <div class="flex justify-between items-start">
+            <h3 class="font-bold text-sm text-neutral-900 uppercase">AC Milan Final Athens</h3>
+            <span class="font-bold text-sm text-neutral-900 tabular-nums">Rp 310.000</span>
+          </div>
+          <p class="text-xs text-neutral-500 mt-0.5">Classic Vintage Series</p>
+          <div class="flex gap-1.5 mt-2">
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">M</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">L</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">XL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="product-card group">
+        <div class="image-frame">
+          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=700&q=80" alt="Jersey 4 Front" class="img-front">
+          <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=700&q=80" alt="Jersey 4 Back" class="img-back">
+          
+          <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
+            <span class="px-2 py-0.5 bg-red-700 text-white text-[9px] font-bold tracking-wider uppercase rounded">TIMNAS RI</span>
+          </div>
+
+          <button @click="customModal = true" class="quick-add">
+            ⚡ Custom Sablon & Beli
+          </button>
+        </div>
+
+        <div class="pt-3">
+          <div class="flex justify-between items-start">
+            <h3 class="font-bold text-sm text-neutral-900 uppercase">Indonesia Home 24/25</h3>
+            <span class="font-bold text-sm text-neutral-900 tabular-nums">Rp 265.000</span>
+          </div>
+          <p class="text-xs text-neutral-500 mt-0.5">Garuda Official Match</p>
+          <div class="flex gap-1.5 mt-2">
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">S</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">M</span>
+            <span class="text-[10px] px-2 py-0.5 border border-neutral-300 rounded font-semibold text-neutral-700">L</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 5. Live Interactive Custom Studio Section ── -->
+<section id="custom-studio" class="py-16 bg-neutral-900 text-[#F4F1EA] border-t border-neutral-800">
+  <div class="wrap">
+    <div class="max-w-2xl mb-12">
+      <span class="lbl text-cyan-400">STUDIO KUSTOMISASI LIVE</span>
+      <h2 class="font-display font-black text-3xl md:text-4xl text-white mt-1 uppercase tracking-tight">
+        Pasang Nama & Nomor Punggung
+      </h2>
+      <p class="text-xs text-neutral-400 mt-2">Tampilan sablon langsung berubah secara instan di atas jersey saat Anda mengetik nama & nomor.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Left: Mockup Canvas Preview (6 cols) -->
+      <div class="lg:col-span-6">
+        <div class="nameset-stage border border-neutral-800">
+          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80" alt="Back Mockup">
+          
+          <div class="nameset-layer">
+            <div class="nameset-text-name" x-text="customName || 'NAMA ANDA'"></div>
+            <div class="nameset-text-number" x-text="customNumber || '00'"></div>
+          </div>
+
+          <template x-if="selectedPatch">
+            <div class="absolute bottom-5 right-5 bg-black/80 border border-neutral-700 px-3 py-1 rounded text-[10px] font-bold text-white uppercase backdrop-blur">
+              <span x-text="selectedPatch === 'ucl' ? '★ UCL Starball Patch' : '⚡ Premier League Badge'"></span>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Right: Controls Form (6 cols) -->
+      <div class="lg:col-span-6 bg-neutral-950 p-8 rounded border border-neutral-800 space-y-6">
+        <div>
+          <h3 class="font-bold text-lg text-white" x-text="activeJersey.name"></h3>
+          <p class="text-xs text-neutral-400" x-text="activeJersey.type"></p>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <div>
+            <label class="block font-semibold uppercase tracking-wider text-neutral-400 mb-1">
+              Nama Punggung (Maks. 12 Karakter) <span class="text-cyan-400">(+Rp 35.000)</span>
+            </label>
+            <input type="text" x-model="customName" maxlength="12" placeholder="CONTOH: BRUNO" 
+                   class="w-full bg-neutral-900 border border-neutral-700 p-3 rounded text-sm text-white uppercase font-jersey tracking-widest focus:outline-none focus:border-cyan-500">
+          </div>
+
+          <div>
+            <label class="block font-semibold uppercase tracking-wider text-neutral-400 mb-1">
+              Nomor Punggung (0 - 99)
+            </label>
+            <input type="text" x-model="customNumber" maxlength="2" placeholder="8" 
+                   class="w-full bg-neutral-900 border border-neutral-700 p-3 rounded text-xl text-white font-jersey tracking-widest focus:outline-none focus:border-cyan-500">
+          </div>
+
+          <div>
+            <label class="block font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">Pilih Ukuran</label>
+            <div class="flex gap-2">
+              <template x-for="sz in ['S', 'M', 'L', 'XL', 'XXL']">
+                <button @click="selectedSize = sz" 
+                        :class="selectedSize === sz ? 'bg-cyan-500 text-neutral-950 font-bold border-cyan-400' : 'bg-neutral-900 text-neutral-400 border border-neutral-800 hover:border-neutral-600'"
+                        class="w-12 py-2 text-center font-semibold rounded text-xs transition"
+                        x-text="sz"></button>
+              </template>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold uppercase tracking-wider text-neutral-400 mb-1">Pilihan Patch Lengan (+Rp 20.000)</label>
+            <select x-model="selectedPatch" class="w-full bg-neutral-900 border border-neutral-700 p-2.5 rounded text-xs text-white uppercase focus:outline-none focus:border-cyan-500">
+              <option value="">Tanpa Patch</option>
+              <option value="ucl">UEFA Champions League Starball</option>
+              <option value="epl">Premier League Sleeve Badge</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="border-t border-neutral-800 pt-5 flex items-center justify-between">
+          <div>
+            <div class="text-xs text-neutral-400 uppercase tracking-wider">Total Pembelian</div>
+            <div class="font-display font-extrabold text-2xl text-cyan-400 mt-0.5" x-text="'Rp ' + grandTotal.toLocaleString('id-ID')"></div>
+          </div>
+          <button @click="checkoutModal = true" class="btn-curtain bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold px-6 py-3.5 border-none">
+            <span>Beli Sekarang &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 6. Checkout & Biteship Pinpoint Preview Modal ── -->
+<div x-show="checkoutModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div @click.away="checkoutModal = false" class="bg-neutral-950 text-[#F4F1EA] border border-neutral-800 w-full max-w-3xl rounded overflow-hidden shadow-2xl my-8">
+    <div class="p-6 border-b border-neutral-800 flex justify-between items-center bg-neutral-900">
+      <div>
+        <h3 class="font-display font-bold text-lg text-white uppercase tracking-tight">Checkout Alamat & Pembayaran</h3>
+        <p class="text-xs text-neutral-400">Pengiriman Biteship & Midtrans Payment Gateway</p>
+      </div>
+      <button @click="checkoutModal = false" class="text-neutral-400 hover:text-white text-2xl font-bold">&times;</button>
+    </div>
+
+    <div class="p-6 md:p-8 space-y-6">
+      <!-- 1. Alamat -->
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3">📍 Alamat Pengiriman Pemesan</h4>
+        <div class="space-y-3 text-xs">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input type="text" value="Alvaro Pratama" placeholder="Nama Penerima" class="bg-neutral-900 border border-neutral-700 p-2.5 rounded text-white">
+            <input type="text" value="0812-3456-7890" placeholder="Nomor WhatsApp" class="bg-neutral-900 border border-neutral-700 p-2.5 rounded text-white">
+          </div>
+          <input type="text" value="Kebayoran Baru, Jakarta Selatan (Kode Pos 12110)" placeholder="Kecamatan / Area (Biteship Autocomplete)" class="w-full bg-neutral-900 border border-neutral-700 p-2.5 rounded text-white">
+          <div class="p-3 bg-neutral-900 border border-neutral-800 rounded flex items-center justify-between">
+            <span class="text-[11px] text-neutral-400">📌 Koordinat GPS Terkunci: <strong>-6.2301, 106.8123</strong></span>
+            <button class="px-2.5 py-1 bg-neutral-800 hover:bg-neutral-700 rounded text-[11px] text-white">Ubah Pin Peta</button>
+          </div>
+          <input type="text" value="Jl. Senopati No. 12 (Pagar hitam, seberang masjid)" placeholder="Alamat Lengkap & Patokan Rumah" class="w-full bg-neutral-900 border border-neutral-700 p-2.5 rounded text-white">
+        </div>
+      </div>
+
+      <!-- 2. Pilihan Kurir -->
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3">🚚 Opsi Ekspedisi (Biteship)</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <label class="p-3 bg-neutral-900 border border-cyan-500 rounded cursor-pointer">
+            <input type="radio" name="courier" checked class="accent-cyan-500 mb-1">
+            <div class="font-bold text-white">SiCepat REG</div>
+            <div class="text-[11px] text-neutral-400">1 - 2 Hari · Rp 14.000</div>
+          </label>
+          <label class="p-3 bg-neutral-900 border border-neutral-800 rounded cursor-pointer hover:border-neutral-700">
+            <input type="radio" name="courier" class="accent-cyan-500 mb-1">
+            <div class="font-bold text-white">JNE YES</div>
+            <div class="text-[11px] text-neutral-400">1 Hari · Rp 24.000</div>
+          </label>
+          <label class="p-3 bg-neutral-900 border border-neutral-800 rounded cursor-pointer hover:border-neutral-700">
+            <input type="radio" name="courier" class="accent-cyan-500 mb-1">
+            <div class="font-bold text-white">Grab Instant</div>
+            <div class="text-[11px] text-neutral-400">1 - 3 Jam · Rp 32.000</div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Total & CTA -->
+      <div class="border-t border-neutral-800 pt-5 flex items-center justify-between">
+        <div>
+          <span class="text-xs text-neutral-400">Total Tagihan (Termasuk Ongkir):</span>
+          <div class="font-display font-extrabold text-2xl text-cyan-400" x-text="'Rp ' + (grandTotal + 14000).toLocaleString('id-ID')"></div>
+        </div>
+        <button @click="alert('Membuka popup pembayaran Midtrans Snap...')" class="btn-curtain bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold border-none">
+          <span>Bayar via Midtrans Snap &rarr;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 7. Clean Editorial Footer ── -->
+<footer class="border-t border-neutral-200 bg-neutral-100/80 py-12 text-neutral-800 text-xs">
+  <div class="wrap grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <div>
+      <div class="font-display font-black text-base tracking-widest mb-2">NGIZAN APPAREL</div>
+      <p class="text-neutral-500 leading-relaxed">
+        Penyedia jersey sepak bola autentik, replika vintage, dan layanan sablon nameset berstandar internasional.
+      </p>
+    </div>
+    <div>
+      <div class="font-bold uppercase tracking-wider mb-2 text-neutral-900">Koleksi</div>
+      <ul class="space-y-1.5 text-neutral-600">
+        <li><a href="#" class="hover:text-black">Klub Eropa</a></li>
+        <li><a href="#" class="hover:text-black">Tim Nasional</a></li>
+        <li><a href="#" class="hover:text-black">Retro Classics</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="font-bold uppercase tracking-wider mb-2 text-neutral-900">Layanan</div>
+      <ul class="space-y-1.5 text-neutral-600">
+        <li><a href="#" class="hover:text-black">Studio Custom Nameset</a></li>
+        <li><a href="#" class="hover:text-black">Lacak Resi Biteship</a></li>
+        <li><a href="#" class="hover:text-black">Panduan Ukuran (Size Chart)</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="font-bold uppercase tracking-wider mb-2 text-neutral-900">Kontak</div>
+      <p class="text-neutral-600 leading-relaxed">
+        WhatsApp: 0812-3456-7890<br>
+        support@ngizanapparel.com<br>
+        Jakarta, Indonesia
+      </p>
+    </div>
+  </div>
+
+  <div class="wrap border-t border-neutral-200 pt-6 flex justify-between items-center text-[11px] text-neutral-500">
+    <p>&copy; 2026 NGIZAN APPAREL. Seluruh hak cipta dilindungi.</p>
+    <p class="tracking-widest uppercase">Bespoke Kits Studio</p>
+  </div>
+</footer>
+
+</body>
+</html>
