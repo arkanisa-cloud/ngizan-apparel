@@ -9,7 +9,7 @@
 ## Tasks
 - [x] Task 1: Design System Foundation — Tailwind Config, CSS Variables & Google Fonts
 - [x] Task 2: Customer Layout, Navigation & Footer — Nike Editorial Chrome
-- [ ] Task 3: Homepage & Hero Section — Nike Campaign Editorial
+- [x] Task 3: Homepage & Hero Section — Nike Campaign Editorial
 - [ ] Task 4: Product Card, Shop Page & Product Detail Page
 - [ ] Task 5: Cart, Checkout & Order Pages
 - [ ] Task 6: Auth Pages & Guest Layout
