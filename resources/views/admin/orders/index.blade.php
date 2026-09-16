@@ -6,23 +6,24 @@
 <div class="space-y-6">
     
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="border-b border-hairline-soft pb-5 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
         <div>
-            <h1 class="text-xl font-bold font-display text-slate-900">Manajemen Pesanan Masuk</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Kelola antrian pesanan, status produksi nameset, booking kurir Biteship, dan cetak label thermal.</p>
+            <span class="text-xs font-medium uppercase tracking-widest text-mute block mb-1">Transaksi & Pengiriman</span>
+            <h1 class="text-2xl sm:text-3xl font-medium tracking-tight text-ink">Manajemen Pesanan</h1>
+            <p class="text-xs text-mute mt-1">Kelola pesanan masuk, kustomisasi sablon, resi kurir, dan cetak label.</p>
         </div>
     </div>
 
     {{-- Filter & Search Bar --}}
-    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 justify-between items-center text-xs">
+    <div class="bg-white p-4 rounded-2xl border border-hairline-soft flex flex-col sm:flex-row gap-3 justify-between items-center text-xs">
         <form method="GET" action="{{ route('admin.orders.index') }}" class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <div class="relative w-full sm:w-64">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. Order atau Pelanggan..." 
-                       class="w-full bg-slate-50 border border-slate-200 pl-8 p-2 rounded-lg text-xs focus:ring-1 focus:ring-slate-900">
-                <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                       class="w-full bg-soft-cloud border border-hairline pl-8 pr-4 py-2 rounded-full text-xs text-ink focus:border-ink focus:ring-0">
+                <svg class="w-4 h-4 text-mute absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
 
-            <select name="status" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 p-2 rounded-lg text-xs focus:ring-1 focus:ring-slate-900">
+            <select name="status" onchange="this.form.submit()" class="bg-soft-cloud border border-hairline px-4 py-2 rounded-full text-xs text-ink focus:border-ink focus:ring-0">
                 <option value="">Semua Status</option>
                 @foreach(\App\Enums\OrderStatus::cases() as $st)
                     <option value="{{ $st->value }}" {{ request('status') === $st->value ? 'selected' : '' }}>{{ $st->label() }}</option>
@@ -30,15 +31,15 @@
             </select>
 
             @if(request()->hasAny(['search', 'status']))
-                <a href="{{ route('admin.orders.index') }}" class="text-rose-600 font-bold hover:underline">Reset</a>
+                <a href="{{ route('admin.orders.index') }}" class="text-sale font-medium hover:underline">Reset</a>
             @endif
         </form>
     </div>
 
     {{-- Orders Table --}}
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <table class="w-full text-xs text-left text-slate-600">
-            <thead class="bg-slate-50 uppercase font-bold text-slate-700 border-b border-slate-200">
+    <div class="bg-white rounded-2xl border border-hairline-soft overflow-hidden">
+        <table class="w-full text-xs text-left text-ink">
+            <thead class="bg-soft-cloud font-medium text-mute border-b border-hairline-soft">
                 <tr>
                     <th class="p-3.5">No. Order & Waktu</th>
                     <th class="p-3.5">Pelanggan</th>
@@ -49,25 +50,25 @@
                     <th class="p-3.5 text-right">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-hairline-soft">
                 @forelse($orders as $order)
-                    <tr class="hover:bg-slate-50/80 transition">
-                        <td class="p-3.5 font-mono font-bold text-slate-900">
-                            <a href="{{ route('admin.orders.show', $order->id) }}" class="text-cyan-700 hover:underline">
+                    <tr class="hover:bg-soft-cloud transition">
+                        <td class="p-3.5 font-mono font-medium text-ink">
+                            <a href="{{ route('admin.orders.show', $order->id) }}" class="hover:underline">
                                 #{{ $order->order_number }}
                             </a>
-                            <div class="text-[10px] text-slate-400 font-sans">{{ $order->created_at->format('d/m/Y H:i') }} WIB</div>
+                            <div class="text-[10px] text-mute font-sans">{{ $order->created_at->format('d/m/Y H:i') }} WIB</div>
                         </td>
                         <td class="p-3.5">
-                            <span class="font-semibold text-slate-900 block">{{ $order->customer_name }}</span>
-                            <span class="text-[10px] text-slate-400">{{ $order->customer_phone }}</span>
+                            <span class="font-medium text-ink block">{{ $order->customer_name }}</span>
+                            <span class="text-[10px] text-mute">{{ $order->customer_phone }}</span>
                         </td>
                         <td class="p-3.5">
                             @foreach($order->items as $item)
-                                <div class="font-semibold text-slate-800">
+                                <div class="font-medium text-ink">
                                     {{ $item->product_name }} ({{ $item->size }}) &times; {{ $item->quantity }}
                                     @if($item->custom_name || $item->custom_number)
-                                        <span class="text-[9.5px] font-bold text-cyan-700 bg-cyan-50 px-1 py-0.2 rounded font-jersey">
+                                        <span class="text-[10px] font-medium text-ink bg-soft-cloud px-1.5 py-0.5 rounded font-jersey">
                                             #{{ $item->custom_name }} {{ $item->custom_number }}
                                         </span>
                                     @endif
@@ -75,37 +76,37 @@
                             @endforeach
                         </td>
                         <td class="p-3.5">
-                            <span class="font-semibold uppercase text-slate-800">{{ $order->courier_service_name ?? ($order->courier_code . ' Reguler') }}</span>
+                            <span class="font-medium uppercase text-ink">{{ $order->courier_service_name ?? ($order->courier_code . ' Reguler') }}</span>
                             @if($order->tracking_number)
-                                <div class="text-[10px] text-cyan-700 font-mono font-bold">Resi: {{ $order->tracking_number }}</div>
+                                <div class="text-[10px] text-mute font-mono">Resi: {{ $order->tracking_number }}</div>
                             @endif
                         </td>
-                        <td class="p-3.5 font-display font-black text-slate-900 tabular-nums">
+                        <td class="p-3.5 font-medium text-ink tabular-nums">
                             {{ $order->formatted_grand_total }}
                         </td>
                         <td class="p-3.5">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold {{ $order->status->badgeClass() }}">
+                            <span class="px-3 py-0.5 rounded-full text-[10px] font-medium {{ $order->status->badgeClass() }}">
                                 {{ $order->status->label() }}
                             </span>
                         </td>
-                        <td class="p-3.5 text-right space-x-1 whitespace-nowrap">
-                            <a href="{{ route('admin.orders.show', $order->id) }}" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-bold transition inline-block">
+                        <td class="p-3.5 text-right space-x-1.5 whitespace-nowrap">
+                            <a href="{{ route('admin.orders.show', $order->id) }}" class="btn-primary py-1.5 px-3.5 text-xs rounded-full inline-block">
                                 Kelola
                             </a>
-                            <a href="{{ route('admin.orders.print.label', $order->id) }}" target="_blank" class="px-2 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs transition inline-block" title="Cetak Label Pengiriman">
+                            <a href="{{ route('admin.orders.print.label', $order->id) }}" target="_blank" class="btn-secondary py-1.5 px-3 text-xs rounded-full inline-block" title="Cetak Label Pengiriman">
                                 🖨️
                             </a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="p-8 text-center text-slate-400">Tidak ada pesanan ditemukan.</td>
+                        <td colspan="7" class="p-8 text-center text-mute">Tidak ada pesanan ditemukan.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
 
-        <div class="p-4 border-t border-slate-100">
+        <div class="p-4 border-t border-hairline-soft">
             {{ $orders->links() }}
         </div>
     </div>

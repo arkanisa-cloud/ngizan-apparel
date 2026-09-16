@@ -6,60 +6,61 @@
 <div class="space-y-8">
     
     {{-- Header Title --}}
-    <div>
-        <h1 class="text-2xl font-bold font-display text-slate-900 tracking-tight">Executive Dashboard</h1>
-        <p class="text-xs text-slate-500 mt-1">Ringkasan performa operasional toko online, status stok gudang, dan logistik.</p>
+    <div class="border-b border-hairline-soft pb-5">
+        <span class="text-xs font-medium uppercase tracking-widest text-mute block mb-1">Executive Overview</span>
+        <h1 class="text-2xl sm:text-3xl font-medium tracking-tight text-ink">Executive Dashboard</h1>
+        <p class="text-xs text-mute mt-1">Ringkasan performa operasional toko online, status stok gudang, dan logistik.</p>
     </div>
 
     {{-- ===== 1. STATISTIC CARDS ===== --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {{-- Card 1: Omset Lunas --}}
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-            <div class="flex items-center justify-between text-slate-500">
-                <span class="text-[11px] font-bold uppercase tracking-wider">Omset Bulan Ini</span>
-                <span class="p-2 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-bold">💰 Lunas</span>
+        <div class="bg-soft-cloud p-5 rounded-2xl border border-hairline-soft space-y-2">
+            <div class="flex items-center justify-between text-mute">
+                <span class="text-[11px] font-medium uppercase tracking-wider">Omset Bulan Ini</span>
+                <span class="px-2.5 py-0.5 bg-white border border-hairline text-ink rounded-full text-[10px] font-medium">💰 Lunas</span>
             </div>
-            <div class="font-display font-black text-2xl text-slate-900">
+            <div class="text-2xl font-medium text-ink tabular-nums">
                 Rp {{ number_format($monthlyRevenue, 0, ',', '.') }}
             </div>
-            <p class="text-[11px] text-slate-400">Dari pesanan terverifikasi Midtrans</p>
+            <p class="text-[11px] text-mute">Dari pesanan terverifikasi Midtrans</p>
         </div>
 
         {{-- Card 2: Pesanan Butuh Diproses --}}
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-            <div class="flex items-center justify-between text-slate-500">
-                <span class="text-[11px] font-bold uppercase tracking-wider">Perlu Diproses</span>
-                <span class="p-2 bg-cyan-50 text-cyan-600 rounded-lg text-xs font-bold">⚡ Antrian</span>
+        <div class="bg-soft-cloud p-5 rounded-2xl border border-hairline-soft space-y-2">
+            <div class="flex items-center justify-between text-mute">
+                <span class="text-[11px] font-medium uppercase tracking-wider">Perlu Diproses</span>
+                <span class="px-2.5 py-0.5 bg-white border border-hairline text-ink rounded-full text-[10px] font-medium">⚡ Antrian</span>
             </div>
-            <div class="font-display font-black text-2xl text-cyan-700">
-                {{ $actionRequiredOrders }} <span class="text-sm font-semibold text-slate-400">Pesanan</span>
+            <div class="text-2xl font-medium text-ink tabular-nums">
+                {{ $actionRequiredOrders }} <span class="text-xs font-normal text-mute">Pesanan</span>
             </div>
-            <p class="text-[11px] text-slate-400">Status Lunas & Masuk Produksi</p>
+            <p class="text-[11px] text-mute">Status Lunas & Masuk Produksi</p>
         </div>
 
         {{-- Card 3: Total Stok Gudang --}}
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-            <div class="flex items-center justify-between text-slate-500">
-                <span class="text-[11px] font-bold uppercase tracking-wider">Stok Jersey Gudang</span>
-                <span class="p-2 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold">📦 Fisik</span>
+        <div class="bg-soft-cloud p-5 rounded-2xl border border-hairline-soft space-y-2">
+            <div class="flex items-center justify-between text-mute">
+                <span class="text-[11px] font-medium uppercase tracking-wider">Stok Jersey Gudang</span>
+                <span class="px-2.5 py-0.5 bg-white border border-hairline text-ink rounded-full text-[10px] font-medium">📦 Fisik</span>
             </div>
-            <div class="font-display font-black text-2xl text-slate-900">
-                {{ number_format($totalStockWarehouse, 0, ',', '.') }} <span class="text-sm font-semibold text-slate-400">Pcs</span>
+            <div class="text-2xl font-medium text-ink tabular-nums">
+                {{ number_format($totalStockWarehouse, 0, ',', '.') }} <span class="text-xs font-normal text-mute">Pcs</span>
             </div>
-            <p class="text-[11px] text-slate-400">Akumulasi seluruh varian ukuran</p>
+            <p class="text-[11px] text-mute">Akumulasi seluruh varian ukuran</p>
         </div>
 
         {{-- Card 4: Total Koleksi Jersey --}}
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-            <div class="flex items-center justify-between text-slate-500">
-                <span class="text-[11px] font-bold uppercase tracking-wider">Koleksi Kit & Edisi</span>
-                <span class="p-2 bg-amber-50 text-amber-600 rounded-lg text-xs font-bold">👕 Master</span>
+        <div class="bg-soft-cloud p-5 rounded-2xl border border-hairline-soft space-y-2">
+            <div class="flex items-center justify-between text-mute">
+                <span class="text-[11px] font-medium uppercase tracking-wider">Koleksi Kit & Edisi</span>
+                <span class="px-2.5 py-0.5 bg-white border border-hairline text-ink rounded-full text-[10px] font-medium">👕 Master</span>
             </div>
-            <div class="font-display font-black text-2xl text-slate-900">
-                {{ $totalProductsCount }} <span class="text-sm font-semibold text-slate-400">Kit ({{ $totalCategoriesCount }} Kategori)</span>
+            <div class="text-2xl font-medium text-ink tabular-nums">
+                {{ $totalProductsCount }} <span class="text-xs font-normal text-mute">Kit ({{ $totalCategoriesCount }} Kategori)</span>
             </div>
-            <p class="text-[11px] text-slate-400">Edisi Klub, Timnas, dan Retro</p>
+            <p class="text-[11px] text-mute">Edisi Klub, Timnas, dan Retro</p>
         </div>
 
     </div>
@@ -68,13 +69,13 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         {{-- Chart Section (8 Cols) --}}
-        <div class="lg:col-span-8 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+        <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-hairline-soft space-y-4">
+            <div class="flex justify-between items-center border-b border-hairline-soft pb-4">
                 <div>
-                    <h2 class="font-bold text-sm text-slate-900">Tren Penjualan 7 Hari Terakhir</h2>
-                    <p class="text-xs text-slate-400">Grafik omset harian pesanan lunas</p>
+                    <h2 class="font-medium text-sm text-ink">Tren Penjualan 7 Hari Terakhir</h2>
+                    <p class="text-xs text-mute">Grafik omset harian pesanan terverifikasi</p>
                 </div>
-                <span class="text-xs font-bold text-cyan-600">Midtrans Verified</span>
+                <span class="text-xs font-medium text-ink bg-soft-cloud border border-hairline px-3 py-1 rounded-full">Midtrans Verified</span>
             </div>
 
             <div class="h-64 relative">
@@ -83,28 +84,28 @@
         </div>
 
         {{-- Low Stock Warning (4 Cols) --}}
-        <div class="lg:col-span-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h2 class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+        <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-hairline-soft space-y-4">
+            <div class="flex justify-between items-center border-b border-hairline-soft pb-3">
+                <h2 class="font-medium text-sm text-ink flex items-center gap-1.5">
                     <span>⚠️ Stok Menipis (&le; 3 pcs)</span>
                 </h2>
-                <a href="{{ route('admin.stock-ins.create') }}" class="text-[11px] font-bold text-cyan-600 hover:underline">+ Restock</a>
+                <a href="{{ route('admin.stock-ins.create') }}" class="text-xs font-medium text-ink underline">+ Restock</a>
             </div>
 
             @if($lowStockVariants->isEmpty())
-                <div class="py-8 text-center text-xs text-slate-400">
+                <div class="py-8 text-center text-xs text-mute">
                     Semua stok varian jersey aman di atas 3 pcs.
                 </div>
             @else
-                <div class="space-y-3">
+                <div class="space-y-2.5">
                     @foreach($lowStockVariants as $variant)
-                        <div class="flex items-center justify-between p-2.5 bg-amber-50/60 border border-amber-100 rounded-lg text-xs">
+                        <div class="flex items-center justify-between p-3 bg-soft-cloud rounded-xl text-xs">
                             <div class="space-y-0.5">
-                                <span class="font-bold text-slate-900 block line-clamp-1">{{ $variant->product?->name }}</span>
-                                <span class="text-[10.5px] text-slate-500">Ukuran: <strong>{{ $variant->size }}</strong> ({{ $variant->type }})</span>
+                                <span class="font-medium text-ink block line-clamp-1">{{ $variant->product?->name }}</span>
+                                <span class="text-[11px] text-mute">Ukuran: <strong>{{ $variant->size }}</strong> ({{ $variant->type }})</span>
                             </div>
                             <div class="text-right">
-                                <span class="px-2 py-0.5 bg-rose-500 text-white rounded text-[10px] font-bold font-jersey">
+                                <span class="px-2.5 py-0.5 bg-sale text-white rounded-full text-[10px] font-medium font-jersey">
                                     Sisa {{ $variant->stock }}
                                 </span>
                             </div>
@@ -117,20 +118,20 @@
     </div>
 
     {{-- ===== 3. RECENT ORDERS TABLE ===== --}}
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-6">
-        <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+    <div class="bg-white rounded-2xl border border-hairline-soft overflow-hidden space-y-4 p-6">
+        <div class="flex justify-between items-center border-b border-hairline-soft pb-4">
             <div>
-                <h2 class="font-bold text-sm text-slate-900">Pesanan Masuk Terbaru</h2>
-                <p class="text-xs text-slate-400">Pantau transaksi dan proses pengiriman kurir Biteship</p>
+                <h2 class="font-medium text-sm text-ink">Pesanan Masuk Terbaru</h2>
+                <p class="text-xs text-mute">Pantau transaksi dan proses pengiriman kurir</p>
             </div>
-            <a href="{{ route('admin.orders.index') }}" class="text-xs font-bold text-cyan-600 hover:underline">
+            <a href="{{ route('admin.orders.index') }}" class="text-xs font-medium text-ink hover:text-mute underline">
                 Lihat Semua Pesanan &rarr;
             </a>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left text-slate-600">
-                <thead class="bg-slate-50 uppercase font-bold text-slate-700 border-b border-slate-200">
+            <table class="w-full text-xs text-left text-ink">
+                <thead class="bg-soft-cloud font-medium text-mute border-b border-hairline-soft">
                     <tr>
                         <th class="p-3">No. Pesanan</th>
                         <th class="p-3">Pelanggan</th>
@@ -141,47 +142,47 @@
                         <th class="p-3 text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-hairline-soft">
                     @forelse($recentOrders as $order)
-                        <tr class="hover:bg-slate-50/80 transition">
-                            <td class="p-3 font-mono font-bold text-slate-900">
+                        <tr class="hover:bg-soft-cloud transition">
+                            <td class="p-3 font-mono font-medium text-ink">
                                 #{{ $order->order_number }}
-                                <div class="text-[10px] text-slate-400 font-sans">{{ $order->created_at->format('d/m/Y H:i') }}</div>
+                                <div class="text-[10px] text-mute font-sans">{{ $order->created_at->format('d/m/Y H:i') }}</div>
                             </td>
                             <td class="p-3">
-                                <span class="font-semibold text-slate-900 block">{{ $order->customer_name }}</span>
-                                <span class="text-[10px] text-slate-400">{{ $order->customer_phone }}</span>
+                                <span class="font-medium text-ink block">{{ $order->customer_name }}</span>
+                                <span class="text-[10px] text-mute">{{ $order->customer_phone }}</span>
                             </td>
                             <td class="p-3">
                                 @foreach($order->items->take(2) as $item)
-                                    <div class="line-clamp-1 font-semibold text-slate-800">
+                                    <div class="line-clamp-1 font-medium text-ink">
                                         {{ $item->product_name }} ({{ $item->size }}) &times; {{ $item->quantity }}
                                     </div>
                                 @endforeach
                                 @if($order->items->count() > 2)
-                                    <span class="text-[10px] text-slate-400">+{{ $order->items->count() - 2 }} item lainnya</span>
+                                    <span class="text-[10px] text-mute">+{{ $order->items->count() - 2 }} item lainnya</span>
                                 @endif
                             </td>
-                            <td class="p-3 uppercase font-semibold text-slate-700">
+                            <td class="p-3 uppercase font-medium text-mute">
                                 {{ $order->courier_code }} - {{ $order->courier_service_code }}
                             </td>
-                            <td class="p-3 font-bold text-slate-900 tabular-nums">
+                            <td class="p-3 font-medium text-ink tabular-nums">
                                 {{ $order->formatted_grand_total }}
                             </td>
                             <td class="p-3">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded {{ $order->status->badgeClass() }}">
+                                <span class="text-[10px] font-medium px-2.5 py-0.5 rounded-full {{ $order->status->badgeClass() }}">
                                     {{ $order->status->label() }}
                                 </span>
                             </td>
                             <td class="p-3 text-right">
-                                <a href="{{ route('admin.orders.show', $order->id) }}" class="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded text-[11px] font-bold transition inline-block">
+                                <a href="{{ route('admin.orders.show', $order->id) }}" class="btn-primary py-1.5 px-3.5 text-[11px] rounded-full inline-block">
                                     Detail
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="p-6 text-center text-slate-400">Belum ada pesanan masuk.</td>
+                            <td colspan="7" class="p-6 text-center text-mute">Belum ada pesanan masuk.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -204,13 +205,13 @@
                     datasets: [{
                         label: 'Omset Penjualan (Rp)',
                         data: {!! json_encode($chartData) !!},
-                        borderColor: '#0284C7',
-                        backgroundColor: 'rgba(2, 132, 199, 0.08)',
+                        borderColor: '#111111',
+                        backgroundColor: 'rgba(17, 17, 17, 0.05)',
                         fill: true,
                         tension: 0.3,
-                        borderWidth: 2.5,
-                        pointBackgroundColor: '#0284C7',
-                        pointRadius: 4
+                        borderWidth: 2,
+                        pointBackgroundColor: '#111111',
+                        pointRadius: 3
                     }]
                 },
                 options: {
@@ -226,11 +227,11 @@
                                 callback: function(value) {
                                     return 'Rp ' + value.toLocaleString('id-ID');
                                 },
-                                font: { size: 10 }
+                                font: { family: 'Inter', size: 10 }
                             }
                         },
                         x: {
-                            ticks: { font: { size: 10 } }
+                            ticks: { font: { family: 'Inter', size: 10 } }
                         }
                     }
                 }
