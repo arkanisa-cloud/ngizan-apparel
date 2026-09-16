@@ -1,111 +1,110 @@
 @extends('layouts.customer')
 
-@section('title', 'Tambah Alamat - Toko Online')
+@section('title', 'Tambah Alamat · NGIZAN APPAREL')
+@section('meta_description', 'Tambahkan alamat pengiriman baru untuk kemudahan berbelanja di Ngizan Apparel.')
 
 @section('content')
-<div class="mb-6 flex items-center justify-between">
-    <nav class="flex text-sm text-slate-500 gap-2">
-        <a href="{{ route('customer.addresses.index') }}" class="hover:text-brand-600 transition-colors">Alamat Pengiriman</a>
-        <span>/</span>
-        <span class="text-slate-808 font-medium">Tambah Alamat</span>
-    </nav>
-</div>
+<div class="py-8 bg-canvas">
+    <div class="wrap max-w-2xl">
+        <div class="mb-6 flex items-center justify-between border-b border-hairline-soft pb-4">
+            <nav class="flex text-xs text-mute gap-2">
+                <a href="{{ route('customer.addresses.index') }}" class="hover:text-ink">Alamat Pengiriman</a>
+                <span>/</span>
+                <span class="text-ink font-medium">Tambah Alamat</span>
+            </nav>
+        </div>
 
-<div class="card max-w-2xl mx-auto">
-    <div class="card-header border-b border-slate-200 bg-slate-50/50">
-        <h3 class="text-base font-semibold text-slate-800">Tambah Alamat Baru</h3>
-    </div>
-    <div class="card-body">
-        <form action="{{ route('customer.addresses.store') }}" method="POST">
-            @csrf
+        <div class="bg-white border border-hairline-soft rounded-2xl p-6 sm:p-8 space-y-6">
+            <h2 class="text-lg font-medium text-ink">Tambah Alamat Baru</h2>
 
-            <div class="space-y-5">
+            <form action="{{ route('customer.addresses.store') }}" method="POST" class="space-y-4 text-xs">
+                @csrf
+
                 <!-- Nama Penerima -->
                 <div>
-                    <label for="recipient_name" class="form-label text-xs">Nama Penerima <span class="text-red-500">*</span></label>
+                    <label for="recipient_name" class="block font-medium text-ink mb-1.5">Nama Penerima *</label>
                     <input type="text"
                            name="recipient_name"
                            id="recipient_name"
-                           class="form-input-custom"
+                           class="w-full bg-soft-cloud border border-hairline rounded-full px-4 py-2.5 text-xs text-ink focus:border-ink focus:ring-0"
                            value="{{ old('recipient_name') }}"
                            placeholder="Contoh: Budi Santoso"
                            required>
-                    @error('recipient_name') <p class="form-error">{{ $message }}</p> @enderror
+                    @error('recipient_name') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- No. HP -->
                 <div>
-                    <label for="phone" class="form-label text-xs">No. HP / WhatsApp <span class="text-red-500">*</span></label>
+                    <label for="phone" class="block font-medium text-ink mb-1.5">No. HP / WhatsApp *</label>
                     <input type="text"
                            name="phone"
                            id="phone"
-                           class="form-input-custom"
+                           class="w-full bg-soft-cloud border border-hairline rounded-full px-4 py-2.5 text-xs text-ink focus:border-ink focus:ring-0"
                            value="{{ old('phone') }}"
                            placeholder="Contoh: 08123456789"
                            required>
-                    @error('phone') <p class="form-error">{{ $message }}</p> @enderror
+                    @error('phone') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- Alamat Lengkap -->
                 <div>
-                    <label for="address" class="form-label text-xs">Alamat Lengkap <span class="text-red-500">*</span></label>
+                    <label for="address" class="block font-medium text-ink mb-1.5">Alamat Lengkap *</label>
                     <textarea name="address"
                               id="address"
-                              class="form-input-custom"
+                              class="w-full bg-soft-cloud border border-hairline rounded-xl p-3 text-xs text-ink focus:border-ink focus:ring-0"
                               rows="3"
                               placeholder="Nama jalan, nomor rumah, RT/RW..."
                               required>{{ old('address') }}</textarea>
-                    @error('address') <p class="form-error">{{ $message }}</p> @enderror
+                    @error('address') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- Kota/Kabupaten -->
                 <div>
-                    <label for="city" class="form-label text-xs">Kota/Kabupaten <span class="text-red-500">*</span></label>
+                    <label for="city" class="block font-medium text-ink mb-1.5">Kota/Kabupaten *</label>
                     <input type="text"
                            name="city"
                            id="city"
-                           class="form-input-custom"
+                           class="w-full bg-soft-cloud border border-hairline rounded-full px-4 py-2.5 text-xs text-ink focus:border-ink focus:ring-0"
                            value="{{ old('city') }}"
                            placeholder="Contoh: Jakarta Selatan"
                            required>
-                    @error('city') <p class="form-error">{{ $message }}</p> @enderror
+                    @error('city') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- Provinsi -->
                 <div>
-                    <label for="province" class="form-label text-xs">Provinsi <span class="text-red-500">*</span></label>
+                    <label for="province" class="block font-medium text-ink mb-1.5">Provinsi *</label>
                     <input type="text"
                            name="province"
                            id="province"
-                           class="form-input-custom"
+                           class="w-full bg-soft-cloud border border-hairline rounded-full px-4 py-2.5 text-xs text-ink focus:border-ink focus:ring-0"
                            value="{{ old('province') }}"
                            placeholder="Contoh: DKI Jakarta"
                            required>
-                    @error('province') <p class="form-error">{{ $message }}</p> @enderror
+                    @error('province') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- Kode Pos -->
                 <div>
-                    <label for="postal_code" class="form-label text-xs">Kode Pos <span class="text-red-500">*</span></label>
+                    <label for="postal_code" class="block font-medium text-ink mb-1.5">Kode Pos *</label>
                     <input type="text"
                            name="postal_code"
                            id="postal_code"
-                           class="form-input-custom"
+                           class="w-full bg-soft-cloud border border-hairline rounded-full px-4 py-2.5 text-xs text-ink focus:border-ink focus:ring-0"
                            value="{{ old('postal_code') }}"
                            placeholder="Contoh: 12345"
                            required>
-                    @error('postal_code') <p class="form-error">{{ $message }}</p> @enderror
+                    @error('postal_code') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                <div class="flex justify-end gap-3 pt-6 border-t border-slate-200">
-                    <a href="{{ route('customer.addresses.index') }}" class="btn-secondary">Batal</a>
-                    <button type="submit" class="btn-primary">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <div class="flex justify-end gap-3 pt-6 border-t border-hairline-soft">
+                    <a href="{{ route('customer.addresses.index') }}" class="btn-secondary py-2.5 px-6 rounded-full text-xs font-medium">Batal</a>
+                    <button type="submit" class="btn-primary py-2.5 px-6 rounded-full text-xs font-medium">
                         Simpan Alamat
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 @endsection

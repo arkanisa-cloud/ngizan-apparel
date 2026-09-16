@@ -7,72 +7,72 @@
     <!-- Leaflet.js Map CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map { height: 260px; width: 100%; border-radius: 4px; z-index: 10; }
+        #map { height: 260px; width: 100%; border-radius: 16px; z-index: 10; }
     </style>
 @endpush
 
 @section('content')
-<div class="py-10" x-data="checkoutApp()">
+<div class="py-8 bg-canvas" x-data="checkoutApp()">
     <div class="wrap">
         
         {{-- Breadcrumb & Title --}}
-        <div class="border-b border-black/10 pb-6 mb-8">
-            <span class="lbl text-ink-muted">LANGKAH TERAKHIR</span>
-            <h1 class="font-display font-black text-2xl md:text-3xl text-ink uppercase tracking-tight mt-1">
+        <div class="border-b border-hairline-soft pb-5 mb-8">
+            <span class="text-xs font-medium uppercase tracking-widest text-mute block mb-1">Langkah Terakhir</span>
+            <h1 class="text-2xl sm:text-3xl font-medium tracking-tight text-ink">
                 Checkout & Pengiriman
             </h1>
         </div>
 
-        <form @submit.prevent="submitOrder" class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <form @submit.prevent="submitOrder" class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
             {{-- ===== 1. FORM DATA PENGIRIMAN & PINPOINT MAPS (7 COLS) ===== --}}
             <div class="lg:col-span-7 space-y-6">
                 
                 {{-- Bagian 1: Data Penerima --}}
-                <div class="bg-white p-6 rounded border border-black/10 space-y-4 shadow-sm">
-                    <h2 class="font-display font-bold text-sm text-ink uppercase tracking-wider border-b border-black/10 pb-3 flex items-center gap-2">
-                        <span>👤 1. Informasi Penerima</span>
+                <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4">
+                    <h2 class="font-medium text-sm text-ink uppercase tracking-wider border-b border-hairline-soft pb-3 flex items-center gap-2">
+                        <span>1. Informasi Penerima</span>
                     </h2>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div>
-                            <label class="block font-bold text-ink mb-1 uppercase tracking-wider">Nama Lengkap Penerima *</label>
+                            <label class="block font-medium text-ink mb-1.5">Nama Lengkap Penerima *</label>
                             <input type="text" x-model="form.recipient_name" required placeholder="Contoh: Muhammad Alvaro"
-                                   class="w-full bg-canvas border border-black/20 p-2.5 rounded text-xs focus:ring-1 focus:ring-ink">
+                                   class="w-full bg-soft-cloud border border-hairline px-4 py-2.5 rounded-full text-xs text-ink focus:border-ink focus:ring-0">
                         </div>
                         <div>
-                            <label class="block font-bold text-ink mb-1 uppercase tracking-wider">Nomor WhatsApp Aktif *</label>
+                            <label class="block font-medium text-ink mb-1.5">Nomor WhatsApp Aktif *</label>
                             <input type="tel" x-model="form.phone_number" required placeholder="081234567890"
-                                   class="w-full bg-canvas border border-black/20 p-2.5 rounded text-xs focus:ring-1 focus:ring-ink">
+                                   class="w-full bg-soft-cloud border border-hairline px-4 py-2.5 rounded-full text-xs text-ink focus:border-ink focus:ring-0">
                         </div>
                     </div>
                 </div>
 
                 {{-- Bagian 2: Alamat Presisi & Autocomplete Biteship --}}
-                <div class="bg-white p-6 rounded border border-black/10 space-y-4 shadow-sm">
-                    <div class="flex justify-between items-center border-b border-black/10 pb-3">
-                        <h2 class="font-display font-bold text-sm text-ink uppercase tracking-wider flex items-center gap-2">
-                            <span>📍 2. Lokasi & Alamat Pengiriman</span>
+                <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4">
+                    <div class="flex justify-between items-center border-b border-hairline-soft pb-3">
+                        <h2 class="font-medium text-sm text-ink uppercase tracking-wider">
+                            2. Lokasi & Alamat Pengiriman
                         </h2>
-                        <button type="button" @click="getCurrentLocation()" class="text-[11px] font-bold text-cyan-600 hover:underline flex items-center gap-1">
-                            <span>🎯 Gunakan GPS Saya</span>
+                        <button type="button" @click="getCurrentLocation()" class="text-xs font-medium text-ink hover:text-mute underline flex items-center gap-1">
+                            <span>Gunakan GPS Saya</span>
                         </button>
                     </div>
 
                     {{-- Autocomplete Area Biteship --}}
                     <div class="relative text-xs">
-                        <label class="block font-bold text-ink mb-1 uppercase tracking-wider">Cari Kecamatan / Kota / Kelurahan (Biteship) *</label>
+                        <label class="block font-medium text-ink mb-1.5">Cari Kecamatan / Kota / Kelurahan *</label>
                         <input type="text" x-model="areaSearchQuery" @input.debounce.400ms="searchBiteshipAreas()" 
-                               placeholder="Ketik nama kecamatan atau kota tujuan (misal: Tebet, Jakarta Selatan)..."
-                               class="w-full bg-canvas border border-black/20 p-2.5 rounded text-xs focus:ring-1 focus:ring-ink">
+                               placeholder="Ketik kecamatan atau kota tujuan (misal: Tebet, Jakarta Selatan)..."
+                               class="w-full bg-soft-cloud border border-hairline px-4 py-2.5 rounded-full text-xs text-ink focus:border-ink focus:ring-0">
                         
                         {{-- Dropdown Hasil Area --}}
                         <div x-show="areaResults.length > 0" x-cloak @click.away="areaResults = []"
-                             class="absolute left-0 right-0 top-full mt-1 bg-white border border-black/20 rounded shadow-xl max-h-48 overflow-y-auto z-30 divide-y divide-black/5">
+                             class="absolute left-0 right-0 top-full mt-1 bg-white border border-hairline rounded-2xl shadow-xl max-h-48 overflow-y-auto z-30 divide-y divide-hairline-soft">
                             <template x-for="area in areaResults" :key="area.id">
-                                <div @click="selectArea(area)" class="p-2.5 hover:bg-neutral-100 cursor-pointer text-xs">
-                                    <div class="font-bold text-ink" x-text="area.name"></div>
-                                    <div class="text-[10px] text-ink-muted" x-text="(area.district_name || '') + ', ' + (area.city_name || '') + ' - ' + (area.postal_code || '')"></div>
+                                <div @click="selectArea(area)" class="p-3 hover:bg-soft-cloud cursor-pointer text-xs">
+                                    <div class="font-medium text-ink" x-text="area.name"></div>
+                                    <div class="text-[11px] text-mute" x-text="(area.district_name || '') + ', ' + (area.city_name || '') + ' - ' + (area.postal_code || '')"></div>
                                 </div>
                             </template>
                         </div>
@@ -80,82 +80,82 @@
 
                     {{-- Area Terpilih Badge --}}
                     <template x-if="form.biteship_area_id">
-                        <div class="p-2.5 bg-cyan-50 border border-cyan-200 rounded text-xs flex justify-between items-center">
+                        <div class="p-3 bg-soft-cloud border border-hairline rounded-xl text-xs flex justify-between items-center">
                             <div>
-                                <span class="text-[10px] uppercase font-bold text-cyan-800">Area Terkunci:</span>
-                                <p class="font-semibold text-ink" x-text="form.district_name + ', ' + form.city_name + ' (' + form.postal_code + ')'"></p>
+                                <span class="text-[10px] uppercase font-medium text-mute block">Area Terpilih:</span>
+                                <p class="font-medium text-ink" x-text="form.district_name + ', ' + form.city_name + ' (' + form.postal_code + ')'"></p>
                             </div>
-                            <span class="text-xs text-emerald-600 font-bold">✓ Terverifikasi</span>
+                            <span class="text-xs text-ink font-medium">✓ Terverifikasi</span>
                         </div>
                     </template>
 
                     {{-- Leaflet.js Interactive Map --}}
                     <div>
-                        <label class="block font-bold text-ink mb-1 uppercase tracking-wider text-xs">
-                            Pin Point Lokasi Rumah (Geser Pin untuk Kurir Instan Grab/Gojek)
+                        <label class="block font-medium text-ink mb-1.5 text-xs">
+                            Pin Point Lokasi Rumah (Geser Pin untuk Kurir Instan)
                         </label>
-                        <div id="map" class="border border-black/20"></div>
-                        <div class="flex justify-between items-center text-[10.5px] text-ink-muted mt-1">
+                        <div id="map" class="border border-hairline-soft"></div>
+                        <div class="flex justify-between items-center text-[11px] text-mute mt-1.5">
                             <span>Koordinat: <strong x-text="form.latitude.toFixed(5) + ', ' + form.longitude.toFixed(5)"></strong></span>
-                            <span>Akurasi Tinggi Leaflet.js</span>
+                            <span>Leaflet.js Pinpoint</span>
                         </div>
                     </div>
 
                     {{-- Alamat Lengkap & Patokan --}}
                     <div class="space-y-3 text-xs">
                         <div>
-                            <label class="block font-bold text-ink mb-1 uppercase tracking-wider">Alamat Lengkap (Nama Jalan, No. Rumah, RT/RW) *</label>
+                            <label class="block font-medium text-ink mb-1.5">Alamat Lengkap (Nama Jalan, No. Rumah, RT/RW) *</label>
                             <textarea x-model="form.full_address" required rows="2" placeholder="Jl. Kemang Raya No. 12B, RT 02/RW 04..."
-                                      class="w-full bg-canvas border border-black/20 p-2.5 rounded text-xs focus:ring-1 focus:ring-ink"></textarea>
+                                      class="w-full bg-soft-cloud border border-hairline p-3 rounded-xl text-xs text-ink focus:border-ink focus:ring-0"></textarea>
                         </div>
 
                         <div>
-                            <label class="block font-bold text-ink mb-1 uppercase tracking-wider">Patokan Rumah / Cat / Pagar (Opsional)</label>
-                            <input type="text" x-model="form.benchmark_notes" placeholder="Contoh: Rumah pagar hitam samping masjid, seberang minimarket"
-                                   class="w-full bg-canvas border border-black/20 p-2.5 rounded text-xs focus:ring-1 focus:ring-ink">
+                            <label class="block font-medium text-ink mb-1.5">Patokan Rumah / Cat / Pagar (Opsional)</label>
+                            <input type="text" x-model="form.benchmark_notes" placeholder="Contoh: Rumah pagar hitam samping minimarket"
+                                   class="w-full bg-soft-cloud border border-hairline px-4 py-2.5 rounded-full text-xs text-ink focus:border-ink focus:ring-0">
                         </div>
                     </div>
                 </div>
 
                 {{-- Bagian 3: Pilihan Kurir & Ongkos Kirim (Biteship Rates) --}}
-                <div class="bg-white p-6 rounded border border-black/10 space-y-4 shadow-sm">
-                    <div class="flex justify-between items-center border-b border-black/10 pb-3">
-                        <h2 class="font-display font-bold text-sm text-ink uppercase tracking-wider flex items-center gap-2">
-                            <span>🚚 3. Pilihan Layanan Kurir</span>
+                <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4">
+                    <div class="flex justify-between items-center border-b border-hairline-soft pb-3">
+                        <h2 class="font-medium text-sm text-ink uppercase tracking-wider">
+                            3. Pilihan Layanan Kurir
                         </h2>
                         <button type="button" @click="fetchShippingRates()" :disabled="isLoadingRates" 
-                                class="text-[11px] font-bold text-cyan-600 hover:underline">
+                                class="text-xs font-medium text-ink hover:text-mute underline">
                             <span x-show="!isLoadingRates">🔄 Hitung Ulang Tarif</span>
                             <span x-show="isLoadingRates" x-cloak>Menghitung...</span>
                         </button>
                     </div>
 
                     {{-- Loading State --}}
-                    <div x-show="isLoadingRates" class="py-6 text-center text-xs text-ink-muted space-y-2">
-                        <div class="inline-block w-6 h-6 border-2 border-ink border-t-transparent rounded-full animate-spin"></div>
-                        <p>Mengambil tarif multi-kurir Biteship (SiCepat, JNE, J&T, Grab, Gojek)...</p>
+                    <div x-show="isLoadingRates" class="py-6 text-center text-xs text-mute space-y-2">
+                        <div class="inline-block w-5 h-5 border-2 border-ink border-t-transparent rounded-full animate-spin"></div>
+                        <p>Mengambil tarif kurir (J&T Express, SiCepat, JNE, Grab, Gojek)...</p>
                     </div>
 
                     {{-- Daftar Pilihan Kurir --}}
                     <div x-show="!isLoadingRates && shippingOptions.length > 0" class="space-y-2 max-h-64 overflow-y-auto pr-1">
                         <template x-for="(rate, idx) in shippingOptions" :key="idx">
-                            <label class="flex items-center justify-between p-3 border rounded cursor-pointer transition text-xs"
-                                   :class="form.courier_service_code === rate.service_code && form.courier_code === rate.courier_code ? 'border-ink bg-neutral-50 shadow-sm' : 'border-black/15 hover:border-black/40'">
+                            <label class="flex items-center justify-between p-3.5 border rounded-2xl cursor-pointer transition text-xs"
+                                   :class="form.courier_service_code === rate.service_code && form.courier_code === rate.courier_code ? 'border-ink bg-soft-cloud' : 'border-hairline hover:border-ink'">
                                 <div class="flex items-center gap-3">
                                     <input type="radio" name="selected_courier" 
                                            :checked="form.courier_service_code === rate.service_code && form.courier_code === rate.courier_code"
                                            @change="selectCourier(rate)" class="text-ink focus:ring-ink">
                                     <div>
-                                        <div class="font-bold text-ink uppercase" x-text="rate.courier_name + ' - ' + rate.service_name"></div>
-                                        <div class="text-[10px] text-ink-muted" x-text="'Estimasi: ' + (rate.etd || '1-3 Hari')"></div>
+                                        <div class="font-medium text-ink uppercase" x-text="rate.courier_name + ' - ' + rate.service_name"></div>
+                                        <div class="text-[11px] text-mute" x-text="'Estimasi: ' + (rate.etd || '1-3 Hari')"></div>
                                     </div>
                                 </div>
-                                <div class="font-display font-extrabold text-sm text-ink tabular-nums" x-text="'Rp ' + (rate.price).toLocaleString('id-ID')"></div>
+                                <div class="font-medium text-sm text-ink tabular-nums" x-text="'Rp ' + (rate.price).toLocaleString('id-ID')"></div>
                             </label>
                         </template>
                     </div>
 
-                    <div x-show="!isLoadingRates && shippingOptions.length === 0" class="py-4 text-center text-xs text-ink-muted bg-canvas rounded">
+                    <div x-show="!isLoadingRates && shippingOptions.length === 0" class="py-4 text-center text-xs text-mute bg-soft-cloud rounded-xl">
                         Pilih area Biteship di atas untuk melihat pilihan kurir pengiriman.
                     </div>
                 </div>
@@ -163,25 +163,25 @@
             </div>
 
             {{-- ===== 2. ORDER SUMMARY & MIDTRANS SNAP BUTTON (5 COLS) ===== --}}
-            <div class="lg:col-span-5 bg-white p-6 rounded border border-black/10 space-y-5 sticky top-28 shadow-sm">
-                <h2 class="font-display font-black text-lg text-ink uppercase tracking-tight border-b border-black/10 pb-3">
+            <div class="lg:col-span-5 bg-soft-cloud p-6 rounded-2xl border border-hairline-soft space-y-5 sticky top-24">
+                <h2 class="font-medium text-base text-ink uppercase tracking-tight border-b border-hairline-soft pb-3">
                     Ringkasan Pesanan
                 </h2>
 
                 {{-- Daftar Item Singkat --}}
-                <div class="space-y-3 max-h-56 overflow-y-auto pr-1 border-b border-black/10 pb-4">
+                <div class="space-y-3 max-h-56 overflow-y-auto pr-1 border-b border-hairline-soft pb-4">
                     @foreach($cart->items as $item)
                         <div class="flex items-center justify-between text-xs gap-3">
                             <div class="space-y-0.5">
-                                <div class="font-bold text-ink uppercase line-clamp-1">{{ $item->product->name }}</div>
-                                <div class="text-[10px] text-ink-muted">
+                                <div class="font-medium text-ink line-clamp-1">{{ $item->product->name }}</div>
+                                <div class="text-[11px] text-mute">
                                     Ukuran: {{ $item->variant->size ?? 'M' }} &times; {{ $item->quantity }} pcs
                                     @if($item->hasCustomNameset())
-                                        · <span class="text-cyan-600 font-bold font-jersey">#{{ $item->custom_name }}</span>
+                                        · <span class="text-ink font-medium">#{{ $item->custom_name }}</span>
                                     @endif
                                 </div>
                             </div>
-                            <div class="font-bold text-ink tabular-nums whitespace-nowrap">
+                            <div class="font-medium text-ink tabular-nums whitespace-nowrap">
                                 Rp {{ number_format($item->total_price, 0, ',', '.') }}
                             </div>
                         </div>
@@ -189,41 +189,41 @@
                 </div>
 
                 {{-- Kalkulasi Total --}}
-                <div class="space-y-2 text-xs text-ink-muted">
+                <div class="space-y-2 text-xs text-mute">
                     <div class="flex justify-between">
                         <span>Subtotal Jersey</span>
-                        <span class="font-bold text-ink">{{ $cart->formatted_total_price }}</span>
+                        <span class="font-medium text-ink">{{ $cart->formatted_total_price }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span>Ongkos Kirim (<span x-text="form.courier_service_name || 'Belum Dipilih'"></span>)</span>
-                        <span class="font-bold text-ink" x-text="'Rp ' + form.shipping_cost.toLocaleString('id-ID')">Rp 0</span>
+                        <span class="font-medium text-ink" x-text="'Rp ' + form.shipping_cost.toLocaleString('id-ID')">Rp 0</span>
                     </div>
                 </div>
 
-                <div class="border-t border-black/10 pt-4 flex justify-between items-center">
-                    <span class="text-xs uppercase font-bold text-ink">Total Pembayaran</span>
-                    <div class="font-display font-black text-2xl text-cyan-600" x-text="'Rp ' + grandTotal.toLocaleString('id-ID')">
+                <div class="border-t border-hairline-soft pt-4 flex justify-between items-center">
+                    <span class="text-xs uppercase font-medium text-ink">Total Pembayaran</span>
+                    <div class="text-2xl font-medium text-ink tabular-nums" x-text="'Rp ' + grandTotal.toLocaleString('id-ID')">
                         {{ $cart->formatted_total_price }}
                     </div>
                 </div>
 
                 {{-- Catatan Pesanan --}}
                 <div>
-                    <label class="block font-bold text-ink mb-1 uppercase tracking-wider text-[10.5px]">Catatan Khusus Pesanan</label>
+                    <label class="block font-medium text-ink mb-1.5 text-xs">Catatan Khusus Pesanan</label>
                     <input type="text" x-model="form.notes" placeholder="Contoh: Titipkan di pos satpam jika tidak ada orang"
-                           class="w-full bg-canvas border border-black/20 p-2 rounded text-xs focus:ring-1 focus:ring-ink">
+                           class="w-full bg-white border border-hairline px-4 py-2 rounded-full text-xs text-ink focus:border-ink focus:ring-0">
                 </div>
 
                 {{-- Tombol Bayar Sekarang --}}
                 <button type="submit" :disabled="isSubmitting || form.shipping_cost <= 0" 
-                        class="btn-curtain w-full py-4 text-center block disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span x-show="!isSubmitting">⚡ Bayar Sekarang (Midtrans Snap) &rarr;</span>
+                        class="btn-primary w-full py-4 text-center block disabled:opacity-50 disabled:cursor-not-allowed rounded-full text-xs font-medium uppercase tracking-wider">
+                    <span x-show="!isSubmitting">Bayar Sekarang (Midtrans Snap) &rarr;</span>
                     <span x-show="isSubmitting" x-cloak>Memproses Pesanan...</span>
                 </button>
 
-                <div class="p-3 bg-amber-50 border border-amber-200 rounded text-[11px] text-amber-900 space-y-1">
-                    <p class="font-bold">⏱️ Batas Waktu Pembayaran 2 Jam</p>
-                    <p class="text-[10px] text-amber-800">Stok jersey otomatis diamankan (*Anti-Overselling Guard*). Jika tidak dibayar dalam 2 jam, pesanan kedaluwarsa dan stok dilepas kembali.</p>
+                <div class="p-3 bg-white border border-hairline-soft rounded-xl text-xs text-mute space-y-1">
+                    <p class="font-medium text-ink">⏱️ Batas Waktu Pembayaran 2 Jam</p>
+                    <p class="text-[11px] leading-relaxed">Stok jersey otomatis diamankan (*Anti-Overselling Guard*). Jika tidak diselesaikan dalam 2 jam, pesanan kedaluwarsa dan stok dilepas kembali.</p>
                 </div>
             </div>
 
