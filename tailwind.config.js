@@ -9,31 +9,61 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.js',
     ],
-
     theme: {
         extend: {
             colors: {
                 canvas: {
-                    DEFAULT: '#EFEDE8',
-                    card: '#E4E1DC',
+                    DEFAULT: '#ffffff',
+                    card: '#f5f5f5',
                 },
+                'soft-cloud': '#f5f5f5',
                 ink: {
-                    DEFAULT: '#101010',
-                    muted: '#6B6862',
+                    DEFAULT: '#111111',
+                    muted: '#707072',
                 },
                 charcoal: {
-                    DEFAULT: '#181818',
-                    dark: '#0A0A0A',
+                    DEFAULT: '#39393b',
+                    dark: '#111111',
                 },
+                ash: '#4b4b4d',
+                mute: '#707072',
+                stone: '#9e9ea0',
+                hairline: '#cacacb',
+                'hairline-soft': '#e5e5e5',
+                sale: {
+                    DEFAULT: '#d30005',
+                    deep: '#780700',
+                },
+                'sale-deep': '#780700',
+                success: {
+                    DEFAULT: '#007d48',
+                    bright: '#1eaa52',
+                },
+                'success-bright': '#1eaa52',
+                info: {
+                    DEFAULT: '#1151ff',
+                    deep: '#0034e3',
+                },
+                'info-deep': '#0034e3',
+                'premium-gold': '#F59E0B',
+                'premium-gold-deep': '#D97706',
+                'jnt-red': '#ED1C24',
             },
             fontFamily: {
-                sans: ['"Plus Jakarta Sans"', 'Outfit', ...defaultTheme.fontFamily.sans],
-                display: ['Archivo', 'Outfit', 'sans-serif'],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                display: ['"Bebas Neue"', 'Anton', 'sans-serif'],
                 jersey: ['"Bebas Neue"', 'sans-serif'],
-                archivo: ['Archivo', 'sans-serif'],
+                archivo: ['Inter', 'sans-serif'],
+            },
+            borderRadius: {
+                'pill': '30px',
+                'pill-md': '24px',
+                'pill-sm': '18px',
+            },
+            spacing: {
+                'section': '48px',
             },
         },
     },
-
     plugins: [forms],
 };
