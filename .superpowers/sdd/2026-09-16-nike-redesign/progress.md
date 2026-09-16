@@ -8,9 +8,6 @@
 
 ## Tasks
 - [x] Task 1: Design System Foundation — Tailwind Config, CSS Variables & Google Fonts
-  - tailwind.config.js updated with Nike Editorial Commerce tokens
-  - resources/css/app.css rewritten with clean CSS variables and component classes
-  - Build & test verification: 77 tests passed, 258 assertions; Vite compiled clean
 - [ ] Task 2: Customer Layout, Navigation & Footer — Nike Editorial Chrome
 - [ ] Task 3: Homepage & Hero Section — Nike Campaign Editorial
 - [ ] Task 4: Product Card, Shop Page & Product Detail Page
