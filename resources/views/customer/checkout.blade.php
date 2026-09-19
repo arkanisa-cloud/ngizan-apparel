@@ -4,8 +4,6 @@
 @section('meta_description', 'Lengkapi alamat pengiriman dengan pin point peta akurat, pilih kurir Biteship, dan bayar aman dengan Midtrans Snap.')
 
 @push('styles')
-    <!-- Leaflet.js Map CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         #map { height: 260px; width: 100%; border-radius: 16px; z-index: 10; }
     </style>
@@ -233,10 +231,7 @@
 @endsection
 
 @push('scripts')
-    <!-- Leaflet.js -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!-- Midtrans Snap JS (Sandbox) -->
+    <!-- Midtrans Snap JS (Sandbox / Production) -->
     <script src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" 
             data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 

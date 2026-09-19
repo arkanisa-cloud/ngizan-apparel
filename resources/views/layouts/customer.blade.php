@@ -8,18 +8,6 @@
     <title>@yield('title', 'NGIZAN APPAREL · Bespoke Football Kits & Archive Store')</title>
     <meta name="description" content="@yield('meta_description', 'Ngizan Apparel - Toko jersey sepak bola autentik, edisi retro, dan studio kustomisasi sablon nama resmi.')">
 
-    <!-- Google Fonts Preconnect & Inter + Bebas Neue -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Toastr.js CSS (CDN) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-
-    <!-- jQuery for Toastr.js -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
