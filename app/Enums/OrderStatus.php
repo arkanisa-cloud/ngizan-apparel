@@ -57,6 +57,16 @@ enum OrderStatus: string
         return in_array($this, [self::PAID, self::IN_PRODUCTION, self::SHIPPED, self::COMPLETED]);
     }
 
+    public function isInProduction(): bool
+    {
+        return $this === self::IN_PRODUCTION;
+    }
+
+    public function isShipped(): bool
+    {
+        return $this === self::SHIPPED;
+    }
+
     public function isCompleted(): bool
     {
         return $this === self::COMPLETED;
@@ -65,6 +75,11 @@ enum OrderStatus: string
     public function isCancelled(): bool
     {
         return in_array($this, [self::CANCELLED, self::EXPIRED]);
+    }
+
+    public function isExpired(): bool
+    {
+        return $this === self::EXPIRED;
     }
 
     public function isPendingPayment(): bool

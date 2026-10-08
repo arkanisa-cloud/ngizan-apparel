@@ -36,6 +36,7 @@ class PremiumSubscriptionController extends Controller
 
             return response()->json([
                 'success'      => true,
+                'subscription_code' => $subscriptionCode,
                 'snap_token'   => $snapResult['snap_token'],
                 'redirect_url' => $snapResult['redirect_url'],
                 'message'      => 'Token pembayaran langganan berhasil dibuat.',
@@ -48,5 +49,42 @@ class PremiumSubscriptionController extends Controller
                 'message' => 'Gagal membuat sesi pembayaran: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Sinkronisasi status langganan premium setelah pembayaran Snap
+     */
+    public function sync(Request $request, MidtransService $midtrans): JsonResponse
+    {
+        $user = Auth::user();
+        $subscriptionCode = $request->input('subscription_code');
+
+        if ($subscriptionCode) {
+            $subscription = PremiumSubscription::where('subscription_code', $subscriptionCode)->first();
+        } else {
+            $subscription = PremiumSubscription::where('user_id', $user->id)
+                ->where('payment_status', 'pending')
+                ->latest()
+                ->first();
+        }
+
+        if (!$subscription) {
+            return response()->json([
+                'success'    => true,
+                'is_premium' => $user->isPremiumActive(),
+                'message'    => 'Tidak ada langganan pending.',
+            ]);
+        }
+
+        $synced = $midtrans->syncSubscriptionStatus($subscription);
+        $user->refresh();
+
+        return response()->json([
+            'success'       => true,
+            'synced'        => $synced,
+            'is_premium'    => $user->isPremiumActive(),
+            'premium_until' => $user->premium_until?->translatedFormat('d F Y'),
+            'message'       => $user->isPremiumActive() ? 'Keanggotaan Ngizan Premium Anda telah aktif!' : 'Menunggu konfirmasi pembayaran.',
+        ]);
     }
 }

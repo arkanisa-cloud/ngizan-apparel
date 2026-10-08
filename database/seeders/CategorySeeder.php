@@ -14,27 +14,33 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name'      => 'Klub Eropa',
-                'slug'      => 'klub-eropa',
-                'image'     => 'categories/klub-eropa.webp',
+                'name'      => 'Jersey',
+                'slug'      => 'jersey',
+                'image'     => 'categories/jersey.webp',
                 'is_active' => true,
             ],
             [
-                'name'      => 'Tim Nasional',
-                'slug'      => 'tim-nasional',
-                'image'     => 'categories/tim-nasional.webp',
+                'name'      => 'kaos-kaki',
+                'slug'      => 'kaos-kaki',
+                'image'     => 'categories/kaos-kaki.webp',
                 'is_active' => true,
             ],
             [
-                'name'      => 'Retro Classics',
-                'slug'      => 'retro-classics',
-                'image'     => 'categories/retro-classics.webp',
+                'name'      => 'Bola Sepak',
+                'slug'      => 'bola-sepak',
+                'image'     => 'categories/bola-sepak.webp',
                 'is_active' => true,
             ],
             [
-                'name'      => 'Special Edition',
-                'slug'      => 'special-edition',
-                'image'     => 'categories/special-edition.webp',
+                'name'      => 'Bola Futsal',
+                'slug'      => 'bola-futsal',
+                'image'     => 'categories/bola-futsal.webp',
+                'is_active' => true,
+            ],
+            [
+                'name'      => 'Manset',
+                'slug'      => 'manset',
+                'image'     => 'categories/manset.webp',
                 'is_active' => true,
             ],
         ];

@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Controller ShopController
- * Mengelola katalog toko jersey, etalase beranda (Storefront Homepage),
- * dan halaman detail produk lengkap dengan Live Custom Nameset Studio.
+ * Mengelola katalog toko jersey dan etalase beranda (Storefront Homepage)
  */
 class ShopController extends Controller
 {
@@ -28,12 +29,16 @@ class ShopController extends Controller
             ->take(8)
             ->get();
 
-        $customStudioProduct = Product::active()
-            ->where('allow_custom_nameset', true)
-            ->with(['category', 'variants'])
-            ->first() ?? $featuredProducts->first();
+        $heroBanner = null;
+        $promoBanner = null;
 
-        return view('home', compact('categories', 'featuredProducts', 'customStudioProduct'));
+        if (Schema::hasTable('banners')) {
+            $banners = Banner::all()->keyBy('key');
+            $heroBanner = $banners->get('hero');
+            $promoBanner = $banners->get('promo_banner');
+        }
+
+        return view('home', compact('categories', 'featuredProducts', 'heroBanner', 'promoBanner'));
     }
 
     /**
@@ -105,7 +110,7 @@ class ShopController extends Controller
      */
     public function show(Product $product): View
     {
-        $product->load(['category', 'variants']);
+        $product->load(['category', 'variants', 'reviews.user']);
 
         $relatedProducts = Product::active()
             ->where('category_id', $product->category_id)

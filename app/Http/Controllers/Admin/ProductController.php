@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\SizeChart;
 use App\Models\StockHistory;
 use App\Services\ImageOptimizationService;
 use Exception;
@@ -33,7 +34,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Product::with(['category', 'variants']);
+        $query = Product::with(['category', 'variants', 'sizeChart']);
 
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
@@ -59,7 +60,8 @@ class ProductController extends Controller
     public function create(): View
     {
         $categories = Category::active()->get();
-        return view('admin.products.create', compact('categories'));
+        $sizeCharts = SizeChart::orderBy('is_default', 'desc')->get();
+        return view('admin.products.create', compact('categories', 'sizeCharts'));
     }
 
     /**
@@ -70,6 +72,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name'                  => 'required|string|max:200',
             'category_id'           => 'required|exists:categories,id',
+            'size_chart_id'         => 'nullable|exists:size_charts,id',
             'base_price'            => 'required|numeric|min:0',
             'weight_grams'          => 'required|integer|min:50',
             'description'           => 'nullable|string',
@@ -78,8 +81,8 @@ class ProductController extends Controller
             'allow_patch'           => 'nullable|boolean',
             'patch_price'           => 'nullable|numeric|min:0',
             'available_patches'     => 'nullable|array',
-            'thumbnail_front'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'thumbnail_back'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'thumbnail_front'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'thumbnail_back'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'variants'              => 'required|array|min:1',
             'variants.*.size'       => 'required|string|max:10',
             'variants.*.type'       => 'required|string|max:50',
@@ -110,9 +113,9 @@ class ProductController extends Controller
             // 2. Buat Record Product
             $product = Product::create([
                 'category_id'          => $validated['category_id'],
+                'size_chart_id'        => $validated['size_chart_id'] ?? null,
                 'name'                 => $validated['name'],
                 'slug'                 => Str::slug($validated['name']) . '-' . rand(100, 999),
-                'sku'                  => 'NGZ-' . strtoupper(Str::random(6)),
                 'base_price'           => $validated['base_price'],
                 'weight_grams'         => $validated['weight_grams'],
                 'description'          => $validated['description'] ?? null,
@@ -126,13 +129,28 @@ class ProductController extends Controller
                 'is_active'            => true,
             ]);
 
-            // 3. Buat Matriks Varian Ukuran & Tipe
+            // 3. Buat Matriks Varian Ukuran & Tipe dengan SKU Unik
+            $baseSku = 'NGZ-' . strtoupper(Str::random(6));
             foreach ($validated['variants'] as $v) {
+                $typeCode = match(strtolower(trim($v['type']))) {
+                    'player issue' => 'PI',
+                    'fans issue'   => 'FI',
+                    'retro'        => 'RETRO',
+                    default        => strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $v['type']), 0, 3) ?: 'VAR'),
+                };
+                
+                $variantSku = $baseSku . '-' . $typeCode . '-' . strtoupper($v['size']);
+                
+                // Pastikan SKU benar-benar unik di tabel product_variants
+                while (ProductVariant::where('sku', $variantSku)->exists()) {
+                    $variantSku = 'NGZ-' . strtoupper(Str::random(6)) . '-' . $typeCode . '-' . strtoupper($v['size']);
+                }
+
                 $variant = ProductVariant::create([
                     'product_id'       => $product->id,
                     'size'             => $v['size'],
                     'type'             => $v['type'],
-                    'sku'              => $product->sku . '-' . strtoupper(substr($v['type'], 0, 1)) . '-' . $v['size'],
+                    'sku'              => $variantSku,
                     'price_adjustment' => $v['price_adj'] ?? 0,
                     'stock'            => (int) $v['stock'],
                 ]);
@@ -178,10 +196,11 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        $product->load(['category', 'variants']);
+        $product->load(['category', 'variants', 'sizeChart']);
         $categories = Category::active()->get();
+        $sizeCharts = SizeChart::orderBy('is_default', 'desc')->get();
 
-        return view('admin.products.edit', compact('product', 'categories'));
+        return view('admin.products.edit', compact('product', 'categories', 'sizeCharts'));
     }
 
     /**
@@ -192,6 +211,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name'                  => 'required|string|max:200',
             'category_id'           => 'required|exists:categories,id',
+            'size_chart_id'         => 'nullable|exists:size_charts,id',
             'base_price'            => 'required|numeric|min:0',
             'weight_grams'          => 'required|integer|min:50',
             'description'           => 'nullable|string',
@@ -200,8 +220,8 @@ class ProductController extends Controller
             'allow_patch'           => 'nullable|boolean',
             'patch_price'           => 'nullable|numeric|min:0',
             'available_patches'     => 'nullable|array',
-            'thumbnail_front'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'thumbnail_back'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'thumbnail_front'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'thumbnail_back'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'is_active'             => 'nullable|boolean',
         ]);
 

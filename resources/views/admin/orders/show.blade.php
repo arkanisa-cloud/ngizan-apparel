@@ -3,13 +3,14 @@
 @section('title', 'Kelola Pesanan #' . $order->order_number . ' · NGIZAN APPAREL')
 
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="space-y-6">
     
     {{-- Header & Quick Actions --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-hairline-soft pb-5 gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-hairline-soft pb-5 gap-4">
         <div>
+            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute block mb-1">Transaksi & Logistik</span>
             <div class="flex items-center gap-3">
-                <h1 class="text-2xl font-medium tracking-tight text-ink">Pesanan #{{ $order->order_number }}</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-ink">Pesanan #{{ $order->order_number }}</h1>
                 <span class="px-3 py-0.5 rounded-full text-[11px] font-medium {{ $order->status->badgeClass() }}">
                     {{ $order->status->label() }}
                 </span>
@@ -17,12 +18,14 @@
             <p class="text-xs text-mute mt-1">Dibuat pada {{ $order->created_at->format('d F Y, H:i') }} WIB</p>
         </div>
 
-        <div class="flex items-center gap-2 flex-wrap">
-            <a href="{{ route('admin.orders.print.label', $order->id) }}" target="_blank" class="px-4 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5">
-                <span>🖨️ Cetak Label Resi</span>
+        <div class="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+            <a href="{{ route('admin.orders.print.label', $order->id) }}" target="_blank" class="px-5 py-2.5 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5 cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                <span>Cetak Label Resi</span>
             </a>
-            <a href="{{ route('admin.orders.index') }}" class="px-4 py-2 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition">
-                &larr; Kembali
+            <a href="{{ route('admin.orders.index') }}" class="px-5 py-2.5 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                <span>Kembali</span>
             </a>
         </div>
     </div>
@@ -58,30 +61,55 @@
         </div>
 
         {{-- J&T Express Tracking Input Form --}}
-        <div class="p-5 bg-soft-cloud rounded-2xl border border-hairline-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div class="space-y-0.5">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-medium text-sale uppercase tracking-wider">🚚 J&T Express (Gratis Ongkir)</span>
-                    @if($order->tracking_number)
-                        <span class="text-[10px] bg-emerald-100 text-emerald-800 font-medium px-2 py-0.5 rounded-full">Otomatis Terlacak</span>
-                    @endif
+        <div class="p-5 bg-soft-cloud rounded-2xl border border-hairline-soft space-y-3" x-data="{ resiInput: '{{ old('tracking_number', $order->tracking_number ?? '') }}' }">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-sale uppercase tracking-wider">J&T Express (Gratis Ongkir)</span>
+                        @if($order->tracking_number)
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-medium px-2 py-0.5 rounded-full">Otomatis Terlacak</span>
+                        @endif
+                    </div>
+                    <p class="text-xs text-mute">
+                        Masukkan nomor resi J&T. Pesanan otomatis berstatus <strong>Telah Dikirim (Shipped)</strong> dan terlacak otomatis.
+                    </p>
                 </div>
-                <p class="text-xs text-mute">
-                    Masukkan nomor resi J&T. Pesanan otomatis berstatus <strong>Telah Dikirim (Shipped)</strong> dan notifikasi WhatsApp langsung terkirim ke pelanggan.
-                </p>
+
+                <form action="{{ route('admin.orders.tracking', $order->id) }}" method="POST" class="flex items-center gap-2 w-full md:w-auto">
+                    @csrf
+                    <div class="relative flex-1 md:w-64">
+                        <input type="text" name="tracking_number" x-model="resiInput"
+                               placeholder="Contoh: JNT9827361829" required
+                               class="w-full bg-white border border-hairline px-3.5 py-2 text-xs rounded-full font-mono text-ink focus:outline-none focus:border-ink uppercase">
+                    </div>
+                    <button type="submit" class="px-4 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        <span>Simpan & Kirim Resi</span>
+                    </button>
+                </form>
             </div>
 
-            <form action="{{ route('admin.orders.tracking', $order->id) }}" method="POST" class="flex items-center gap-2 w-full md:w-auto">
-                @csrf
-                <div class="relative flex-1 md:w-64">
-                    <input type="text" name="tracking_number" value="{{ old('tracking_number', $order->tracking_number) }}" 
-                           placeholder="Contoh: JNT9827361829" required
-                           class="w-full bg-white border border-hairline px-3.5 py-2 text-xs rounded-full font-mono text-ink focus:outline-none focus:border-ink uppercase">
-                </div>
-                <button type="submit" class="px-4 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
-                    <span>⚡ Simpan & Kirim</span>
+            {{-- Development Simulator Chips (Tidak mengganggu production) --}}
+            <div class="pt-2 border-t border-hairline-soft/80 flex flex-wrap items-center gap-2 text-[11px]">
+                <span class="font-bold text-neutral-500 uppercase tracking-wider text-[10px] flex items-center gap-1">
+                    <span>⚡ Quick Test Resi:</span>
+                </span>
+                <button type="button" @click="resiInput = 'TEST-JNT-DELIVERED'"
+                    class="px-2.5 py-1 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full font-mono font-medium transition cursor-pointer"
+                    title="Simulasi kurir telah mengantar paket ke penerima (Auto-Completed & Buka Ulasan)">
+                    ✓ TEST-JNT-DELIVERED (Paket Sampai)
                 </button>
-            </form>
+                <button type="button" @click="resiInput = 'TEST-JNT-TRANSIT'"
+                    class="px-2.5 py-1 bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 rounded-full font-mono font-medium transition cursor-pointer"
+                    title="Simulasi paket sedang dalam perjalanan kurir">
+                    🚚 TEST-JNT-TRANSIT (Sedang Dikirim)
+                </button>
+                <button type="button" @click="resiInput = 'TEST-JNT-PICKUP'"
+                    class="px-2.5 py-1 bg-white hover:bg-amber-50 text-amber-800 border border-amber-200 rounded-full font-mono font-medium transition cursor-pointer"
+                    title="Simulasi paket baru masuk gerai Drop Point">
+                    📦 TEST-JNT-PICKUP (Drop Point)
+                </button>
+            </div>
         </div>
     </div>
 
@@ -112,12 +140,12 @@
                                     <div class="flex flex-wrap gap-1.5 pt-1">
                                         @if($item->custom_name || $item->custom_number)
                                             <span class="px-2.5 py-0.5 bg-ink text-white rounded-full text-[10px] font-medium font-jersey tracking-widest uppercase">
-                                                ⚡ SABLON: {{ $item->custom_name ?? '-' }} #{{ $item->custom_number ?? '0' }}
+                                                SABLON: {{ $item->custom_name ?? '-' }} #{{ $item->custom_number ?? '0' }}
                                             </span>
                                         @endif
                                         @if($item->selected_patch)
                                             <span class="px-2.5 py-0.5 bg-soft-cloud border border-hairline text-ink rounded-full text-[10px] font-medium uppercase">
-                                                ★ {{ $item->selected_patch }}
+                                                PATCH: {{ $item->selected_patch }}
                                             </span>
                                         @endif
                                     </div>
@@ -141,8 +169,8 @@
             @if($trackingInfo)
                 <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4 text-xs">
                     <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3 flex justify-between items-center">
-                        <span>🚚 Pelacakan Biteship Real-Time</span>
-                        <span class="font-mono text-ink font-medium">{{ $order->tracking_number }}</span>
+                        <span class="font-bold uppercase tracking-wider text-xs">Pelacakan Logistik Biteship</span>
+                        <span class="font-mono text-ink font-bold">{{ $order->tracking_number }}</span>
                     </h2>
 
                     @if(!empty($trackingInfo['history']))
@@ -165,7 +193,7 @@
             
             {{-- Alamat Penerima Snapshot --}}
             <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-3 text-xs">
-                <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3">📍 Alamat Pengiriman</h2>
+                <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3">Alamat Pengiriman</h2>
                 @php
                     $addr = $order->shipping_address_snapshot ?? [];
                 @endphp
@@ -193,7 +221,7 @@
 
             {{-- Rincian Biaya & Pembayaran Midtrans --}}
             <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-3 text-xs">
-                <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3">💳 Rincian Finansial</h2>
+                <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3">Rincian Finansial</h2>
                 
                 <div class="flex justify-between text-mute">
                     <span>Subtotal Jersey:</span>

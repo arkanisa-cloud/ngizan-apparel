@@ -2,103 +2,91 @@
 
 @php
     $frontImage = $product->thumbnail_front ? asset('storage/' . $product->thumbnail_front) : 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=700&q=80';
-    $backImage  = $product->thumbnail_back  ? asset('storage/' . $product->thumbnail_back)  : 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=700&q=80';
+    $backImage  = $product->thumbnail_back  ? asset('storage/' . $product->thumbnail_back)  : null;
     
-    $firstVariant = $product->variants->first();
-    $badgeType = $firstVariant ? strtoupper($firstVariant->type) : 'AUTHENTIC KIT';
+    // Rating Bintang
+    $avgRating = $product->average_rating > 0 ? $product->average_rating : 5.0;
+    $reviewsCount = $product->reviews_count;
 
+    // Membership Check
     $isPremium = auth()->check() && auth()->user()->isPremiumActive();
     $finalPrice = $product->getFinalPrice(auth()->user());
-    $reviewsCount = $product->reviews_count;
-    $avgRating = $product->average_rating;
 @endphp
 
-<div class="product-card group bg-canvas rounded-none">
-    {{-- Image Frame dengan Dual POV Transition pada soft-cloud studio surface --}}
-    <div class="image-frame bg-soft-cloud aspect-square overflow-hidden relative">
-        <a href="{{ route('shop.show', $product->slug) }}" class="block w-full h-full">
-            <img src="{{ $frontImage }}" alt="{{ $product->name }} Tampak Depan" class="img-front object-cover w-full h-full" loading="lazy">
-            <img src="{{ $backImage }}" alt="{{ $product->name }} Tampak Belakang (Back POV)" class="img-back object-cover w-full h-full" loading="lazy">
-        </a>
+<a href="{{ route('shop.show', $product->slug) }}" 
+   class="product-card group block p-2 sm:p-2.5 bg-white border border-gray-100 hover:border-gray-300 rounded-xl sm:rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300 select-none">
+    
+    {{-- 1. Image Frame dengan Background Soft Cloud & Dual POV Hover --}}
+    <div class="image-frame bg-soft-cloud aspect-square rounded-lg sm:rounded-xl overflow-hidden relative">
+        <img src="{{ $frontImage }}" 
+             alt="{{ $product->name }}" 
+             class="img-front object-cover w-full h-full transition-all duration-500 ease-out group-hover:scale-105 {{ $backImage ? 'group-hover:opacity-0' : '' }}" 
+             loading="lazy">
+             
+        @if($backImage)
+            <img src="{{ $backImage }}" 
+                 alt="{{ $product->name }} Tampak Belakang" 
+                 class="img-back absolute inset-0 object-cover w-full h-full opacity-0 transition-all duration-500 ease-out group-hover:scale-105 group-hover:opacity-100" 
+                 loading="lazy">
+        @endif
 
-        {{-- Badge Tipe & Member Privilege --}}
-        <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 pointer-events-none">
-            <span class="px-2.5 py-0.5 bg-ink text-white text-[10px] font-medium tracking-wider uppercase rounded-full">
-                {{ $badgeType }}
-            </span>
-            @if($isPremium)
-                <span class="px-2.5 py-0.5 bg-premium-gold text-ink text-[10px] font-medium tracking-wider uppercase rounded-full">
-                    ★ Member 5% OFF
+        {{-- Badge Diskon Member jika Aktif --}}
+        @if($isPremium)
+            <div class="absolute top-2 left-2 z-10">
+                <span class="bg-premium-gold text-ink text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs uppercase tracking-wide">
+                    5% OFF
                 </span>
-            @endif
-        </div>
+            </div>
+        @endif
 
-        {{-- Quick Custom & Beli Button (Pill Slide-Up) --}}
-        <a href="{{ route('shop.show', $product->slug) }}" class="quick-add block">
-            Custom Sablon & Beli &rarr;
-        </a>
+        {{-- Floating Add / Detail Action Button on Hover --}}
+        <div class="absolute bottom-2.5 right-2.5 z-10 opacity-0 translate-y-2 scale-90 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 transition-all duration-300 ease-out">
+            <span class="w-8 h-8 sm:w-9 sm:h-9 bg-ink text-white rounded-full flex items-center justify-center shadow-md hover:bg-black transition-transform active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                </svg>
+            </span>
+        </div>
     </div>
 
-    {{-- Detail Metadata Produk (8px spacing rhythm) --}}
-    <div class="pt-3 space-y-1">
-        {{-- Title and Price Row --}}
-        <div class="flex justify-between items-baseline gap-2">
-            <h3 class="font-medium text-[15px] text-ink line-clamp-1">
-                <a href="{{ route('shop.show', $product->slug) }}" class="hover:text-mute transition">
-                    {{ $product->name }}
-                </a>
-            </h3>
+    {{-- 2. Detail Produk (Kategori, Nama, Harga, Bintang) --}}
+    <div class="pt-3 px-1 pb-1 space-y-1">
+        {{-- Kategori Subtitle --}}
+        <p class="text-[11px] font-medium text-mute uppercase tracking-wider truncate">
+            {{ $product->category->name ?? 'Official Jersey' }}
+        </p>
 
-            <div class="text-right shrink-0">
+        {{-- Nama Produk --}}
+        <h3 class="font-medium text-[13px] sm:text-[15px] text-ink line-clamp-1 group-hover:text-black transition duration-200">
+            {{ $product->name }}
+        </h3>
+
+        {{-- Row: Harga & Rating Bintang --}}
+        <div class="flex items-center justify-between gap-2 pt-1">
+            {{-- Harga Produk --}}
+            <div class="flex items-baseline gap-1.5 flex-wrap">
                 @if($isPremium)
-                    <div class="flex items-baseline gap-1.5 justify-end">
-                        <span class="text-xs text-mute line-through tabular-nums">
-                            {{ $product->formatted_price }}
-                        </span>
-                        <span class="font-medium text-[15px] text-sale tabular-nums">
-                            Rp {{ number_format($finalPrice, 0, ',', '.') }}
-                        </span>
-                    </div>
-                @else
-                    <span class="font-medium text-[15px] text-ink tabular-nums">
+                    <p class="font-bold text-[14px] sm:text-[15px] text-ink tabular-nums tracking-tight">
+                        Rp {{ number_format($finalPrice, 0, ',', '.') }}
+                    </p>
+                    <span class="text-[11px] text-mute line-through tabular-nums">
                         {{ $product->formatted_price }}
                     </span>
+                @else
+                    <p class="font-bold text-[14px] sm:text-[15px] text-ink tabular-nums tracking-tight">
+                        {{ $product->formatted_price }}
+                    </p>
                 @endif
             </div>
-        </div>
 
-        {{-- Subtitle & Rating --}}
-        <div class="flex items-center justify-between text-xs text-mute">
-            <p>
-                {{ $product->category->name ?? 'Football Kit' }}
-                @if($product->allow_custom_nameset)
-                    · <span class="text-ink font-medium">+Custom Sablon</span>
-                @endif
-            </p>
-
-            <div class="flex items-center gap-1 text-xs">
+            {{-- Rating Bintang --}}
+            <div class="flex items-center gap-1 text-xs shrink-0">
+                <span class="text-amber-500 text-xs">★</span>
+                <span class="text-ink font-semibold text-xs tabular-nums">{{ number_format($avgRating, 1) }}</span>
                 @if($reviewsCount > 0)
-                    <span class="text-premium-gold font-medium">★ {{ number_format($avgRating, 1) }}</span>
-                    <span class="text-mute">({{ $reviewsCount }})</span>
-                @else
-                    <span class="text-mute text-[11px]">Baru</span>
+                    <span class="text-mute text-[11px] tabular-nums">({{ $reviewsCount }})</span>
                 @endif
             </div>
-        </div>
-
-        {{-- Pills Ukuran Stok Real-time (Pills dengan hairline borders) --}}
-        <div class="flex flex-wrap gap-1 pt-1">
-            @foreach($product->variants->sortBy('size') as $variant)
-                @if($variant->stock > 0)
-                    <span class="text-[10px] px-2 py-0.5 border {{ $variant->stock <= 3 ? 'border-amber-400 bg-amber-50 text-amber-900' : 'border-hairline text-ink' }} rounded-full font-medium">
-                        {{ $variant->size }} @if($variant->stock <= 3)<span class="text-[9px] text-amber-700">(Sisa {{ $variant->stock }})</span>@endif
-                    </span>
-                @else
-                    <span class="text-[10px] px-2 py-0.5 border border-hairline-soft bg-soft-cloud text-stone rounded-full line-through">
-                        {{ $variant->size }}
-                    </span>
-                @endif
-            @endforeach
         </div>
     </div>
-</div>
+</a>

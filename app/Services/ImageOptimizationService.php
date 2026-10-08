@@ -22,9 +22,9 @@ class ImageOptimizationService
     /**
      * Alias method untuk optimize dan simpan gambar
      */
-    public function optimizeAndStore(UploadedFile|string $file, string $directory = 'products', int $quality = 82): string
+    public function optimizeAndStore(UploadedFile|string $file, string $directory = 'products', int $quality = 85, ?int $maxDimension = null): string
     {
-        return $this->convertToWebp($file, $directory, $quality);
+        return $this->convertToWebp($file, $directory, $quality, $maxDimension);
     }
 
     /**
@@ -36,18 +36,24 @@ class ImageOptimizationService
     }
 
     /**
-     * Konversi dan simpan gambar ke format .webp
+     * Smart Auto-Resize dan konversi gambar ke format .webp
      *
      * @param UploadedFile|string $file File upload atau path lokal
-     * @param string $directory Sub-folder di dalam storage (misal: 'products', 'categories')
-     * @param int $quality Kualitas kompresi WebP (default 82%)
+     * @param string $directory Sub-folder di dalam storage (misal: 'products', 'categories', 'banners')
+     * @param int $quality Kualitas kompresi WebP (default 85%)
+     * @param int|null $maxDimension Dimensi maksimum panjang/lebar (px)
      * @return string Path relatif file yang tersimpan (misal: 'products/abc12345.webp')
      */
-    public function convertToWebp(UploadedFile|string $file, string $directory = 'products', int $quality = 82): string
+    public function convertToWebp(UploadedFile|string $file, string $directory = 'products', int $quality = 85, ?int $maxDimension = null): string
     {
         $filename = Str::uuid() . '.webp';
         $relativeDir = trim($directory, '/');
         $targetPath = $relativeDir . '/' . $filename;
+
+        // Tentukan batas dimensi maksimum otomatis berdasarkan direktori
+        if ($maxDimension === null) {
+            $maxDimension = str_starts_with($relativeDir, 'banners') ? 2000 : 1600;
+        }
 
         // Pastikan folder tujuan ada
         Storage::disk($this->disk)->makeDirectory($relativeDir);
@@ -58,17 +64,57 @@ class ImageOptimizationService
 
             if (function_exists('imagewebp') && function_exists('imagecreatefromstring')) {
                 $imageData = file_get_contents($sourcePath);
-                $image = @imagecreatefromstring($imageData);
+                $sourceImage = @imagecreatefromstring($imageData);
 
-                if ($image !== false) {
-                    // Tangani transparansi PNG
-                    imagepalettetotruecolor($image);
-                    imagealphablending($image, true);
-                    imagesavealpha($image, true);
+                if ($sourceImage !== false) {
+                    $origWidth = imagesx($sourceImage);
+                    $origHeight = imagesy($sourceImage);
 
-                    // Simpan sebagai WebP
-                    imagewebp($image, $fullDestinationPath, $quality);
-                    imagedestroy($image);
+                    // 1. SMART AUTO-RESIZE: Hitung dimensi baru jika melebihi batas
+                    $targetWidth = $origWidth;
+                    $targetHeight = $origHeight;
+
+                    if ($origWidth > $maxDimension || $origHeight > $maxDimension) {
+                        if ($origWidth >= $origHeight) {
+                            $targetWidth = $maxDimension;
+                            $targetHeight = (int) round(($origHeight / $origWidth) * $maxDimension);
+                        } else {
+                            $targetHeight = $maxDimension;
+                            $targetWidth = (int) round(($origWidth / $origHeight) * $maxDimension);
+                        }
+                    }
+
+                    // 2. Buat canvas gambar baru jika perlu resize
+                    if ($targetWidth !== $origWidth || $targetHeight !== $origHeight) {
+                        $processedImage = imagecreatetruecolor($targetWidth, $targetHeight);
+
+                        // Pertahankan transparansi PNG / Alpha channel
+                        imagealphablending($processedImage, false);
+                        imagesavealpha($processedImage, true);
+                        $transparent = imagecolorallocatealpha($processedImage, 255, 255, 255, 127);
+                        imagefilledrectangle($processedImage, 0, 0, $targetWidth, $targetHeight, $transparent);
+
+                        imagecopyresampled(
+                            $processedImage,
+                            $sourceImage,
+                            0, 0, 0, 0,
+                            $targetWidth,
+                            $targetHeight,
+                            $origWidth,
+                            $origHeight
+                        );
+
+                        imagedestroy($sourceImage);
+                    } else {
+                        $processedImage = $sourceImage;
+                        imagepalettetotruecolor($processedImage);
+                        imagealphablending($processedImage, true);
+                        imagesavealpha($processedImage, true);
+                    }
+
+                    // 3. Simpan sebagai WebP berkualitas tinggi & efisien
+                    imagewebp($processedImage, $fullDestinationPath, $quality);
+                    imagedestroy($processedImage);
 
                     return $targetPath;
                 }
@@ -78,6 +124,12 @@ class ImageOptimizationService
                 $imagick = new \Imagick($sourcePath);
                 $imagick->setImageFormat('webp');
                 $imagick->setImageCompressionQuality($quality);
+
+                // Auto resize Imagick
+                if ($imagick->getImageWidth() > $maxDimension || $imagick->getImageHeight() > $maxDimension) {
+                    $imagick->resizeImage($maxDimension, $maxDimension, \Imagick::FILTER_LANCZOS, 1, true);
+                }
+
                 $imagick->writeImage($fullDestinationPath);
                 $imagick->clear();
                 $imagick->destroy();

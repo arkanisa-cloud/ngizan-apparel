@@ -59,6 +59,16 @@ class OrderController extends Controller
         $trackingInfo = null;
         if ($order->tracking_number && $order->courier_code) {
             $trackingInfo = $this->biteship->getTracking($order->tracking_number, $order->courier_code);
+
+            if (!empty($trackingInfo['status']) && in_array(strtolower($trackingInfo['status']), ['delivered', 'selesai', 'sukses'])) {
+                if ($order->status === OrderStatus::SHIPPED) {
+                    $order->update([
+                        'status'       => OrderStatus::COMPLETED,
+                        'completed_at' => now(),
+                    ]);
+                    $order->refresh();
+                }
+            }
         }
 
         return view('admin.orders.show', compact('order', 'trackingInfo'));
@@ -103,16 +113,65 @@ class OrderController extends Controller
     public function updateTracking(Request $request, Order $order): RedirectResponse
     {
         $validated = $request->validate([
-            'tracking_number' => 'required|string|max:100',
+            'tracking_number' => 'required|string|min:6|max:50',
+        ], [
+            'tracking_number.required' => 'Nomor resi pengiriman wajib diisi.',
+            'tracking_number.min'      => 'Nomor resi minimal terdiri dari 6 karakter.',
         ]);
 
-        $trackingNumber = trim($validated['tracking_number']);
+        $trackingNumber = strtoupper(trim($validated['tracking_number']));
+
+        // 1. Validasi karakter (hanya huruf, angka, dan strip)
+        if (!preg_match('/^[A-Z0-9\-]+$/', $trackingNumber)) {
+            return back()->withInput()->with('error', 'Nomor resi hanya boleh berisi huruf, angka, dan tanda hubung (-).');
+        }
+
+        $isSimulator = str_starts_with($trackingNumber, 'TEST-') || 
+                        str_starts_with($trackingNumber, 'DEMO-') || 
+                        str_starts_with($trackingNumber, 'MOCK-') ||
+                        str_starts_with($trackingNumber, 'SIM-');
+
+        if ($isSimulator) {
+            // Validasi resi simulasi resmi
+            $isValidSim = str_contains($trackingNumber, 'DELIVERED') || 
+                          str_contains($trackingNumber, 'TRANSIT') || 
+                          str_contains($trackingNumber, 'PICKUP') ||
+                          str_contains($trackingNumber, 'SELESAI') ||
+                          str_contains($trackingNumber, 'KIRIM');
+
+            if (!$isValidSim) {
+                return back()->withInput()->with('error', 'Nomor resi simulasi "' . $trackingNumber . '" tidak valid! Pilih salah satu tombol resmi: TEST-JNT-DELIVERED, TEST-JNT-TRANSIT, atau TEST-JNT-PICKUP.');
+            }
+        } else {
+            // Validasi format nomor resi kurir J&T Express asli
+            // Standar J&T Express: awalan JO, JX, JP, JS, JT, JD, JNT, TJNT, EZ atau deretan digit angka 8-20 karakter alfanumerik
+            $isValidJntFormat = preg_match('/^(JO|JX|JP|JS|JT|JD|JNT|TJNT|EZ|[0-9]{8,20})[A-Z0-9]{4,18}$/i', $trackingNumber) ||
+                                (strlen($trackingNumber) >= 8 && strlen($trackingNumber) <= 25 && ctype_alnum($trackingNumber));
+
+            if (!$isValidJntFormat || strlen($trackingNumber) < 8) {
+                return back()->withInput()->with('error', 'Format nomor resi "' . $trackingNumber . '" tidak valid! Resi J&T Express resmi umumnya berawalan JO, JX, JP, JT, JNT atau 8-20 karakter alfanumerik (Contoh: JO0325803121). Untuk uji coba, silakan gunakan tombol Quick Test Resi.');
+            }
+        }
+
+        // Ambil info tracking untuk sinkronisasi awal
+        $trackingInfo = $this->biteship->getTracking($trackingNumber, 'jnt');
+
+        $newStatus = OrderStatus::SHIPPED;
+        $completedAt = null;
+
+        if (!empty($trackingInfo['success']) && !empty($trackingInfo['status'])) {
+            if (in_array(strtolower($trackingInfo['status']), ['delivered', 'selesai', 'sukses'])) {
+                $newStatus = OrderStatus::COMPLETED;
+                $completedAt = now();
+            }
+        }
 
         $order->update([
             'tracking_number'      => $trackingNumber,
             'courier_code'         => 'jnt',
             'courier_service_name' => 'J&T Express (Gratis Ongkir)',
-            'status'               => OrderStatus::SHIPPED,
+            'status'               => $newStatus,
+            'completed_at'         => $completedAt,
         ]);
 
         if ($order->customer_phone) {
@@ -123,7 +182,11 @@ class OrderController extends Controller
             }
         }
 
-        return back()->with('success', "Nomor resi J&T {$trackingNumber} berhasil disimpan. Status pesanan otomatis diubah menjadi Telah Dikirim (Shipped) dan notifikasi WhatsApp terkirim.");
+        $statusMsg = $newStatus === OrderStatus::COMPLETED 
+            ? "Nomor resi {$trackingNumber} berhasil disimpan. Paket berstatus TELAH TIBA (Completed) dan ulasan pelanggan telah aktif."
+            : "Nomor resi {$trackingNumber} berhasil disimpan. Status pesanan diubah menjadi TELAH DIKIRIM (Shipped) dan terlacak otomatis.";
+
+        return back()->with('success', $statusMsg);
     }
 
     /**

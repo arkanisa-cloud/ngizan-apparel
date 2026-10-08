@@ -1,304 +1,267 @@
 @extends('layouts.customer')
 
-@section('title', 'NGIZAN APPAREL · Bespoke Football Kits & Archive Store')
-@section('meta_description', 'Ngizan Apparel - Toko jersey sepak bola autentik, edisi retro arsip, dan live studio kustomisasi nameset nama & nomor punggung.')
+@section('title', 'NGIZAN APPAREL · Official Football Kits & Archive Store')
+@section('meta_description',
+    'Ngizan Apparel - Toko jersey sepak bola autentik, edisi player issue, tim nasional, dan
+    arsip retro terkurasi.')
 
 @section('content')
 
-    {{-- ===== 1. HERO SECTION: NIKE CAMPAIGN EDITORIAL ===== --}}
-    <section id="hero" class="relative w-full overflow-hidden bg-soft-cloud border-b border-hairline-soft">
-        <div class="relative min-h-[75vh] md:min-h-[82vh] flex items-end">
-            {{-- Campaign Photography Background --}}
-            <div class="absolute inset-0 z-0">
-                <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=2000&q=85" 
-                     alt="Ngizan Football Kit Campaign" 
-                     class="w-full h-full object-cover object-center filter brightness-90">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
+    {{-- ===== 1. HERO HEADER (FULLSCREEN MINIMALIST EDITORIAL) ===== --}}
+    @php
+        $heroImage =
+            $heroBanner?->image_url ??
+            'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=2000&q=85';
+    @endphp
+
+    <header id="hero-section"
+        class="relative w-full h-[65vh] sm:h-[85vh] lg:h-[125vh] min-h-[440px] sm:min-h-[550px] bg-neutral-950 overflow-hidden">
+        {{-- Full Screen Pure Hero Image --}}
+        <img src="{{ $heroImage }}" alt="Ngizan Apparel Hero Campaign"
+            class="w-full h-full object-cover object-center select-none pointer-events-none">
+    </header>
+
+    {{-- ===== 2. TOP CATEGORIES (EXPANDED LARGE EDITORIAL CARDS SESUAI REFERENSI GAMBAR) ===== --}}
+    <section class="wrap pt-10 pb-5 sm:pt-16 sm:pb-8 relative" x-data="{
+        canScrollLeft: false,
+        canScrollRight: true,
+        updateScrollState() {
+            const el = this.$refs.categoryScroll;
+            this.canScrollLeft = el.scrollLeft > 10;
+            this.canScrollRight = el.scrollLeft < (el.scrollWidth - el.clientWidth - 10);
+        },
+        scroll(direction) {
+            const container = this.$refs.categoryScroll;
+            const scrollAmount = container.clientWidth * 0.8;
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+            setTimeout(() => this.updateScrollState(), 350);
+        }
+    }" x-init="setTimeout(() => updateScrollState(), 200)">
+
+        {{-- Section Header --}}
+        <div class="flex items-end justify-between mb-4 sm:mb-6 pb-2.5 sm:pb-3 border-b border-gray-200">
+            <div>
+                <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-400 block mb-1">
+                    Official Archive
+                </span>
+                <h2 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink uppercase">
+                    Kategori Pilihan
+                </h2>
             </div>
 
-            {{-- Campaign Headline & CTAs (Lower-Left Placement per DESIGN.md) --}}
-            <div class="wrap relative z-10 w-full pb-14 md:pb-20 pt-32">
-                <div class="max-w-3xl space-y-4">
-                    <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-xs text-white text-[11px] font-medium tracking-wider uppercase rounded-full">
-                        EDISI MUSIM 2024/2025 · AUTHENTIC KITS
-                    </span>
-                    <h1 class="display-campaign text-white text-[clamp(44px,9vw,92px)] leading-[0.9] tracking-tight">
-                        WIN ON AIR.<br>BESPOKE KITS.
-                    </h1>
-                    <p class="text-white/85 text-sm sm:text-base font-medium max-w-xl leading-relaxed">
-                        Arsip jersey sepak bola vintage terkurasi, edisi match-issue klub eropa, dan studio kustomisasi sablon polyflex berstandar resmi.
-                    </p>
-                    <div class="flex items-center gap-3 pt-2 flex-wrap">
-                        <a href="#katalog" class="btn-outline-image">
-                            Jelajahi Koleksi Jersey
-                        </a>
-                        <a href="#custom-studio" class="inline-flex items-center justify-center gap-2 bg-black/60 hover:bg-black/80 backdrop-blur-xs text-white px-6 py-3 rounded-full text-[15px] font-medium transition">
-                            Studio Kustomisasi
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== 2. CATEGORY TILES (FLAT CLEAN ON WHITE CANVAS) ===== --}}
-    <section class="py-12 bg-canvas border-b border-hairline-soft">
-        <div class="wrap">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-
-                <a href="{{ route('shop.index', ['category' => 'klub-eropa']) }}"
-                    class="group relative overflow-hidden bg-soft-cloud aspect-[4/3] flex flex-col justify-end p-4 sm:p-5 transition hover:bg-neutral-200">
-                    <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=500&q=80"
-                        alt="Klub Eropa"
-                        class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-75 group-hover:scale-105 transition duration-500">
-                    <div class="relative z-10">
-                        <h3 class="font-medium text-sm sm:text-base text-ink uppercase tracking-tight">Klub Eropa</h3>
-                        <p class="text-xs text-mute mt-0.5">EPL, La Liga, Serie A</p>
-                    </div>
-                </a>
-
-                <a href="{{ route('shop.index', ['category' => 'tim-nasional']) }}"
-                    class="group relative overflow-hidden bg-soft-cloud aspect-[4/3] flex flex-col justify-end p-4 sm:p-5 transition hover:bg-neutral-200">
-                    <img src="https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=500&q=80"
-                        alt="Tim Nasional"
-                        class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-75 group-hover:scale-105 transition duration-500">
-                    <div class="relative z-10">
-                        <h3 class="font-medium text-sm sm:text-base text-ink uppercase tracking-tight">Tim Nasional</h3>
-                        <p class="text-xs text-mute mt-0.5">Garuda & World Cup</p>
-                    </div>
-                </a>
-
-                <a href="{{ route('shop.index', ['category' => 'retro-classics']) }}"
-                    class="group relative overflow-hidden bg-soft-cloud aspect-[4/3] flex flex-col justify-end p-4 sm:p-5 transition hover:bg-neutral-200">
-                    <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=500&q=80"
-                        alt="Retro Classics"
-                        class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-75 group-hover:scale-105 transition duration-500">
-                    <div class="relative z-10">
-                        <h3 class="font-medium text-sm sm:text-base text-ink uppercase tracking-tight">Retro Archive</h3>
-                        <p class="text-xs text-mute mt-0.5">Arsip Edisi 90s & 2000s</p>
-                    </div>
-                </a>
-
-                <a href="#custom-studio"
-                    class="group relative overflow-hidden bg-soft-cloud aspect-[4/3] flex flex-col justify-end p-4 sm:p-5 transition hover:bg-neutral-200">
-                    <img src="https://images.unsplash.com/photo-1544698310-74ea9d1c8258?auto=format&fit=crop&w=500&q=80"
-                        alt="Custom Nameset"
-                        class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-75 group-hover:scale-105 transition duration-500">
-                    <div class="relative z-10">
-                        <h3 class="font-medium text-sm sm:text-base text-ink uppercase tracking-tight">Custom Nameset</h3>
-                        <p class="text-xs text-mute mt-0.5">Nama & Nomor Font Resmi</p>
-                    </div>
-                </a>
-
+            {{-- Top Navigation Controls (Mobile/Desktop Header) --}}
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <button type="button" @click="scroll(-1)"
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-hairline hover:border-ink flex items-center justify-center text-ink transition hover:bg-soft-cloud focus:outline-none"
+                    aria-label="Geser Kategori ke Kiri">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button type="button" @click="scroll(1)"
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-hairline hover:border-ink flex items-center justify-center text-ink transition hover:bg-soft-cloud focus:outline-none"
+                    aria-label="Geser Kategori ke Kanan">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
             </div>
         </div>
-    </section>
 
-    {{-- ===== 3. FEATURED CATALOG WITH DUAL POV HOVER ===== --}}
-    <section id="katalog" class="py-16 bg-canvas">
-        <div class="wrap">
-            <div class="flex flex-col sm:flex-row sm:items-baseline justify-between mb-8 pb-4 border-b border-hairline-soft gap-4">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-medium tracking-tight text-ink">Katalog Paling Dicari</h2>
-                    <p class="text-xs text-mute mt-1">Arahkan kursor pada kartu produk untuk melihat tampak belakang (Back POV)</p>
-                </div>
-                <div>
-                    <a href="{{ route('shop.index') }}"
-                        class="text-xs font-medium text-ink hover:text-mute underline transition inline-flex items-center gap-1">
-                        <span>Lihat Semua Produk ({{ $featuredProducts->count() }})</span>
-                        <span>&rarr;</span>
+        {{-- Card Rail Container with Floating Slider Buttons --}}
+        <div class="relative group">
+            {{-- Floating Prev Arrow --}}
+            <button type="button" @click="scroll(-1)" x-show="canScrollLeft" x-transition
+                class="hidden md:flex absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white text-ink rounded-full shadow-xl border border-gray-100 items-center justify-center hover:scale-105 active:scale-95 transition focus:outline-none cursor-pointer"
+                aria-label="Previous Categories">
+                <svg class="w-5 h-5 text-neutral-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            {{-- Large 1-Row Horizontally Scrollable Category Cards --}}
+            <div x-ref="categoryScroll" @scroll.debounce.50ms="updateScrollState()"
+                class="flex gap-3 sm:gap-4 overflow-x-auto pb-1 hide-scroll scroll-smooth snap-x snap-mandatory">
+                @forelse($categories as $cat)
+                    <a href="{{ route('shop.index', ['category' => $cat->slug]) }}"
+                        class="relative w-[72vw] sm:w-[48vw] md:w-[calc(33.333%-11px)] min-w-[240px] sm:min-w-[320px] md:min-w-[360px] h-[340px] sm:h-[440px] md:h-[500px] lg:h-[540px] bg-neutral-900 rounded-2xl overflow-hidden group cursor-pointer shrink-0 snap-start block select-none">
+
+                        {{-- Category Image with Smooth Zoom on Hover --}}
+                        <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}"
+                            class="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105">
+
+                        {{-- Subtle Bottom Shadow Overlay for Readability --}}
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70 group-hover:opacity-85 transition-opacity">
+                        </div>
+
+                        {{-- Rounded Dark Pill Badge (Sesuai Screenshot Referensi) --}}
+                        <div class="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 z-10">
+                            <span
+                                class="bg-neutral-900/90 hover:bg-black text-white text-xs sm:text-sm font-semibold px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl backdrop-blur-md shadow-lg inline-block tracking-normal transition">
+                                {{ $cat->name }}
+                            </span>
+                        </div>
                     </a>
-                </div>
-            </div>
-
-            {{-- Grid Product Cards (Nike flat, square 1:1, soft-cloud studio background) --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                @forelse($featuredProducts as $product)
-                    <x-product-card :product="$product" />
                 @empty
-                    <div class="col-span-4 text-center py-16 text-mute">
-                        <p>Belum ada produk yang ditampilkan.</p>
+                    <div class="w-full text-center py-12 text-mute text-sm bg-soft-cloud rounded-xl">
+                        Belum ada kategori yang ditambahkan.
                     </div>
                 @endforelse
             </div>
+
+            {{-- Floating Next Arrow --}}
+            <button type="button" @click="scroll(1)" x-show="canScrollRight" x-transition
+                class="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-white text-ink rounded-full shadow-xl border border-gray-100 items-center justify-center hover:scale-105 active:scale-95 transition focus:outline-none cursor-pointer"
+                aria-label="Next Categories">
+                <svg class="w-5 h-5 text-neutral-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
         </div>
     </section>
 
-    {{-- ===== 4. NIKE MEMBER PRIVILEGE EDITORIAL BANNER ===== --}}
-    <section class="py-12 bg-canvas">
-        <div class="wrap">
-            <div class="relative overflow-hidden bg-ink text-white rounded-2xl p-8 sm:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-                <div class="max-w-xl space-y-3">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-xs font-medium">
-                        <span class="text-premium-gold">★</span>
-                        <span>NGIZAN MEMBERSHIP</span>
-                    </div>
-                    <h3 class="display-campaign text-3xl sm:text-4xl leading-tight">
-                        NIKMATI DISKON 5% & GRATIS ONGKIR SEUMUR HIDUP
-                    </h3>
-                    <p class="text-white/80 text-xs sm:text-sm leading-relaxed">
-                        Bergabunglah dengan program Ngizan Premium untuk mendapatkan diskon langsung tanpa batas dan kemitraan kurir resmi J&T Express ke seluruh wilayah Indonesia.
-                    </p>
-                </div>
-                <div class="shrink-0" x-data>
-                    <button type="button" @click="$dispatch('open-premium-modal')" class="btn-outline-image px-8 py-4 text-sm font-medium">
-                        Pelajari Keanggotaan &rarr;
-                    </button>
-                </div>
+    {{-- ===== 3. NEW ARRIVALS (CONSISTENT INTER-SECTION RHYTHM) ===== --}}
+    <section class="wrap pt-5 pb-5 sm:pt-8 sm:pb-8" x-data="{
+        scroll(direction) {
+            const container = this.$refs.newArrivalsScroll;
+            const scrollAmount = container.clientWidth * 0.75;
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+    }">
+
+        {{-- Section Header with Interactive Prev/Next Navigation Controls --}}
+        <div class="flex items-end justify-between mb-4 sm:mb-6 pb-2.5 sm:pb-3 border-b border-gray-200">
+            <div>
+                <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-400 block mb-1">
+                    Fresh Releases
+                </span>
+                <h2 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink uppercase">
+                    Jersey Ngizan
+                </h2>
+            </div>
+
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <button type="button" @click="scroll(-1)"
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-hairline hover:border-ink flex items-center justify-center text-ink transition hover:bg-soft-cloud focus:outline-none"
+                    aria-label="Geser ke Kiri">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button type="button" @click="scroll(1)"
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-hairline hover:border-ink flex items-center justify-center text-ink transition hover:bg-soft-cloud focus:outline-none"
+                    aria-label="Geser ke Kanan">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
             </div>
         </div>
+
+        {{-- Dynamic Horizontally Scrollable Rail (Responsive Card Widths) --}}
+        <div x-ref="newArrivalsScroll"
+            class="flex gap-3 sm:gap-4 overflow-x-auto pb-1 hide-scroll scroll-smooth snap-x snap-mandatory">
+            @forelse($featuredProducts as $product)
+                <div class="w-[170px] sm:w-[220px] md:w-[260px] lg:w-[280px] shrink-0 snap-start">
+                    <x-product-card :product="$product" />
+                </div>
+            @empty
+                <div class="w-full text-center py-12 text-mute text-sm">
+                    Belum ada produk rilis terbaru.
+                </div>
+            @endforelse
+        </div>
+
+        {{-- View All CTA Button --}}
+        <div class="mt-5 sm:mt-6 flex justify-center">
+            <a href="{{ route('shop.index') }}"
+                class="bg-black text-white px-6 sm:px-8 py-2 sm:py-2.5 text-xs sm:text-sm font-bold tracking-widest uppercase hover:bg-neutral-800 transition-colors rounded-full shadow-sm">
+                View All
+            </a>
+        </div>
     </section>
 
-    {{-- ===== 5. LIVE INTERACTIVE CUSTOM NAMESET 2D STUDIO ===== --}}
+    {{-- ===== 4. WIDE PROMO BANNER (RESPONSIVE FULL WIDTH) ===== --}}
+    @if ($promoBanner && $promoBanner->image_url)
+        <section class="wrap pt-5 pb-5 sm:pt-8 sm:pb-8 overflow-hidden">
+            <a href="{{ route('shop.index') }}"
+                class="block relative w-full aspect-[16/9] sm:aspect-[1200/350] bg-neutral-900 rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group shadow-sm">
+                <img src="{{ $promoBanner->image_url }}" alt="Promo Banner"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            </a>
+        </section>
+    @endif
+
+    {{-- ===== 5. KOLEKSI TIMNAS (CONSISTENT INTER-SECTION RHYTHM) ===== --}}
     @php
-        $studioProduct = $customStudioProduct ?? $featuredProducts->first();
-        $studioBackImg = $studioProduct?->thumbnail_back
-            ? asset('storage/' . $studioProduct->thumbnail_back)
-            : 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80';
-        $studioBasePrice = $studioProduct ? (int) $studioProduct->base_price : 299000;
-        $studioNamesetFee = $studioProduct ? (int) $studioProduct->custom_nameset_price : 50000;
-        $studioPatchFee = $studioProduct ? (int) $studioProduct->patch_price : 35000;
+        $timnasList = $featuredProducts->filter(function ($p) {
+            $name = strtolower($p->name);
+            $cat = strtolower($p->category->slug ?? '');
+            return str_contains($name, 'timnas') || str_contains($name, 'garuda') || str_contains($cat, 'tim-nasional');
+        });
+
+        // Fallback jika belum ada produk timnas khusus di DB, tampilkan subset produk
+        $displayTimnas = $timnasList->isNotEmpty() ? $timnasList : $featuredProducts->take(6);
     @endphp
 
-    <section id="custom-studio" class="py-16 sm:py-20 bg-soft-cloud border-t border-hairline-soft"
-        x-data="{
-            productName: '{{ $studioProduct?->name ?? 'Real Madrid 2024/25 Home' }}',
-            basePrice: {{ $studioBasePrice }},
-            namesetFee: {{ $studioNamesetFee }},
-            patchFee: {{ $studioPatchFee }},
-            customName: 'BRUNO',
-            customNumber: '8',
-            selectedSize: 'L',
-            selectedPatch: '',
-            get hasNameset() {
-                return this.customName.trim() !== '' || this.customNumber.trim() !== '';
-            },
-            get grandTotal() {
-                let total = this.basePrice;
-                if (this.hasNameset) total += this.namesetFee;
-                if (this.selectedPatch) total += this.patchFee;
-                return total;
-            }
-        }">
-        <div class="wrap">
-            <div class="max-w-2xl mb-10">
-                <span class="text-xs font-medium uppercase tracking-widest text-mute block mb-1">Live Nameset Studio</span>
-                <h2 class="text-2xl sm:text-3xl font-medium tracking-tight text-ink">
-                    Pasang Nama & Nomor Punggung
+    <section class="wrap pt-5 pb-5 sm:pt-8 sm:pb-8" x-data="{
+        scroll(direction) {
+            const container = this.$refs.timnasScroll;
+            const scrollAmount = container.clientWidth * 0.75;
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+    }">
+
+        {{-- Section Header with Interactive Prev/Next Navigation Controls --}}
+        <div class="flex items-end justify-between mb-4 sm:mb-6 pb-2.5 sm:pb-3 border-b border-gray-200">
+            <div>
+                <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-400 block mb-1">
+                    Produk Selain Jersey
+                </span>
+                <h2 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink uppercase">
+                    Katalog Ngizan
                 </h2>
-                <p class="text-xs text-mute mt-1.5 leading-relaxed">
-                    Teks sablon polyflex dirender langsung secara real-time di atas visual punggung jersey saat Anda mengetik nama dan nomor punggung.
-                </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-                {{-- Left: Mockup Canvas Preview on soft-cloud studio background --}}
-                <div class="lg:col-span-6 bg-white p-4 sm:p-6 border border-hairline-soft">
-                    <div class="nameset-stage border border-hairline-soft">
-                        <img src="{{ $studioBackImg }}" alt="Jersey Back Mockup Studio"
-                            class="select-none pointer-events-none">
-
-                        {{-- 2D Live Typography Layer --}}
-                        <div class="nameset-layer">
-                            <div class="nameset-text-name uppercase" x-text="customName || 'NAMA ANDA'"></div>
-                            <div class="nameset-text-number" x-text="customNumber || '00'"></div>
-                        </div>
-
-                        {{-- Dynamic Patch Badge Display --}}
-                        <template x-if="selectedPatch">
-                            <div class="absolute bottom-4 right-4 bg-ink text-white px-3 py-1 rounded-full text-[11px] font-medium uppercase shadow-md">
-                                <span x-text="'★ ' + selectedPatch"></span>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-                {{-- Right: Interactive Controls Form on White Card --}}
-                <div class="lg:col-span-6 bg-white p-6 sm:p-8 border border-hairline-soft space-y-6">
-                    <div>
-                        <h3 class="font-medium text-lg text-ink" x-text="productName"></h3>
-                        <p class="text-xs text-mute">Sablon Polyflex PU Premium & Heat Press 160°C</p>
-                    </div>
-
-                    <div class="space-y-4 text-xs">
-                        {{-- Input Nama Punggung --}}
-                        <div>
-                            <label class="block font-medium text-ink mb-1.5">
-                                Nama Punggung (Maks. 12 Karakter)
-                                <span class="text-mute font-normal">(+Rp {{ number_format($studioNamesetFee, 0, ',', '.') }})</span>
-                            </label>
-                            <input type="text" x-model="customName" maxlength="12" placeholder="CONTOH: RONALDO"
-                                class="w-full bg-soft-cloud border border-hairline px-4 py-2.5 rounded-full text-sm text-ink uppercase font-jersey tracking-widest focus:outline-none focus:border-ink">
-                        </div>
-
-                        {{-- Input Nomor Punggung --}}
-                        <div>
-                            <label class="block font-medium text-ink mb-1.5">
-                                Nomor Punggung (0 - 99)
-                            </label>
-                            <input type="text" x-model="customNumber" maxlength="2" placeholder="7"
-                                class="w-full bg-soft-cloud border border-hairline px-4 py-2.5 rounded-full text-lg text-ink font-jersey tracking-widest focus:outline-none focus:border-ink">
-                        </div>
-
-                        {{-- Pilih Ukuran --}}
-                        <div>
-                            <label class="block font-medium text-ink mb-2">Pilih Ukuran Jersey</label>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach (['S', 'M', 'L', 'XL', 'XXL'] as $sz)
-                                    <button type="button" @click="selectedSize = '{{ $sz }}'"
-                                        :class="selectedSize === '{{ $sz }}' ?
-                                            'bg-ink text-white border-ink' :
-                                            'bg-white text-ink border-hairline hover:border-ink'"
-                                        class="w-12 py-2 text-center font-medium rounded-full border text-xs transition">
-                                        {{ $sz }}
-                                    </button>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        {{-- Pilihan Patch Lengan --}}
-                        <div>
-                            <label class="block font-medium text-ink mb-1.5">
-                                Pilihan Patch Turnamen
-                                <span class="text-mute font-normal">(+Rp {{ number_format($studioPatchFee, 0, ',', '.') }})</span>
-                            </label>
-                            <select x-model="selectedPatch"
-                                class="w-full bg-soft-cloud border border-hairline px-4 py-2.5 rounded-full text-xs text-ink focus:outline-none focus:border-ink">
-                                <option value="">Tanpa Patch (+Rp 0)</option>
-                                <option value="UCL Starball + Foundation">UEFA Champions League Starball + Foundation</option>
-                                <option value="Premier League Official Gold">Premier League Official Sleeve Badge</option>
-                                <option value="FIFA World Cup Qualifiers">FIFA World Cup Qualifiers Badge</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {{-- Price Bar & Action --}}
-                    <div class="border-t border-hairline-soft pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <div class="text-[11px] text-mute uppercase font-medium">Total Estimasi Harga:</div>
-                            <div class="text-2xl font-medium text-ink mt-0.5"
-                                x-text="'Rp ' + grandTotal.toLocaleString('id-ID')"></div>
-                        </div>
-
-                        @if ($studioProduct)
-                            <a :href="'{{ route('shop.show', $studioProduct->slug) }}' +
-                            '?custom_name=' + encodeURIComponent(customName) + '&custom_number=' +
-                            encodeURIComponent(customNumber) + '&size=' + selectedSize + '&patch=' +
-                            encodeURIComponent(selectedPatch)"
-                                class="btn-primary px-8 py-3.5 text-xs font-medium uppercase tracking-wider text-center">
-                                <span>Beli Spesifikasi Ini &rarr;</span>
-                            </a>
-                        @else
-                            <a href="{{ route('shop.index') }}"
-                                class="btn-primary px-8 py-3.5 text-xs font-medium uppercase tracking-wider text-center">
-                                <span>Beli di Katalog &rarr;</span>
-                            </a>
-                        @endif
-                    </div>
-                </div>
-
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <button type="button" @click="scroll(-1)"
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-hairline hover:border-ink flex items-center justify-center text-ink transition hover:bg-soft-cloud focus:outline-none"
+                    aria-label="Geser ke Kiri">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button type="button" @click="scroll(1)"
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-hairline hover:border-ink flex items-center justify-center text-ink transition hover:bg-soft-cloud focus:outline-none"
+                    aria-label="Geser ke Kanan">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
             </div>
+        </div>
+
+        {{-- Dynamic Horizontally Scrollable Rail --}}
+        <div x-ref="timnasScroll"
+            class="flex gap-3 sm:gap-4 overflow-x-auto pb-1 hide-scroll scroll-smooth snap-x snap-mandatory">
+            @forelse($displayTimnas as $product)
+                <div class="w-[170px] sm:w-[220px] md:w-[260px] lg:w-[280px] shrink-0 snap-start">
+                    <x-product-card :product="$product" />
+                </div>
+            @empty
+                <div class="w-full text-center py-12 text-mute text-sm">
+                    Belum ada produk
+                </div>
+            @endforelse
+        </div>
+
+        {{-- View All CTA Button --}}
+        <div class="mt-5 sm:mt-6 flex justify-center">
+            <a href="{{ route('shop.index', ['category' => 'tim-nasional']) }}"
+                class="bg-black text-white px-6 sm:px-8 py-2 sm:py-2.5 text-xs sm:text-sm font-bold tracking-widest uppercase hover:bg-neutral-800 transition-colors rounded-full shadow-sm">
+                View All
+            </a>
         </div>
     </section>
 

@@ -138,7 +138,126 @@ class MidtransService
     }
 
     /**
-     * 3. Buat Snap Token untuk Pembayaran Langganan Ngizan Premium (Rp 100.000)
+     * 3. Dapatkan Status Transaksi Langsung dari Midtrans API v2
+     *
+     * @param string $orderNumber
+     * @return array|null
+     */
+    public function getTransactionStatus(string $orderNumber): ?array
+    {
+        $statusApiUrl = $this->isProduction
+            ? "https://api.midtrans.com/v2/{$orderNumber}/status"
+            : "https://api.sandbox.midtrans.com/v2/{$orderNumber}/status";
+
+        try {
+            $response = Http::withBasicAuth($this->serverKey, '')
+                ->acceptJson()
+                ->timeout(10)
+                ->get($statusApiUrl);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            Log::warning("Midtrans getTransactionStatus for {$orderNumber} returned {$response->status()}: " . $response->body());
+            return null;
+        } catch (Exception $e) {
+            Log::error("Midtrans getTransactionStatus exception for {$orderNumber}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 4. Sinkronisasi Real-Time Status Pesanan Langsung dari Midtrans API
+     * (Sangat krusial saat webhook tidak tembus di localhost atau sebelum webhook masuk)
+     *
+     * @param Order $order
+     * @return bool True jika status berubah atau lunas
+     */
+    public function syncOrderStatus(Order $order): bool
+    {
+        $payload = $this->getTransactionStatus($order->order_number);
+        if (!$payload) {
+            return false;
+        }
+
+        $transactionStatus = $payload['transaction_status'] ?? null;
+        $fraudStatus       = $payload['fraud_status'] ?? null;
+        $paymentType       = $payload['payment_type'] ?? null;
+        $transactionId     = $payload['transaction_id'] ?? null;
+        $grossAmount       = $payload['gross_amount'] ?? $order->grand_total;
+
+        if (!$transactionStatus) {
+            return false;
+        }
+
+        $payment = Payment::firstOrNew(['order_id' => $order->id]);
+        $payment->transaction_id = $transactionId ?? $payment->transaction_id;
+        $payment->payment_type   = $paymentType ?? $payment->payment_type;
+        $payment->gross_amount   = (float) $grossAmount;
+        $payment->raw_payload    = $payload;
+
+        $statusChanged = false;
+
+        if ($transactionStatus === 'capture') {
+            if ($fraudStatus === 'accept') {
+                $payment->transaction_status = 'settlement';
+                $payment->paid_at            = now();
+                $order->update([
+                    'status'  => \App\Enums\OrderStatus::PAID,
+                    'paid_at' => now(),
+                ]);
+                $statusChanged = true;
+            } elseif ($fraudStatus === 'challenge') {
+                $payment->transaction_status = 'pending';
+            }
+        } elseif ($transactionStatus === 'settlement') {
+            $payment->transaction_status = 'settlement';
+            $payment->paid_at            = now();
+            $order->update([
+                'status'  => \App\Enums\OrderStatus::PAID,
+                'paid_at' => now(),
+            ]);
+            $statusChanged = true;
+        } elseif ($transactionStatus === 'pending') {
+            $payment->transaction_status = 'pending';
+        } elseif (in_array($transactionStatus, ['deny', 'cancel'])) {
+            $payment->transaction_status = 'cancel';
+            if ($order->status !== \App\Enums\OrderStatus::CANCELLED) {
+                $order->update([
+                    'status'       => \App\Enums\OrderStatus::CANCELLED,
+                    'cancelled_at' => now(),
+                ]);
+                app(\App\Services\InventoryService::class)->restoreStock($order, \App\Enums\StockReferenceType::RESTOCK_CANCELLED);
+                $statusChanged = true;
+            }
+        } elseif ($transactionStatus === 'expire') {
+            $payment->transaction_status = 'expire';
+            if ($order->status !== \App\Enums\OrderStatus::EXPIRED) {
+                $order->update([
+                    'status'       => \App\Enums\OrderStatus::EXPIRED,
+                    'cancelled_at' => now(),
+                ]);
+                app(\App\Services\InventoryService::class)->restoreStock($order, \App\Enums\StockReferenceType::RESTOCK_EXPIRED);
+                $statusChanged = true;
+            }
+        }
+
+        $payment->save();
+
+        if ($statusChanged && $order->status === \App\Enums\OrderStatus::PAID) {
+            try {
+                app(\App\Services\WhatsAppService::class)->sendPaymentReceived($order);
+            } catch (\Throwable $e) {
+                Log::warning('WhatsApp Send Payment Received Failed during sync: ' . $e->getMessage());
+            }
+        }
+
+        return $statusChanged;
+    }
+
+    /**
+     * 5. Buat Snap Token untuk Pembayaran Langganan Ngizan Premium (Rp 100.000)
      */
     public function createSubscriptionSnapToken(\App\Models\User $user, \App\Models\PremiumSubscription $subscription): array
     {
@@ -190,11 +309,67 @@ class MidtransService
                 ];
             }
 
-            Log::error('Midtrans Subscription Snap Error: ' . $response->body(), ['code' => $subscription->subscription_code]);
-            throw new Exception($response->json('error_messages.0') ?? 'Gagal membuat Snap Token langganan.');
         } catch (Exception $e) {
             Log::error('Midtrans Subscription Exception: ' . $e->getMessage(), ['code' => $subscription->subscription_code]);
             throw $e;
         }
     }
+
+    /**
+     * 6. Sinkronisasi Real-Time Status Langganan Ngizan Premium dari Midtrans API
+     */
+    public function syncSubscriptionStatus(\App\Models\PremiumSubscription $subscription): bool
+    {
+        $payload = $this->getTransactionStatus($subscription->subscription_code);
+        if (!$payload) {
+            return false;
+        }
+
+        $transactionStatus = $payload['transaction_status'] ?? null;
+        $fraudStatus       = $payload['fraud_status'] ?? null;
+
+        if (!$transactionStatus) {
+            return false;
+        }
+
+        $isSettled = ($transactionStatus === 'settlement') || ($transactionStatus === 'capture' && $fraudStatus === 'accept');
+
+        if ($isSettled) {
+            $duration = $subscription->duration_days ?: 365;
+            $subscription->update([
+                'payment_status' => 'settlement',
+                'paid_at'        => now(),
+                'expires_at'     => now()->addDays($duration),
+            ]);
+
+            $user = $subscription->user;
+            if ($user) {
+                $user->update([
+                    'is_premium'    => true,
+                    'premium_until' => now()->addDays($duration),
+                ]);
+
+                // Kirim notifikasi WA selamat bergabung
+                if ($user->phone) {
+                    try {
+                        $msg = "Selamat bergabung di *Ngizan Premium*, {$user->name}! 💎\n\n"
+                            . "Keanggotaan Anda telah aktif selama 1 tahun. Anda kini otomatis menikmati diskon 5% untuk semua jersey di Ngizan Apparel.\n\n"
+                            . "Cek koleksi jersey terbaru di: " . route('shop.index');
+                        app(\App\Services\WhatsAppService::class)->sendMessage($user->phone, $msg);
+                    } catch (\Throwable $e) {
+                        Log::warning("Gagal kirim WA premium: " . $e->getMessage());
+                    }
+                }
+            }
+
+            return true;
+        } elseif (in_array($transactionStatus, ['expire', 'cancel', 'deny'])) {
+            $subscription->update([
+                'payment_status' => $transactionStatus,
+            ]);
+        }
+
+        return false;
+    }
 }
+

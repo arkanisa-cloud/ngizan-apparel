@@ -4,9 +4,10 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline-soft pb-5">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-hairline-soft pb-5">
         <div>
-            <h1 class="text-2xl font-medium tracking-tight text-ink">Laporan & Audit Stok Gudang</h1>
+            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute block mb-1">Laporan & Keuangan</span>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-ink">Laporan & Audit Stok Gudang</h1>
             <p class="text-xs text-mute mt-1">Audit inventori fisik varian ukuran, sisa stok gudang, dan indikator restock.</p>
         </div>
     </div>

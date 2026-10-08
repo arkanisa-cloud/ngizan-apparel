@@ -6,10 +6,10 @@
 <div class="space-y-6">
     
     {{-- Header --}}
-    <div class="border-b border-hairline-soft pb-5 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-hairline-soft pb-5">
         <div>
-            <span class="text-xs font-medium uppercase tracking-widest text-mute block mb-1">Transaksi & Pengiriman</span>
-            <h1 class="text-2xl sm:text-3xl font-medium tracking-tight text-ink">Manajemen Pesanan</h1>
+            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute block mb-1">Transaksi & Logistik</span>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-ink">Manajemen Pesanan</h1>
             <p class="text-xs text-mute mt-1">Kelola pesanan masuk, kustomisasi sablon, resi kurir, dan cetak label.</p>
         </div>
     </div>
@@ -38,7 +38,8 @@
 
     {{-- Orders Table --}}
     <div class="bg-white rounded-2xl border border-hairline-soft overflow-hidden">
-        <table class="w-full text-xs text-left text-ink">
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left text-ink">
             <thead class="bg-soft-cloud font-medium text-mute border-b border-hairline-soft">
                 <tr>
                     <th class="p-3.5">No. Order & Waktu</th>
@@ -90,11 +91,11 @@
                             </span>
                         </td>
                         <td class="p-3.5 text-right space-x-1.5 whitespace-nowrap">
-                            <a href="{{ route('admin.orders.show', $order->id) }}" class="btn-primary py-1.5 px-3.5 text-xs rounded-full inline-block">
+                            <a href="{{ route('admin.orders.show', $order->id) }}" class="px-3.5 py-1.5 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition inline-block">
                                 Kelola
                             </a>
-                            <a href="{{ route('admin.orders.print.label', $order->id) }}" target="_blank" class="btn-secondary py-1.5 px-3 text-xs rounded-full inline-block" title="Cetak Label Pengiriman">
-                                🖨️
+                            <a href="{{ route('admin.orders.print.label', $order->id) }}" target="_blank" class="p-2 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full transition inline-flex items-center justify-center align-middle" title="Cetak Label Pengiriman">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                             </a>
                         </td>
                     </tr>
@@ -105,6 +106,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
 
         <div class="p-4 border-t border-hairline-soft">
             {{ $orders->links() }}

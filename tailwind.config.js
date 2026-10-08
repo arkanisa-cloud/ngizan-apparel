@@ -50,10 +50,10 @@ export default {
                 'jnt-red': '#ED1C24',
             },
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', ...defaultTheme.fontFamily.sans],
                 display: ['"Bebas Neue"', 'Anton', 'sans-serif'],
                 jersey: ['"Bebas Neue"', 'sans-serif'],
-                archivo: ['Inter', 'sans-serif'],
+                archivo: ['"Inter"', 'sans-serif'],
             },
             borderRadius: {
                 'pill': '30px',

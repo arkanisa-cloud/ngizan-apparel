@@ -105,7 +105,15 @@ class User extends Authenticatable
      */
     public function isPremiumActive(): bool
     {
-        return (bool) $this->is_premium && $this->premium_until && $this->premium_until->isFuture();
+        if (!$this->is_premium) {
+            return false;
+        }
+
+        if ($this->premium_until === null) {
+            return true;
+        }
+
+        return $this->premium_until->isFuture();
     }
 
     /**

@@ -3,25 +3,28 @@
 @section('title', $product->name . ' · Detail Produk Admin')
 
 @section('content')
-<div class="space-y-6 max-w-5xl mx-auto">
+<div class="space-y-6">
     
     {{-- Header --}}
-    <div class="flex items-center justify-between border-b border-hairline-soft pb-5">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-hairline-soft pb-5">
         <div>
+            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute block mb-1">Master Data</span>
             <div class="flex items-center gap-3">
-                <h1 class="text-2xl font-medium tracking-tight text-ink">{{ $product->name }}</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-ink">{{ $product->name }}</h1>
                 <span class="px-3 py-0.5 rounded-full text-[11px] font-medium {{ $product->is_active ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-soft-cloud text-mute border border-hairline' }}">
                     {{ $product->is_active ? 'Aktif' : 'Draft' }}
                 </span>
             </div>
-            <p class="text-xs text-mute mt-1">SKU: <strong class="font-mono text-ink">{{ $product->sku }}</strong> · Kategori: {{ $product->category->name }}</p>
+            <p class="text-xs text-mute mt-1">SKU: <strong class="font-mono text-ink">{{ $product->sku }}</strong> &bull; Kategori: {{ $product->category->name }}</p>
         </div>
-        <div class="flex gap-2">
-            <a href="{{ route('admin.products.edit', $product->id) }}" class="px-4 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition">
-                ✏️ Edit Produk
+        <div class="flex items-center gap-2.5 self-start sm:self-auto">
+            <a href="{{ route('admin.products.edit', $product->id) }}" class="px-5 py-2.5 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition inline-flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span>Edit Kit Jersey</span>
             </a>
-            <a href="{{ route('admin.products.index') }}" class="px-4 py-2 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition">
-                &larr; Kembali
+            <a href="{{ route('admin.products.index') }}" class="px-5 py-2.5 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition inline-flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                <span>Kembali</span>
             </a>
         </div>
     </div>
@@ -62,10 +65,6 @@
                     <span>Opsi Sablon:</span>
                     <strong class="text-ink">{{ $product->allow_custom_nameset ? 'Aktif (+Rp ' . number_format($product->custom_nameset_price, 0, ',', '.') . ')' : 'Tidak Aktif' }}</strong>
                 </div>
-                <div class="flex justify-between">
-                    <span>Opsi Patch:</span>
-                    <strong class="text-ink">{{ $product->allow_patch ? 'Aktif (+Rp ' . number_format($product->patch_price, 0, ',', '.') . ')' : 'Tidak Aktif' }}</strong>
-                </div>
             </div>
         </div>
 
@@ -76,30 +75,32 @@
             <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4">
                 <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3">Matriks Varian Ukuran & Stok</h2>
                 
-                <table class="w-full text-xs text-left text-ink">
-                    <thead class="bg-soft-cloud uppercase font-medium text-mute border-b border-hairline-soft">
-                        <tr>
-                            <th class="p-3">Ukuran</th>
-                            <th class="p-3">Tipe</th>
-                            <th class="p-3">SKU Varian</th>
-                            <th class="p-3">Harga Akhir</th>
-                            <th class="p-3 text-right">Stok Fisik</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-hairline-soft">
-                        @foreach($product->variants as $variant)
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left text-ink">
+                        <thead class="bg-soft-cloud uppercase font-medium text-mute border-b border-hairline-soft">
                             <tr>
-                                <td class="p-3 font-medium text-ink">{{ $variant->size }}</td>
-                                <td class="p-3 uppercase text-[11px] text-mute">{{ $variant->type }}</td>
-                                <td class="p-3 font-mono text-[10px] text-mute">{{ $variant->sku }}</td>
-                                <td class="p-3 font-medium text-ink">{{ $variant->formatted_final_price }}</td>
-                                <td class="p-3 text-right font-medium text-sm {{ $variant->stock <= 3 ? 'text-sale' : 'text-ink' }}">
-                                    {{ $variant->stock }} pcs
-                                </td>
+                                <th class="p-3">Ukuran</th>
+                                <th class="p-3">Tipe</th>
+                                <th class="p-3">SKU Varian</th>
+                                <th class="p-3">Harga Akhir</th>
+                                <th class="p-3 text-right">Stok Fisik</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-hairline-soft">
+                            @foreach($product->variants as $variant)
+                                <tr>
+                                    <td class="p-3 font-medium text-ink">{{ $variant->size }}</td>
+                                    <td class="p-3 uppercase text-[11px] text-mute">{{ $variant->type }}</td>
+                                    <td class="p-3 font-mono text-[10px] text-mute">{{ $variant->sku }}</td>
+                                    <td class="p-3 font-medium text-ink">{{ $variant->formatted_final_price }}</td>
+                                    <td class="p-3 text-right font-medium text-sm {{ $variant->stock <= 3 ? 'text-sale' : 'text-ink' }}">
+                                        {{ $variant->stock }} pcs
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {{-- Audit Trail Riwayat Stok --}}

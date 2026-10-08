@@ -27,9 +27,11 @@ class CategoryRequest extends FormRequest
         $categoryId = $this->route('category')?->id;
 
         return [
-            'name' => 'required|string|max:255|unique:categories,name,' . $categoryId,
+            'name'        => 'required|string|max:255|unique:categories,name,' . $categoryId,
             'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
+            'status'      => 'nullable|in:active,inactive',
+            'is_active'   => 'nullable|boolean',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:10240',
         ];
     }
 
@@ -40,9 +42,10 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name.required' => 'Nama kategori wajib diisi',
-            'name.unique' => 'Nama kategori sudah ada',
-            'status.required' => 'Status wajib dipilih',
-            'status.in' => 'Status tidak valid',
+            'name.unique'   => 'Nama kategori sudah ada',
+            'image.image'   => 'File yang diupload harus berupa gambar',
+            'image.mimes'   => 'Format gambar harus jpeg, png, jpg, webp, atau svg',
+            'image.max'     => 'Ukuran gambar maksimal 10MB',
         ];
     }
 }

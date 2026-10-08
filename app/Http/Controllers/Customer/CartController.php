@@ -23,48 +23,63 @@ class CartController extends Controller
     /**
      * Tampilkan halaman keranjang belanja
      */
-    public function index(): View
-    {
-        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-        $cart->load(['items.product', 'items.variant']);
+     public function index(): View
+     {
+         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+         $cart->load(['items.product', 'items.variant']);
 
-        return view('customer.cart', compact('cart'));
-    }
+         $isPremium = Auth::user()?->isPremiumActive();
+         foreach ($cart->items as $item) {
+             if (!$item->variant) continue;
+             $rawPrice = (float) $item->variant->final_price;
+             $expectedUnitPrice = $isPremium ? (float) round($rawPrice * 0.95) : $rawPrice;
+
+             if ((float) $item->unit_price !== (float) $expectedUnitPrice) {
+                 $item->unit_price = $expectedUnitPrice;
+                 $item->total_price = ($expectedUnitPrice + (float)$item->custom_fee) * $item->quantity;
+                 $item->save();
+             }
+         }
+
+         return view('customer.cart', compact('cart'));
+     }
 
     /**
      * Tambahkan item jersey ke keranjang belanja
      */
-    public function store(Request $request): RedirectResponse|JsonResponse
-    {
-        $validated = $request->validate([
-            'product_id'         => 'required|exists:products,id',
-            'product_variant_id' => 'required|exists:product_variants,id',
-            'quantity'           => 'nullable|integer|min:1|max:20',
-            'custom_name'        => 'nullable|string|max:12',
-            'custom_number'      => 'nullable|string|max:2',
-            'selected_patch'     => 'nullable|string|max:100',
-        ]);
+     public function store(Request $request): RedirectResponse|JsonResponse
+     {
+         $validated = $request->validate([
+             'product_id'         => 'required|exists:products,id',
+             'product_variant_id' => 'required|exists:product_variants,id',
+             'quantity'           => 'nullable|integer|min:1|max:20',
+             'custom_name'        => 'nullable|string|max:12',
+             'custom_number'      => 'nullable|string|max:2',
+             'selected_patch'     => 'nullable|string|max:100',
+         ]);
 
-        $qty = (int) ($validated['quantity'] ?? 1);
-        $variant = ProductVariant::with('product')->findOrFail($validated['product_variant_id']);
-        $product = $variant->product;
+         $qty = (int) ($validated['quantity'] ?? 1);
+         $variant = ProductVariant::with('product')->findOrFail($validated['product_variant_id']);
+         $product = $variant->product;
 
-        // Validasi stok
-        if ($variant->stock < $qty) {
-            $msg = "Stok {$product->name} ukuran {$variant->size} tidak mencukupi (Sisa: {$variant->stock}).";
-            if ($request->wantsJson()) {
-                return response()->json(['success' => false, 'message' => $msg], 422);
-            }
-            return back()->with('error', $msg)->withInput();
-        }
+         // Validasi stok
+         if ($variant->stock < $qty) {
+             $msg = "Stok {$product->name} ukuran {$variant->size} tidak mencukupi (Sisa: {$variant->stock}).";
+             if ($request->wantsJson()) {
+                 return response()->json(['success' => false, 'message' => $msg], 422);
+             }
+             return back()->with('error', $msg)->withInput();
+         }
 
-        // Kalkulasi biaya kustom
-        $hasNameset = $product->allow_custom_nameset && (!empty($validated['custom_name']) || !empty($validated['custom_number']));
-        $hasPatch = $product->allow_patch && !empty($validated['selected_patch']);
+         // Kalkulasi biaya kustom & diskon membership premium 5%
+         $hasNameset = $product->allow_custom_nameset && (!empty($validated['custom_name']) || !empty($validated['custom_number']));
+         $hasPatch = $product->allow_patch && !empty($validated['selected_patch']);
 
-        $unitPrice = $variant->final_price;
-        $customFee = ($hasNameset ? (float)$product->custom_nameset_price : 0) + ($hasPatch ? (float)$product->patch_price : 0);
-        $totalPrice = ($unitPrice + $customFee) * $qty;
+         $isPremium = Auth::check() && Auth::user()->isPremiumActive();
+         $rawPrice = (float) $variant->final_price;
+         $unitPrice = $isPremium ? (float) round($rawPrice * 0.95) : $rawPrice;
+         $customFee = ($hasNameset ? (float)$product->custom_nameset_price : 0) + ($hasPatch ? (float)$product->patch_price : 0);
+         $totalPrice = ($unitPrice + $customFee) * $qty;
 
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 

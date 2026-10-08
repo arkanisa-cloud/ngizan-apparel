@@ -3,15 +3,19 @@
 @section('title', 'Edit Produk: ' . $product->name . ' · NGIZAN APPAREL')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="max-w-4xl space-y-6">
     
-    {{-- Breadcrumb & Title --}}
-    <div class="flex items-center justify-between border-b border-hairline-soft pb-5">
+    {{-- Header --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-hairline-soft pb-5">
         <div>
-            <h1 class="text-2xl font-medium tracking-tight text-ink">Edit Kit Jersey</h1>
+            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute block mb-1">Master Data</span>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-ink">Edit Kit Jersey</h1>
             <p class="text-xs text-mute mt-1">Perbarui informasi harga, status aktif, foto POV, dan konfigurasi sablon/patch.</p>
         </div>
-        <a href="{{ route('admin.products.index') }}" class="px-4 py-2 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition">&larr; Kembali</a>
+        <a href="{{ route('admin.products.index') }}" class="px-5 py-2.5 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition self-start sm:self-auto flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>Kembali</span>
+        </a>
     </div>
 
     <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
@@ -34,6 +38,18 @@
                     <select name="category_id" required class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink focus:outline-none focus:border-ink cursor-pointer">
                         @foreach($categories as $cat)
                             <option value="{{ $cat->id }}" {{ old('category_id', $product->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Template Panduan Ukuran (Size Chart)</label>
+                    <select name="size_chart_id" class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink focus:outline-none focus:border-ink cursor-pointer">
+                        <option value="">Gunakan Default Sistem</option>
+                        @foreach($sizeCharts as $sc)
+                            <option value="{{ $sc->id }}" {{ old('size_chart_id', $product->size_chart_id) == $sc->id ? 'selected' : '' }}>
+                                {{ $sc->name }} ({{ count($sc->rows ?? []) }} Ukuran)
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -77,6 +93,7 @@
                         <img src="{{ asset('storage/' . $product->thumbnail_front) }}" alt="Front POV" class="w-24 h-28 object-cover rounded-xl border border-hairline-soft mb-2">
                     @endif
                     <input type="file" name="thumbnail_front" accept="image/*" class="w-full text-xs text-mute file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-soft-cloud file:text-ink hover:file:bg-neutral-200 cursor-pointer">
+                    <p class="text-[11px] text-mute mt-1">Kosongkan jika tidak diganti (JPG, PNG, WEBP Maks. 10MB, auto resize & WebP).</p>
                 </div>
 
                 <div>
@@ -85,15 +102,16 @@
                         <img src="{{ asset('storage/' . $product->thumbnail_back) }}" alt="Back POV" class="w-24 h-28 object-cover rounded-xl border border-hairline-soft mb-2">
                     @endif
                     <input type="file" name="thumbnail_back" accept="image/*" class="w-full text-xs text-mute file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-soft-cloud file:text-ink hover:file:bg-neutral-200 cursor-pointer">
+                    <p class="text-[11px] text-mute mt-1">Kosongkan jika tidak diganti (Maks. 10MB, auto resize & WebP).</p>
                 </div>
             </div>
         </div>
 
-        {{-- 3. FITUR KUSTOMISASI & PATCH --}}
+        {{-- 3. FITUR KUSTOMISASI SABLON --}}
         <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4 text-xs">
-            <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3">3. Konfigurasi Sablon Nameset & Patch</h2>
+            <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3">3. Konfigurasi Kustom Sablon Nameset</h2>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="max-w-md">
                 <div class="space-y-3 p-4 bg-soft-cloud rounded-xl border border-hairline-soft">
                     <label class="flex items-center gap-2 font-medium text-ink cursor-pointer">
                         <input type="checkbox" name="allow_custom_nameset" value="1" {{ $product->allow_custom_nameset ? 'checked' : '' }} class="rounded text-ink focus:ring-ink">
@@ -102,18 +120,6 @@
                     <div>
                         <label class="block text-mute font-medium mb-1 text-[11px]">Biaya Tambahan Sablon (Rp)</label>
                         <input type="number" name="custom_nameset_price" value="{{ old('custom_nameset_price', (int)$product->custom_nameset_price) }}" step="1000"
-                               class="w-full bg-white border border-hairline p-2 rounded-lg text-xs text-ink focus:outline-none focus:border-ink">
-                    </div>
-                </div>
-
-                <div class="space-y-3 p-4 bg-soft-cloud rounded-xl border border-hairline-soft">
-                    <label class="flex items-center gap-2 font-medium text-ink cursor-pointer">
-                        <input type="checkbox" name="allow_patch" value="1" {{ $product->allow_patch ? 'checked' : '' }} class="rounded text-ink focus:ring-ink">
-                        <span>Aktifkan Pilihan Patch Turnamen</span>
-                    </label>
-                    <div>
-                        <label class="block text-mute font-medium mb-1 text-[11px]">Biaya Tambahan Patch (Rp)</label>
-                        <input type="number" name="patch_price" value="{{ old('patch_price', (int)$product->patch_price) }}" step="1000"
                                class="w-full bg-white border border-hairline p-2 rounded-lg text-xs text-ink focus:outline-none focus:border-ink">
                     </div>
                 </div>

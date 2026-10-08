@@ -32,10 +32,11 @@ class ProductAndVariantSeeder extends Seeder
         );
 
         // Ambil ID Kategori
-        $catEropa = Category::where('slug', 'klub-eropa')->first();
-        $catTimnas = Category::where('slug', 'tim-nasional')->first();
-        $catRetro = Category::where('slug', 'retro-classics')->first();
-        $catSpecial = Category::where('slug', 'special-edition')->first();
+        $defaultCatId = Category::first()?->id ?? 1;
+        $catEropa = Category::where('slug', 'klub-eropa')->first()?->id ?? $defaultCatId;
+        $catTimnas = Category::where('slug', 'tim-nasional')->first()?->id ?? $defaultCatId;
+        $catRetro = Category::where('slug', 'retro-classics')->first()?->id ?? Category::where('slug', 'bola-sepak')->first()?->id ?? $defaultCatId;
+        $catSpecial = Category::where('slug', 'special-edition')->first()?->id ?? Category::where('slug', 'bola-futsal')->first()?->id ?? $defaultCatId;
 
         // 2. Daftar 5 Produk Realistis
         $productsData = [

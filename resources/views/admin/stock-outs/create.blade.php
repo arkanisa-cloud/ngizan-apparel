@@ -3,13 +3,17 @@
 @section('title', 'Catat Stok Keluar · NGIZAN APPAREL')
 
 @section('content')
-<div class="max-w-2xl mx-auto space-y-6">
-    <div class="flex items-center justify-between border-b border-hairline-soft pb-5">
+<div class="max-w-4xl space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-hairline-soft pb-5">
         <div>
-            <h1 class="text-2xl font-medium tracking-tight text-ink">Catat Penyesuaian Stok Keluar</h1>
+            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute block mb-1">Gudang & Inventori</span>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-ink">Catat Penyesuaian Stok Keluar</h1>
             <p class="text-xs text-mute mt-1">Kurangi kuantitas stok akibat barang cacat, sampel display, atau promosi.</p>
         </div>
-        <a href="{{ route('admin.stock-outs.index') }}" class="px-4 py-2 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition">&larr; Kembali</a>
+        <a href="{{ route('admin.stock-outs.index') }}" class="px-5 py-2.5 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition self-start sm:self-auto flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>Kembali</span>
+        </a>
     </div>
 
     <form action="{{ route('admin.stock-outs.store') }}" method="POST" class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4 text-xs">

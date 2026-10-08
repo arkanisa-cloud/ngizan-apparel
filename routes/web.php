@@ -15,8 +15,9 @@ Route::get('/product/{product:slug}', [ShopController::class, 'show'])->name('sh
 Route::get('/customer/shop', [ShopController::class, 'index'])->name('customer.shop.index');
 Route::get('/customer/product/{product}', [ShopController::class, 'show'])->name('customer.shop.show');
 
-// API Shipping (Biteship Proxy)
+// API Shipping (Biteship & OSM Geocoding)
 Route::get('/api/shipping/areas', [CheckoutController::class, 'searchAreas'])->name('api.shipping.areas');
+Route::get('/api/shipping/reverse-geocode', [CheckoutController::class, 'reverseGeocode'])->name('api.shipping.reverse-geocode');
 Route::post('/api/shipping/rates', [CheckoutController::class, 'getRates'])->name('api.shipping.rates');
 
 // Dashboard Dispatcher
@@ -37,8 +38,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Master Kategori
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
 
+    // Master Banner & Hero Section
+    Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class)->only(['index', 'edit', 'update']);
+
     // Master Produk & Varian Matrix
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
+
+    // Master Panduan Ukuran (Size Charts)
+    Route::resource('size-charts', \App\Http\Controllers\Admin\SizeChartController::class);
 
     // Inventori & Mutasi Stok
     Route::resource('stock-ins', \App\Http\Controllers\Admin\StockInController::class)->only(['index', 'create', 'store', 'show']);
@@ -73,9 +80,15 @@ Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->
     // Orders & Tracking
     Route::get('/orders', [CheckoutController::class, 'indexOrders'])->name('orders.index');
     Route::get('/orders/{order}', [CheckoutController::class, 'showOrder'])->name('orders.show');
+    Route::post('/orders/{order}/sync-payment', [CheckoutController::class, 'syncPayment'])->name('orders.sync-payment');
+
+    // Shipping Addresses
+    Route::patch('/addresses/{address}/primary', [\App\Http\Controllers\Customer\ShippingAddressController::class, 'setPrimary'])->name('addresses.primary');
+    Route::resource('addresses', \App\Http\Controllers\Customer\ShippingAddressController::class);
 
     // Ngizan Premium Subscription
     Route::post('/premium/subscribe', [\App\Http\Controllers\Customer\PremiumSubscriptionController::class, 'store'])->name('premium.subscribe');
+    Route::post('/premium/sync', [\App\Http\Controllers\Customer\PremiumSubscriptionController::class, 'sync'])->name('premium.sync');
 
     // Product Reviews (Verified Buyer)
     Route::post('/reviews', [\App\Http\Controllers\Customer\ReviewController::class, 'store'])->name('reviews.store');

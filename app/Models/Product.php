@@ -18,6 +18,7 @@ class Product extends Model
 
     protected $fillable = [
         'category_id',
+        'size_chart_id',
         'name',
         'slug',
         'description',
@@ -55,6 +56,14 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Relasi ke Master Panduan Ukuran (Size Chart)
+     */
+    public function sizeChart(): BelongsTo
+    {
+        return $this->belongsTo(SizeChart::class);
     }
 
     /**

@@ -123,7 +123,7 @@
 <body onload="window.print()">
 
     <div class="no-print" style="margin-bottom: 15px; text-align: center;">
-        <button onclick="window.print()" class="print-btn">🖨️ Cetak Ulang Label</button>
+        <button onclick="window.print()" class="print-btn">Cetak Ulang Label</button>
     </div>
 
     {{-- Header --}}
@@ -208,7 +208,7 @@
                         <td>
                             [ ] <strong>{{ $item->product_name }}</strong> (Size: {{ $item->size }}, {{ $item->type }})
                             @if($item->custom_name || $item->custom_number)
-                                <span class="nameset-tag">⚡ SABLON: {{ $item->custom_name }} #{{ $item->custom_number }}</span>
+                                <span class="nameset-tag">SABLON: {{ $item->custom_name }} #{{ $item->custom_number }}</span>
                             @endif
                             @if($item->selected_patch)
                                 <span style="font-size: 9px; color: #707072;">★ {{ $item->selected_patch }}</span>
