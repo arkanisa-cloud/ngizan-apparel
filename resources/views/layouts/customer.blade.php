@@ -491,22 +491,6 @@
                     <span class="text-[10px] text-neutral-400 font-normal">02</span>
                 </a>
 
-                {{-- Sub Categories Quick Access (Simple Clean Badges) --}}
-                <div class="py-2 flex items-center gap-1.5 overflow-x-auto hide-scroll">
-                    <a href="{{ route('shop.index', ['category' => 'klub-eropa']) }}" @click="mobileOpen = false"
-                        class="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-[11px] font-medium rounded-md whitespace-nowrap transition normal-case tracking-normal">
-                        Klub Eropa
-                    </a>
-                    <a href="{{ route('shop.index', ['category' => 'tim-nasional']) }}" @click="mobileOpen = false"
-                        class="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-[11px] font-medium rounded-md whitespace-nowrap transition normal-case tracking-normal">
-                        Tim Nasional
-                    </a>
-                    <a href="{{ route('shop.index', ['category' => 'retro-classics']) }}" @click="mobileOpen = false"
-                        class="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-[11px] font-medium rounded-md whitespace-nowrap transition normal-case tracking-normal">
-                        Retro Archive
-                    </a>
-                </div>
-
                 <a href="{{ request()->routeIs('home') ? '#contact' : route('home') . '#contact' }}"
                     @click="mobileOpen = false"
                     class="flex items-center justify-between py-2.5 text-neutral-600 hover:text-ink transition">
