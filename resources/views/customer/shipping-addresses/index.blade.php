@@ -109,7 +109,9 @@
                                         </a>
 
                                         <form action="{{ route('customer.addresses.destroy', $address) }}" method="POST"
-                                            onsubmit="return confirm('Hapus alamat ini dari buku alamat Anda?');"
+                                            data-confirm-title="Hapus Alamat Pengiriman?"
+                                            data-confirm-text="Apakah Anda yakin ingin menghapus alamat '{{ $address->label }}'?"
+                                            data-confirm-btn="Ya, Hapus"
                                             class="inline">
                                             @csrf
                                             @method('DELETE')

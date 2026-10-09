@@ -8,7 +8,6 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\StockHistory;
 use App\Models\StockIn;
-use App\Models\Supplier;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -17,13 +16,13 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Controller StockInController (Admin)
- * Mengelola pencatatan stok masuk restock supplier dan audit trail inventori
+ * Mengelola pencatatan stok masuk restock dan audit trail inventori
  */
 class StockInController extends Controller
 {
     public function index(): View
     {
-        $stockIns = StockIn::with(['variant.product', 'supplier'])
+        $stockIns = StockIn::with(['variant.product'])
             ->latest()
             ->paginate(12);
 
@@ -33,15 +32,13 @@ class StockInController extends Controller
     public function create(): View
     {
         $products = Product::active()->with('variants')->get();
-        $suppliers = Supplier::all();
 
-        return view('admin.stock-ins.create', compact('products', 'suppliers'));
+        return view('admin.stock-ins.create', compact('products'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'supplier_id'        => 'required|exists:suppliers,id',
             'product_variant_id' => 'required|exists:product_variants,id',
             'quantity'           => 'required|integer|min:1',
             'purchase_price'     => 'required|numeric|min:0',
@@ -66,7 +63,7 @@ class StockInController extends Controller
                 'quantity_change'    => $validated['quantity'],
                 'stock_before'       => $stockBefore,
                 'stock_after'        => $variant->stock,
-                'notes'              => 'Restock Supplier Invoice: ' . ($validated['invoice_number'] ?: '-'),
+                'notes'              => 'Restock Invoice: ' . ($validated['invoice_number'] ?: '-'),
             ]);
 
             DB::commit();
@@ -81,7 +78,7 @@ class StockInController extends Controller
 
     public function show(StockIn $stockIn): View
     {
-        $stockIn->load(['variant.product', 'supplier']);
+        $stockIn->load(['variant.product']);
         return view('admin.stock-ins.show', compact('stockIn'));
     }
 }

@@ -9,6 +9,15 @@
     $activeCategory = request('category')
         ? $categories->first(fn($c) => $c->slug == request('category') || (string)$c->id == (string)request('category'))
         : null;
+
+    $currentSort = request('sort', 'latest');
+    $sortLabels = [
+        'latest' => 'Rilis Terbaru',
+        'price_low' => 'Harga: Rendah ke Tinggi',
+        'price_high' => 'Harga: Tinggi ke Rendah',
+        'name' => 'Nama: A - Z',
+    ];
+    $currentSortLabel = $sortLabels[$currentSort] ?? 'Rilis Terbaru';
 @endphp
 
 @section('content')
@@ -95,41 +104,53 @@
                         @endif
                     </form>
 
-                    {{-- Sort Dropdown --}}
-                    <form method="GET" action="{{ route('shop.index') }}" class="flex items-center">
-                        @if (request('category'))
-                            <input type="hidden" name="category" value="{{ request('category') }}">
-                        @endif
-                        @if (request('size'))
-                            <input type="hidden" name="size" value="{{ request('size') }}">
-                        @endif
-                        @if (request('type'))
-                            <input type="hidden" name="type" value="{{ request('type') }}">
-                        @endif
-                        @if (request('search'))
-                            <input type="hidden" name="search" value="{{ request('search') }}">
-                        @endif
+                    {{-- Sort Dropdown (Custom Nike Luxury Pill) --}}
+                    <div class="relative" x-data="{ sortOpen: false }">
+                        <button type="button" @click="sortOpen = !sortOpen"
+                            class="inline-flex items-center gap-2 bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-full px-4 py-2 transition focus:outline-none cursor-pointer shadow-2xs select-none">
+                            <span class="text-mute font-normal hidden sm:inline">Urutkan:</span>
+                            <span class="font-bold">{{ $currentSortLabel }}</span>
+                            <svg class="w-3.5 h-3.5 text-mute transition-transform duration-200"
+                                :class="sortOpen ? 'rotate-180 text-ink' : ''" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
 
-                        <div class="relative">
-                            <select name="sort" id="sort" onchange="this.form.submit()"
-                                class="appearance-none bg-soft-cloud border border-hairline text-ink text-xs font-semibold rounded-full pl-4 pr-8 py-1.5 focus:ring-1 focus:ring-ink focus:border-ink cursor-pointer">
-                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Rilis Terbaru
-                                </option>
-                                <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga:
-                                    Rendah ke Tinggi</option>
-                                <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga:
-                                    Tinggi ke Rendah</option>
-                                <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Nama A - Z
-                                </option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-ink">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
+                        {{-- Floating Menu --}}
+                        <div x-show="sortOpen" @click.away="sortOpen = false" x-cloak
+                            x-transition:enter="transition ease-out duration-150 transform"
+                            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-100 transform"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute right-0 mt-2 w-56 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl">
+
+                            <div
+                                class="px-3.5 py-1.5 border-b border-hairline-soft text-[10px] font-bold uppercase tracking-wider text-mute">
+                                Urutkan Berdasarkan
+                            </div>
+
+                            <div class="py-1">
+                                @foreach ($sortLabels as $val => $label)
+                                    @php $isSelected = ($currentSort === $val); @endphp
+                                    <a href="{{ route('shop.index', array_merge(request()->except('page', 'sort'), $val !== 'latest' ? ['sort' => $val] : [])) }}"
+                                        class="flex items-center justify-between px-3.5 py-2.5 transition {{ $isSelected ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium' }}">
+                                        <span>{{ $label }}</span>
+                                        @if ($isSelected)
+                                            <svg class="w-4 h-4 text-ink shrink-0" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        @endif
+                                    </a>
+                                @endforeach
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
 

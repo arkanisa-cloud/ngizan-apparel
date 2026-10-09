@@ -15,7 +15,6 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ShippingAddress;
 use App\Models\StockHistory;
-use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

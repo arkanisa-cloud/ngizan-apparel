@@ -9,7 +9,6 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\StockHistory;
-use App\Models\Supplier;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -20,17 +19,6 @@ class ProductAndVariantSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Buat Supplier
-        $supplier = Supplier::updateOrCreate(
-            ['name' => 'Ngizan Kit Factory Bandung'],
-            [
-                'contact_person' => 'Kang Asep Apparel',
-                'phone'          => '081122334455',
-                'email'          => 'supplier@ngizanapparel.com',
-                'address'        => 'Kawasan Industri Tekstil Batununggal No. 45, Bandung, Jawa Barat',
-            ]
-        );
-
         // Ambil ID Kategori
         $defaultCatId = Category::first()?->id ?? 1;
         $catEropa = Category::where('slug', 'klub-eropa')->first()?->id ?? $defaultCatId;

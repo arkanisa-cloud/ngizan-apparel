@@ -44,15 +44,116 @@
 
                 <div>
                     <label class="block font-bold text-ink uppercase text-[11px] tracking-wider mb-1.5">
-                        Kategori Pakaian *
+                        Kategori Pakaian <span class="text-sale">*</span>
                     </label>
-                    <select name="category_type" required
-                            class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-xl text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition font-medium">
-                        <option value="tops" {{ old('category_type', $sizeChart->category_type) === 'tops' ? 'selected' : '' }}>Atasan / Jersey (Tops)</option>
-                        <option value="bottoms" {{ old('category_type', $sizeChart->category_type) === 'bottoms' ? 'selected' : '' }}>Bawahan / Celana (Bottoms)</option>
-                        <option value="outerwear" {{ old('category_type', $sizeChart->category_type) === 'outerwear' ? 'selected' : '' }}>Jaket / Luaran (Outerwear)</option>
-                        <option value="other" {{ old('category_type', $sizeChart->category_type) === 'other' ? 'selected' : '' }}>Lainnya / Setelan</option>
-                    </select>
+                    <div class="relative" x-data="{ 
+                        open: false, 
+                        search: '{{ old('category_type', $sizeChart->category_type) }}',
+                        selected: '{{ old('category_type', $sizeChart->category_type) }}',
+                        options: [
+                            @foreach($categories as $category)
+                                { id: '{{ $category->name }}', label: '{{ $category->name }}' },
+                            @endforeach
+                        ],
+                        get filteredOptions() {
+                            if (!this.search || this.search.trim() === '') {
+                                return this.options;
+                            }
+                            return this.options.filter(o => o.label.toLowerCase().includes(this.search.toLowerCase()));
+                        },
+                        selectOption(item) {
+                            this.selected = item.id;
+                            this.search = item.label;
+                            this.open = false;
+                        },
+                        handleInput() {
+                            this.selected = this.search;
+                            this.open = true;
+                        }
+                    }">
+                        <input type="hidden" name="category_type" :value="selected" required>
+
+                        {{-- Combobox Input Trigger --}}
+                        <div class="relative flex items-center">
+                            <input type="text" 
+                                   x-model="search"
+                                   @focus="open = true"
+                                   @input="handleInput()"
+                                   @keydown.escape="open = false"
+                                   @click.outside="open = false"
+                                   placeholder="Pilih atau cari kategori..."
+                                   class="w-full bg-soft-cloud focus:bg-white hover:bg-neutral-200/70 border border-hairline-soft focus:border-ink text-ink text-xs font-semibold rounded-2xl pl-4 pr-16 py-3 transition focus:outline-none shadow-2xs">
+
+                            <div class="absolute right-3 flex items-center gap-1.5">
+                                <template x-if="search && search.length > 0">
+                                    <button type="button" 
+                                            @click.stop="search = ''; selected = ''; open = true" 
+                                            class="p-1 text-mute hover:text-ink transition cursor-pointer"
+                                            title="Hapus pencarian">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </template>
+                                <button type="button" 
+                                        @click.stop="open = !open" 
+                                        class="p-1 text-mute hover:text-ink transition cursor-pointer">
+                                    <svg class="w-4 h-4 transition-transform duration-200"
+                                         :class="open ? 'rotate-180 text-ink' : ''" 
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Combobox Results Dropdown --}}
+                        <div x-show="open" 
+                            @click.away="open = false" 
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150 transform"
+                            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-100 transform"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute left-0 right-0 mt-2 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl max-h-60 overflow-y-auto">
+                            
+                            <div class="px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-mute border-b border-hairline-soft flex items-center justify-between">
+                                <span>Kategori Database</span>
+                                <span x-text="filteredOptions.length + ' opsi'"></span>
+                            </div>
+
+                            <template x-for="item in filteredOptions" :key="item.id">
+                                <button type="button" 
+                                    @click="selectOption(item)"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 transition text-left cursor-pointer"
+                                    :class="selected.toLowerCase() === item.id.toLowerCase() ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full" :class="selected.toLowerCase() === item.id.toLowerCase() ? 'bg-ink' : 'bg-transparent'"></span>
+                                        <span x-text="item.label"></span>
+                                    </div>
+                                    <span x-show="selected.toLowerCase() === item.id.toLowerCase()" class="text-ink font-bold">✓</span>
+                                </button>
+                            </template>
+
+                            {{-- Option to use typed text if not strictly in database --}}
+                            <template x-if="search && search.trim() !== '' && !options.some(o => o.label.toLowerCase() === search.trim().toLowerCase())">
+                                <button type="button" 
+                                    @click="selected = search.trim(); open = false"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 transition text-left cursor-pointer bg-amber-50/50 hover:bg-amber-50 text-ink border-t border-hairline-soft font-semibold">
+                                    <span class="truncate">Gunakan input: <strong class="text-ink" x-text="'\'' + search.trim() + '\''"></strong></span>
+                                    <span class="text-[10px] bg-amber-200/80 px-2 py-0.5 rounded-full text-amber-900 font-bold">Kustom +</span>
+                                </button>
+                            </template>
+
+                            <template x-if="filteredOptions.length === 0 && (!search || search.trim() === '')">
+                                <div class="px-4 py-3 text-center text-mute text-[11px]">
+                                    Belum ada kategori terdaftar di database.
+                                </div>
+                            </template>
+                        </div>
+                    </div>
                 </div>
             </div>
 

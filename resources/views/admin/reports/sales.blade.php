@@ -10,7 +10,7 @@
         <div>
             <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute block mb-1">Laporan & Keuangan</span>
             <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-ink">Laporan Penjualan & Finansial</h1>
-            <p class="text-xs text-mute mt-1">Rekapitulasi omset jersey, biaya kustom sablon nameset, patch turnamen, dan ongkos kirim.</p>
+            <p class="text-xs text-mute mt-1">Rekapitulasi omset penjualan, volume pesanan berhasil, total produk terjual, dan rata-rata transaksi.</p>
         </div>
         <a href="{{ route('admin.reports.export.sales', request()->all()) }}" class="px-5 py-2.5 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5 self-start sm:self-auto cursor-pointer">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -30,12 +30,53 @@
         </div>
         <div class="w-full sm:w-auto">
             <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[10px]">Status Pesanan</label>
-            <select name="status" class="w-full sm:w-auto bg-soft-cloud border border-hairline px-4 py-2 rounded-full text-xs text-ink font-medium focus:outline-none focus:border-ink cursor-pointer">
-                <option value="">Semua Status</option>
-                @foreach(\App\Enums\OrderStatus::cases() as $st)
-                    <option value="{{ $st->value }}" {{ $status === $st->value ? 'selected' : '' }}>{{ $st->label() }}</option>
-                @endforeach
-            </select>
+            <div class="relative" x-data="{ 
+                statusOpen: false, 
+                selected: '{{ $status ?? '' }}',
+                options: [
+                    { id: '', label: 'Semua Status' },
+                    @foreach(\App\Enums\OrderStatus::cases() as $st)
+                        { id: '{{ $st->value }}', label: '{{ $st->label() }}' },
+                    @endforeach
+                ],
+                get currentLabel() {
+                    const found = this.options.find(o => o.id === this.selected);
+                    return found ? found.label : 'Semua Status';
+                }
+            }">
+                <input type="hidden" name="status" :value="selected">
+
+                <button type="button" 
+                    @click="statusOpen = !statusOpen" 
+                    @keydown.escape="statusOpen = false"
+                    class="w-full sm:w-auto inline-flex items-center justify-between gap-3 bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-full px-4 py-2 transition focus:outline-none cursor-pointer shadow-2xs select-none">
+                    <span x-text="currentLabel"></span>
+                    <svg class="w-3.5 h-3.5 text-mute transition-transform duration-200"
+                        :class="statusOpen ? 'rotate-180 text-ink' : ''" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div x-show="statusOpen" @click.away="statusOpen = false" x-cloak
+                    x-transition:enter="transition ease-out duration-150 transform"
+                    x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-100 transform"
+                    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                    class="absolute left-0 mt-2 w-56 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl">
+                    <template x-for="item in options" :key="item.id">
+                        <button type="button" 
+                            @click="selected = item.id; statusOpen = false"
+                            class="w-full flex items-center justify-between px-3.5 py-2 transition text-left cursor-pointer"
+                            :class="selected === item.id ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                            <span x-text="item.label"></span>
+                            <span x-show="selected === item.id" class="text-ink font-bold">✓</span>
+                        </button>
+                    </template>
+                </div>
+            </div>
         </div>
         <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition cursor-pointer">
             Filter Data
@@ -44,36 +85,40 @@
 
     {{-- Financial Summary Breakdown Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {{-- Card 1: Total Omset --}}
         <div class="bg-soft-cloud p-5 rounded-2xl border border-hairline-soft space-y-1">
-            <span class="text-[11px] font-medium uppercase tracking-wider text-mute">Total Omset Bersih</span>
-            <div class="text-2xl font-medium text-ink tabular-nums">
+            <span class="text-[11px] font-semibold uppercase tracking-wider text-mute">Total Omset Penjualan</span>
+            <div class="text-2xl font-bold text-ink tabular-nums">
                 Rp {{ number_format($totalRevenue, 0, ',', '.') }}
             </div>
-            <p class="text-[11px] text-mute">Dari {{ $paidOrders->count() }} pesanan lunas</p>
+            <p class="text-[11px] text-mute">Dari {{ number_format($totalOrdersCount) }} pesanan lunas</p>
         </div>
 
+        {{-- Card 2: Total Pesanan Berhasil --}}
         <div class="bg-soft-cloud p-5 rounded-2xl border border-hairline-soft space-y-1">
-            <span class="text-[11px] font-medium uppercase tracking-wider text-mute">Penjualan Jersey Murni</span>
-            <div class="text-2xl font-medium text-ink tabular-nums">
-                Rp {{ number_format($totalSubtotal - $totalCustomFee, 0, ',', '.') }}
+            <span class="text-[11px] font-semibold uppercase tracking-wider text-mute">Pesanan Berhasil</span>
+            <div class="text-2xl font-bold text-ink tabular-nums">
+                {{ number_format($totalOrdersCount) }} <span class="text-base font-medium text-mute">Order</span>
             </div>
-            <p class="text-[11px] text-mute">Harga dasar kit</p>
+            <p class="text-[11px] text-mute">Status lunas & selesai diproses</p>
         </div>
 
+        {{-- Card 3: Total Produk Terjual --}}
         <div class="bg-soft-cloud p-5 rounded-2xl border border-hairline-soft space-y-1">
-            <span class="text-[11px] font-medium uppercase tracking-wider text-mute">Omset Sablon & Patch</span>
-            <div class="text-2xl font-medium text-ink tabular-nums">
-                Rp {{ number_format($totalCustomFee, 0, ',', '.') }}
+            <span class="text-[11px] font-semibold uppercase tracking-wider text-mute">Total Produk Terjual</span>
+            <div class="text-2xl font-bold text-emerald-700 tabular-nums">
+                {{ number_format($totalItemsSold) }} <span class="text-base font-medium text-emerald-600/70">Pcs</span>
             </div>
-            <p class="text-[11px] text-mute">Fee sablon nameset + patch</p>
+            <p class="text-[11px] text-mute">Akumulasi volume barang terjual</p>
         </div>
 
+        {{-- Card 4: Average Order Value (AOV) --}}
         <div class="bg-soft-cloud p-5 rounded-2xl border border-hairline-soft space-y-1">
-            <span class="text-[11px] font-medium uppercase tracking-wider text-mute">Total Ongkir Biteship</span>
-            <div class="text-2xl font-medium text-ink tabular-nums">
-                Rp {{ number_format($totalShipping, 0, ',', '.') }}
+            <span class="text-[11px] font-semibold uppercase tracking-wider text-mute">Rata-rata Order (AOV)</span>
+            <div class="text-2xl font-bold text-ink tabular-nums">
+                Rp {{ number_format($averageOrderValue, 0, ',', '.') }}
             </div>
-            <p class="text-[11px] text-mute">Diteruskan ke kurir logistik</p>
+            <p class="text-[11px] text-mute">Rata-rata nilai belanja per order</p>
         </div>
     </div>
 

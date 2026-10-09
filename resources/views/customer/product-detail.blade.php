@@ -383,20 +383,6 @@
                             <span x-show="selectedStock > 0">&rarr;</span>
                         </button>
 
-                        {{-- Trust Signals --}}
-                        <div class="grid grid-cols-2 gap-3 pt-2">
-                            <div
-                                class="flex items-center gap-2 bg-soft-cloud p-3 rounded-xl border border-hairline-soft text-[11px] font-semibold text-ink">
-                                <span class="text-success font-bold text-sm">✓</span>
-                                <span>Gratis Ongkir J&T (Rp 0)</span>
-                            </div>
-                            <div
-                                class="flex items-center gap-2 bg-soft-cloud p-3 rounded-xl border border-hairline-soft text-[11px] font-semibold text-ink">
-                                <span class="text-premium-gold font-bold text-sm">★</span>
-                                <span>100% Autentik Resmi</span>
-                            </div>
-                        </div>
-
                     </form>
 
                 </div>
@@ -539,29 +525,31 @@
 
         {{-- ===== DYNAMIC SIZE CHART MODAL ===== --}}
         @php
-            $activeSizeChart = $product->sizeChart 
-                ?? \App\Models\SizeChart::where('is_default', true)->first() 
-                ?? \App\Models\SizeChart::first();
+            $activeSizeChart =
+                $product->sizeChart ??
+                (\App\Models\SizeChart::where('is_default', true)->first() ?? \App\Models\SizeChart::first());
         @endphp
 
         <div x-show="sizeModal" x-cloak
             class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
             <div @click.away="sizeModal = false"
                 class="bg-white border border-hairline w-full max-w-2xl rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl my-auto">
-                
+
                 {{-- Header --}}
                 <div class="flex justify-between items-start border-b border-hairline-soft pb-4 gap-4">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-soft-cloud text-ink border border-hairline-soft">
-                                {{ match($activeSizeChart?->category_type) {
+                            <span
+                                class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-soft-cloud text-ink border border-hairline-soft">
+                                {{ match ($activeSizeChart?->category_type) {
                                     'tops' => 'Atasan / Jersey',
                                     'bottoms' => 'Bawahan / Celana',
                                     'outerwear' => 'Jaket / Luaran',
-                                    default => 'Fitting Guide'
+                                    default => ($activeSizeChart?->category_type ?? 'Fitting Guide'),
                                 } }}
                             </span>
-                            <span class="text-[10px] text-mute uppercase font-bold tracking-widest">· Standar Autentik</span>
+                            <span class="text-[10px] text-mute uppercase font-bold tracking-widest">· Standar
+                                Autentik</span>
                         </div>
                         <h3 class="font-extrabold text-lg sm:text-xl text-ink uppercase tracking-tight">
                             {{ $activeSizeChart?->name ?? 'Panduan Ukuran (Size Chart)' }}
@@ -572,7 +560,8 @@
                 </div>
 
                 {{-- Deskripsi Petunjuk Ukur --}}
-                <div class="p-3.5 bg-soft-cloud rounded-2xl border border-hairline-soft text-xs text-mute flex items-start gap-2.5">
+                <div
+                    class="p-3.5 bg-soft-cloud rounded-2xl border border-hairline-soft text-xs text-mute flex items-start gap-2.5">
                     <span class="text-base shrink-0">📏</span>
                     <p class="leading-relaxed">
                         {{ $activeSizeChart?->description ?? 'Ukur pakaian dalam posisi terbentang rata di permukaan datar tanpa ditarik. Toleransi jahitan & material elastis: ± 1-2 cm.' }}
@@ -580,25 +569,27 @@
                 </div>
 
                 {{-- Dynamic Table --}}
-                @if($activeSizeChart && !empty($activeSizeChart->columns) && !empty($activeSizeChart->rows))
+                @if ($activeSizeChart && !empty($activeSizeChart->columns) && !empty($activeSizeChart->rows))
                     <div class="overflow-x-auto border border-hairline-soft rounded-2xl">
                         <table class="w-full text-xs text-left">
-                            <thead class="bg-soft-cloud border-b border-hairline-soft font-bold text-ink uppercase text-[10px] tracking-wider">
+                            <thead
+                                class="bg-soft-cloud border-b border-hairline-soft font-bold text-ink uppercase text-[10px] tracking-wider">
                                 <tr>
-                                    @foreach($activeSizeChart->columns as $col)
+                                    @foreach ($activeSizeChart->columns as $col)
                                         <th class="p-3 sm:p-3.5 whitespace-nowrap">{{ $col }}</th>
                                     @endforeach
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-hairline-soft">
-                                @foreach($activeSizeChart->rows as $r)
+                                @foreach ($activeSizeChart->rows as $r)
                                     <tr class="hover:bg-soft-cloud/40 transition">
                                         <td class="p-3 sm:p-3.5 font-bold text-ink whitespace-nowrap">
-                                            <span class="px-2 py-0.5 bg-soft-cloud border border-hairline-soft rounded-md inline-block">
+                                            <span
+                                                class="px-2 py-0.5 bg-soft-cloud border border-hairline-soft rounded-md inline-block">
                                                 {{ $r['size'] ?? '-' }}
                                             </span>
                                         </td>
-                                        @for($i = 1; $i < count($activeSizeChart->columns); $i++)
+                                        @for ($i = 1; $i < count($activeSizeChart->columns); $i++)
                                             <td class="p-3 sm:p-3.5 text-mute font-medium whitespace-nowrap">
                                                 {{ $r['col' . $i] ?? '-' }}
                                             </td>
@@ -613,7 +604,8 @@
                 @endif
 
                 {{-- Footer Tips & Close Button --}}
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-hairline-soft">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-hairline-soft">
                     <span class="text-[11px] text-mute flex items-center gap-1.5">
                         <span class="text-emerald-600 font-bold">✓</span>
                         <span>Jika ragu di antara dua ukuran, disarankan memilih <strong>1 size lebih besar</strong>.</span>

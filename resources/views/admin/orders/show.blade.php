@@ -34,17 +34,60 @@
     <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-5">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {{-- Manual Status Update --}}
-            <form action="{{ route('admin.orders.status', $order->id) }}" method="POST" class="flex flex-wrap items-center gap-2 text-xs">
+            <form action="{{ route('admin.orders.status', $order->id) }}" method="POST" class="flex flex-wrap items-center gap-2.5 text-xs">
                 @csrf
                 @method('PUT')
                 <label class="font-medium text-mute uppercase tracking-wider text-[10px]">Ubah Status:</label>
-                <select name="status" class="bg-soft-cloud border border-hairline px-3 py-2 rounded-full text-xs font-medium text-ink focus:outline-none focus:border-ink">
-                    <option value="in_production" {{ $order->status->value === 'in_production' ? 'selected' : '' }}>Masuk Antrian Produksi</option>
-                    <option value="shipped" {{ $order->status->value === 'shipped' ? 'selected' : '' }}>Telah Dikirim (Shipped)</option>
-                    <option value="completed" {{ $order->status->value === 'completed' ? 'selected' : '' }}>Selesai (Completed)</option>
-                    <option value="cancelled" {{ $order->status->value === 'cancelled' ? 'selected' : '' }}>Batalkan Pesanan</option>
-                </select>
-                <button type="submit" class="px-4 py-2 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition cursor-pointer">
+                
+                <div class="relative" x-data="{ 
+                    statusOpen: false, 
+                    selected: '{{ $order->status->value }}',
+                    options: [
+                        { id: 'in_production', label: 'Masuk Antrian Produksi' },
+                        { id: 'shipped', label: 'Telah Dikirim (Shipped)' },
+                        { id: 'completed', label: 'Selesai (Completed)' },
+                        { id: 'cancelled', label: 'Batalkan Pesanan' }
+                    ],
+                    get currentLabel() {
+                        const found = this.options.find(o => o.id === this.selected);
+                        return found ? found.label : 'Pilih Status';
+                    }
+                }">
+                    <input type="hidden" name="status" :value="selected">
+
+                    <button type="button" 
+                        @click="statusOpen = !statusOpen" 
+                        @keydown.escape="statusOpen = false"
+                        class="inline-flex items-center gap-2 bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-full px-4 py-2 transition focus:outline-none cursor-pointer shadow-2xs select-none">
+                        <span x-text="currentLabel"></span>
+                        <svg class="w-3.5 h-3.5 text-mute transition-transform duration-200"
+                            :class="statusOpen ? 'rotate-180 text-ink' : ''" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div x-show="statusOpen" @click.away="statusOpen = false" x-cloak
+                        x-transition:enter="transition ease-out duration-150 transform"
+                        x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-100 transform"
+                        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                        class="absolute left-0 mt-2 w-56 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl">
+                        <template x-for="item in options" :key="item.id">
+                            <button type="button" 
+                                @click="selected = item.id; statusOpen = false"
+                                class="w-full flex items-center justify-between px-3.5 py-2 transition text-left cursor-pointer"
+                                :class="selected === item.id ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                                <span x-text="item.label"></span>
+                                <span x-show="selected === item.id" class="text-ink font-bold">✓</span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+                <button type="submit" class="px-4 py-2 bg-ink hover:bg-black text-white rounded-full text-xs font-semibold uppercase tracking-wider transition cursor-pointer shadow-xs">
                     Update Status
                 </button>
             </form>

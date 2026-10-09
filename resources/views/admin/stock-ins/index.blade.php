@@ -8,7 +8,7 @@
         <div>
             <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute block mb-1">Gudang & Inventori</span>
             <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-ink">Mutasi Stok Masuk</h1>
-            <p class="text-xs text-mute mt-1">Catat pengadaan jersey baru dari supplier konveksi ke gudang fisik.</p>
+            <p class="text-xs text-mute mt-1">Catat pengadaan jersey baru ke gudang fisik.</p>
         </div>
         <a href="{{ route('admin.stock-ins.create') }}" class="px-5 py-2.5 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5 self-start sm:self-auto cursor-pointer">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -23,7 +23,6 @@
                     <tr>
                         <th class="p-4">Tanggal Diterima</th>
                         <th class="p-4">Jersey & Varian</th>
-                        <th class="p-4">Supplier</th>
                         <th class="p-4">No. Invoice</th>
                         <th class="p-4">Harga Beli / Pcs</th>
                         <th class="p-4 text-right">Qty Masuk</th>
@@ -39,9 +38,6 @@
                                 <span class="font-medium text-ink block">{{ $in->variant?->product?->name }}</span>
                                 <span class="text-[11px] text-mute">Ukuran: <strong class="text-ink">{{ $in->variant?->size }}</strong> ({{ $in->variant?->type }})</span>
                             </td>
-                            <td class="p-4 text-mute">
-                                {{ $in->supplier?->name ?? 'Supplier Direct' }}
-                            </td>
                             <td class="p-4 font-mono text-mute">
                                 {{ $in->invoice_number ?: '-' }}
                             </td>
@@ -54,7 +50,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="p-8 text-center text-mute">Belum ada catatan mutasi stok masuk.</td>
+                            <td colspan="5" class="p-8 text-center text-mute">Belum ada catatan mutasi stok masuk.</td>
                         </tr>
                     @endforelse
                 </tbody>

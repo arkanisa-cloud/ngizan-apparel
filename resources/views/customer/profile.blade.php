@@ -113,7 +113,7 @@
                         <div>
                             <h3 class="text-sm font-bold uppercase tracking-wider text-white">Privilege Khusus Member</h3>
                             <p class="text-xs text-neutral-300 leading-relaxed mt-1">
-                                Nikmati diskon otomatis <strong class="text-amber-400">5% di setiap jersey</strong> tanpa syarat minimum transaksi & prioritas antrean pengiriman.
+                                Nikmati diskon otomatis <strong class="text-amber-400">5% di setiap pembelian</strong> tanpa syarat minimum transaksi pada seluruh produk katalog.
                             </p>
                         </div>
 

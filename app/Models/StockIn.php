@@ -8,14 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Model StockIn
- * Catatan barang masuk dari vendor supplier
+ * Catatan restock barang masuk ke gudang
  */
 class StockIn extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'supplier_id',
         'product_variant_id',
         'quantity',
         'purchase_price',
@@ -31,14 +30,6 @@ class StockIn extends Model
             'purchase_price' => 'decimal:2',
             'received_date'  => 'date',
         ];
-    }
-
-    /**
-     * Relasi ke Supplier
-     */
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
     }
 
     /**

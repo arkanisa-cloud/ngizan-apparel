@@ -52,24 +52,109 @@
 
                 <div>
                     <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Kategori Edisi *</label>
-                    <select name="category_id" required class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink focus:outline-none focus:border-ink cursor-pointer">
-                        <option value="">Pilih Kategori</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
+                    <div class="relative" x-data="{ 
+                        open: false, 
+                        selected: '{{ old('category_id', '') }}',
+                        categories: @js($categories),
+                        get currentLabel() {
+                            const found = this.categories.find(c => c.id == this.selected);
+                            return found ? found.name : 'Pilih Kategori';
+                        }
+                    }">
+                        <input type="hidden" name="category_id" :value="selected" required>
+
+                        <button type="button" 
+                            @click="open = !open" 
+                            @keydown.escape="open = false"
+                            class="w-full flex items-center justify-between bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-2xl px-4 py-2.5 transition focus:outline-none focus:border-ink shadow-2xs cursor-pointer">
+                            <span x-text="currentLabel"></span>
+                            <svg class="w-4 h-4 text-mute transition-transform duration-200"
+                                :class="open ? 'rotate-180 text-ink' : ''" 
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" 
+                            @click.away="open = false" 
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150 transform"
+                            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-100 transform"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute left-0 right-0 mt-2 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden max-h-60 overflow-y-auto backdrop-blur-xl">
+                            
+                            <template x-for="cat in categories" :key="cat.id">
+                                <button type="button" 
+                                    @click="selected = cat.id; open = false"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 transition text-left cursor-pointer"
+                                    :class="selected == cat.id ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                                    <span x-text="cat.name"></span>
+                                    <span x-show="selected == cat.id" class="text-ink font-bold">✓</span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
                 </div>
 
                 <div>
                     <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Template Panduan Ukuran (Size Chart)</label>
-                    <select name="size_chart_id" class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink focus:outline-none focus:border-ink cursor-pointer">
-                        <option value="">Gunakan Default Sistem</option>
-                        @foreach($sizeCharts as $sc)
-                            <option value="{{ $sc->id }}" {{ (old('size_chart_id') == $sc->id || ($sc->is_default && !old('size_chart_id'))) ? 'selected' : '' }}>
-                                {{ $sc->name }} ({{ count($sc->rows ?? []) }} Ukuran)
-                            </option>
-                        @endforeach
-                    </select>
+                    <div class="relative" x-data="{ 
+                        open: false, 
+                        selected: '{{ old('size_chart_id', $sizeCharts->firstWhere('is_default', true)?->id ?? '') }}',
+                        sizeCharts: @js($sizeCharts),
+                        get currentLabel() {
+                            if (!this.selected) return 'Gunakan Default Sistem';
+                            const found = this.sizeCharts.find(sc => sc.id == this.selected);
+                            return found ? found.name : 'Gunakan Default Sistem';
+                        }
+                    }">
+                        <input type="hidden" name="size_chart_id" :value="selected">
+
+                        <button type="button" 
+                            @click="open = !open" 
+                            @keydown.escape="open = false"
+                            class="w-full flex items-center justify-between bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-2xl px-4 py-2.5 transition focus:outline-none focus:border-ink shadow-2xs cursor-pointer">
+                            <span x-text="currentLabel"></span>
+                            <svg class="w-4 h-4 text-mute transition-transform duration-200"
+                                :class="open ? 'rotate-180 text-ink' : ''" 
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" 
+                            @click.away="open = false" 
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150 transform"
+                            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-100 transform"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute left-0 right-0 mt-2 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden max-h-60 overflow-y-auto backdrop-blur-xl">
+                            
+                            <button type="button" 
+                                @click="selected = ''; open = false"
+                                class="w-full flex items-center justify-between px-4 py-2.5 transition text-left cursor-pointer border-b border-hairline-soft/60"
+                                :class="!selected ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                                <span>Gunakan Default Sistem</span>
+                                <span x-show="!selected" class="text-ink font-bold">✓</span>
+                            </button>
+
+                            <template x-for="sc in sizeCharts" :key="sc.id">
+                                <button type="button" 
+                                    @click="selected = sc.id; open = false"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 transition text-left cursor-pointer"
+                                    :class="selected == sc.id ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                                    <span x-text="sc.name"></span>
+                                    <span x-show="selected == sc.id" class="text-ink font-bold">✓</span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
                 </div>
 
                 <div>
@@ -145,25 +230,70 @@
             <div class="space-y-3">
                 <template x-for="(v, index) in variants" :key="index">
                     <div class="flex items-center gap-3 p-3.5 bg-soft-cloud border border-hairline-soft rounded-xl">
-                        <div class="w-28">
-                            <label class="block text-[10px] font-medium text-mute uppercase">Ukuran</label>
-                            <select :name="'variants[' + index + '][size]'" x-model="v.size" class="w-full bg-white border border-hairline p-2 rounded-lg text-xs text-ink focus:outline-none focus:border-ink">
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                                <option value="XXL">XXL</option>
-                                <option value="3XL">3XL</option>
-                            </select>
+                        <div class="w-28 relative" x-data="{ open: false }">
+                            <label class="block text-[10px] font-medium text-mute uppercase mb-1">Ukuran</label>
+                            <input type="hidden" :name="'variants[' + index + '][size]'" :value="v.size">
+                            <button type="button" 
+                                    @click="open = !open" 
+                                    @click.outside="open = false" 
+                                    class="w-full flex items-center justify-between gap-1.5 px-3 py-2 bg-white border border-hairline hover:border-ink rounded-xl text-xs font-semibold text-ink transition">
+                                <span x-text="v.size"></span>
+                                <svg class="w-3.5 h-3.5 text-mute transition-transform duration-200" :class="{ 'rotate-180 text-ink': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                                 class="absolute left-0 mt-1 w-full bg-white border border-hairline-soft rounded-xl py-1 shadow-xl z-50 text-xs overflow-hidden"
+                                 style="display: none;">
+                                <template x-for="s in ['S', 'M', 'L', 'XL', 'XXL', '3XL']" :key="s">
+                                    <button type="button" 
+                                            @click="v.size = s; open = false" 
+                                            class="w-full text-left px-3 py-1.5 flex items-center justify-between hover:bg-soft-cloud transition cursor-pointer"
+                                            :class="v.size === s ? 'bg-soft-cloud text-ink font-bold' : 'text-mute'">
+                                        <span x-text="s"></span>
+                                        <span x-show="v.size === s" class="text-ink font-bold">✓</span>
+                                    </button>
+                                </template>
+                            </div>
                         </div>
 
-                        <div class="w-36">
-                            <label class="block text-[10px] font-medium text-mute uppercase">Tipe Rilis</label>
-                            <select :name="'variants[' + index + '][type]'" x-model="v.type" class="w-full bg-white border border-hairline p-2 rounded-lg text-xs text-ink focus:outline-none focus:border-ink">
-                                <option value="Fans Issue">Fans Issue</option>
-                                <option value="Player Issue">Player Issue</option>
-                                <option value="Retro">Retro</option>
-                            </select>
+                        <div class="w-36 relative" x-data="{ open: false }">
+                            <label class="block text-[10px] font-medium text-mute uppercase mb-1">Tipe Rilis</label>
+                            <input type="hidden" :name="'variants[' + index + '][type]'" :value="v.type">
+                            <button type="button" 
+                                    @click="open = !open" 
+                                    @click.outside="open = false" 
+                                    class="w-full flex items-center justify-between gap-1.5 px-3 py-2 bg-white border border-hairline hover:border-ink rounded-xl text-xs font-semibold text-ink transition">
+                                <span x-text="v.type" class="truncate"></span>
+                                <svg class="w-3.5 h-3.5 text-mute transition-transform duration-200 shrink-0" :class="{ 'rotate-180 text-ink': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                                 class="absolute left-0 mt-1 w-full bg-white border border-hairline-soft rounded-xl py-1 shadow-xl z-50 text-xs overflow-hidden"
+                                 style="display: none;">
+                                <template x-for="t in ['Fans Issue', 'Player Issue', 'Retro']" :key="t">
+                                    <button type="button" 
+                                            @click="v.type = t; open = false" 
+                                            class="w-full text-left px-3 py-1.5 flex items-center justify-between hover:bg-soft-cloud transition cursor-pointer"
+                                            :class="v.type === t ? 'bg-soft-cloud text-ink font-bold' : 'text-mute'">
+                                        <span x-text="t"></span>
+                                        <span x-show="v.type === t" class="text-ink font-bold">✓</span>
+                                    </button>
+                                </template>
+                            </div>
                         </div>
 
                         <div class="w-28">

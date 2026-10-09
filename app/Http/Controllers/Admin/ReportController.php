@@ -56,14 +56,16 @@ class ReportController extends Controller
         $totalRevenue     = $paidOrders->sum('grand_total');
         $totalSubtotal    = $paidOrders->sum('subtotal_amount');
         $totalShipping    = $paidOrders->sum('shipping_cost');
+        $totalOrdersCount = $paidOrders->count();
 
-        // Total Biaya Kustom Sablon & Patch
-        $totalCustomFee = 0;
+        // Hitung Total Item/Pcs Terjual
+        $totalItemsSold = 0;
         foreach ($paidOrders as $ord) {
-            foreach ($ord->items as $it) {
-                $totalCustomFee += ($it->custom_fee * $it->quantity);
-            }
+            $totalItemsSold += $ord->items->sum('quantity');
         }
+
+        // Rata-rata Nilai Belanja per Order (AOV)
+        $averageOrderValue = $totalOrdersCount > 0 ? ($totalRevenue / $totalOrdersCount) : 0;
 
         // Top 5 Jersey Terlaris
         $topJerseys = OrderItem::select('product_name', DB::raw('SUM(quantity) as total_sold'), DB::raw('SUM(subtotal) as total_amount'))
@@ -82,7 +84,9 @@ class ReportController extends Controller
             'totalRevenue',
             'totalSubtotal',
             'totalShipping',
-            'totalCustomFee',
+            'totalOrdersCount',
+            'totalItemsSold',
+            'averageOrderValue',
             'topJerseys',
             'startDate',
             'endDate',

@@ -11,7 +11,9 @@
     {{-- Preconnect & Google Fonts CDN with display=swap for instantaneous font render without FOUT --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -147,7 +149,8 @@
                                     'bg-ink': !mobileOpen && (isPastHero || !isHome || searchBarOpen)
                                 }"></span>
                             {{-- Middle bar --}}
-                            <span class="w-5 h-[2px] rounded-full transition-all duration-200 ease-in-out {{ !$isHomeRoute ? 'bg-ink' : 'bg-white' }}"
+                            <span
+                                class="w-5 h-[2px] rounded-full transition-all duration-200 ease-in-out {{ !$isHomeRoute ? 'bg-ink' : 'bg-white' }}"
                                 :class="{
                                     'opacity-0 scale-0': mobileOpen,
                                     'bg-white': !mobileOpen && isHome && !isPastHero && !searchBarOpen,
@@ -367,8 +370,10 @@
                                     @if (Auth::user()->isAdmin())
                                         <a href="{{ route('admin.dashboard') }}"
                                             class="flex items-center gap-2.5 px-4 py-2 hover:bg-soft-cloud font-medium text-ink transition">
-                                            <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
                                             </svg>
                                             <span>Backoffice Admin</span>
                                         </a>
@@ -376,31 +381,39 @@
 
                                     <a href="{{ route('customer.orders.index') }}"
                                         class="flex items-center gap-2.5 px-4 py-2 hover:bg-soft-cloud text-ink font-medium transition">
-                                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                         </svg>
                                         <span>Pesanan Saya</span>
                                     </a>
 
                                     <a href="{{ route('customer.addresses.index') }}"
                                         class="flex items-center gap-2.5 px-4 py-2 hover:bg-soft-cloud text-ink font-medium transition">
-                                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
                                         <span>Alamat Pengiriman</span>
                                     </a>
 
                                     <a href="{{ route('profile.edit') }}"
                                         class="flex items-center gap-2.5 px-4 py-2 hover:bg-soft-cloud text-ink font-medium transition">
-                                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
                                         <span>Profil & Keanggotaan</span>
                                     </a>
 
                                     @if (!Auth::user()->isPremiumActive())
-                                        <button type="button" @click="$dispatch('open-premium-modal'); userMenuOpen = false"
+                                        <button type="button"
+                                            @click="$dispatch('open-premium-modal'); userMenuOpen = false"
                                             class="flex items-center justify-between w-full text-left px-4 py-2 hover:bg-amber-50 text-amber-900 font-semibold transition border-t border-b border-amber-100/60 my-0.5">
                                             <span>Gabung Ngizan Premium</span>
                                             <span class="text-amber-600 text-xs">⭐</span>
@@ -413,8 +426,10 @@
                                         @csrf
                                         <button type="submit"
                                             class="w-full text-left px-4 py-2 hover:bg-rose-50 text-sale font-medium transition flex items-center gap-2.5">
-                                            <svg class="w-4 h-4 text-sale" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            <svg class="w-4 h-4 text-sale" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                             </svg>
                                             <span>Keluar</span>
                                         </button>
@@ -515,13 +530,18 @@
         @yield('content')
     </main>
 
-    @if (request()->routeIs('checkout.index') || request()->routeIs('customer.checkout.index') || request()->routeIs('checkout.*') || request()->routeIs('customer.checkout.*'))
+    @if (request()->routeIs('checkout.index') ||
+            request()->routeIs('customer.checkout.index') ||
+            request()->routeIs('checkout.*') ||
+            request()->routeIs('customer.checkout.*'))
         {{-- ===== DISTRACTION-FREE CHECKOUT MINIMAL FOOTER ===== --}}
         <footer class="border-t border-hairline-soft bg-white text-ink py-6 text-xs mt-8">
             <div class="wrap flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-mute">
                 <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                     <span>Enkripsi 256-Bit SSL · Pembayaran Aman Terverifikasi Midtrans</span>
                 </div>
@@ -532,60 +552,63 @@
         {{-- ===== NIKE EDITORIAL FOOTER ===== --}}
         <footer id="contact"
             class="border-t border-hairline bg-white text-ink pt-10 pb-10 sm:pt-16 sm:pb-12 text-xs mt-5 sm:mt-8 scroll-mt-20">
-        <div class="wrap grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-            <div>
-                <div class="font-display font-medium text-2xl tracking-wider text-ink uppercase mb-3">
-                    NGIZAN APPAREL
+            <div class="wrap grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div>
+                    <div class="font-display font-medium text-2xl tracking-wider text-ink uppercase mb-3">
+                        NGIZAN APPAREL
+                    </div>
+                    <p class="text-mute leading-relaxed">
+                        Penyedia jersey sepak bola autentik, edisi player issue, dan arsip retro terkurasi berstandar
+                        editorial.
+                    </p>
                 </div>
-                <p class="text-mute leading-relaxed">
-                    Penyedia jersey sepak bola autentik, edisi player issue, dan arsip retro terkurasi berstandar editorial.
-                </p>
+
+                <div>
+                    <div class="font-medium text-sm text-ink mb-4">Koleksi Ngizan Apparel</div>
+                    <ul class="space-y-2.5 text-mute">
+                        <li><a href="{{ route('shop.index', ['category' => 'jersey']) }}"
+                                class="hover:text-ink transition">Jersey Berkualitas Tinggi</a></li>
+                        <li><a href="{{ route('shop.index', ['category' => 'tactical-board']) }}"
+                                class="hover:text-ink transition">Tactical Board</a></li>
+                        <li><a href="{{ route('shop.index', ['category' => 'kaos-kaki']) }}"
+                                class="hover:text-ink transition">Kaos Kaki</a></li>
+                        <li><a href="{{ route('shop.index', ['category' => 'celana']) }}"
+                                class="hover:text-ink transition">Celana</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="font-medium text-sm text-ink mb-4">Layanan Pelanggan</div>
+                    <ul class="space-y-2.5 text-mute">
+                        <li><a href="{{ route('shop.index') }}" class="hover:text-ink transition">Kustomisasi Sablon
+                                &
+                                Nameset</a></li>
+                        <li><a href="{{ route('customer.orders.index') }}" class="hover:text-ink transition">Lacak
+                                Pengiriman Pesanan</a></li>
+                        <li><a href="{{ route('shop.index') }}" class="hover:text-ink transition">Panduan Ukuran
+                                (Size
+                                Chart)</a></li>
+                        <li><a href="{{ route('auth.google') }}" class="hover:text-ink transition">Login 1-Klik
+                                Google</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="font-medium text-sm text-ink mb-4">Kontak & Workshop</div>
+                    <p class="text-mute leading-relaxed">
+                        WhatsApp: <span class="text-ink font-medium">+62 812-3456-7890</span><br>
+                        Email: <span class="text-ink font-medium">ngizanapparel@gmail.com</span><br>
+                        Workshop: Yogyakarta, Indonesia
+                    </p>
+                </div>
             </div>
 
-            <div>
-                <div class="font-medium text-sm text-ink mb-4">Koleksi Ngizan Apparel</div>
-                <ul class="space-y-2.5 text-mute">
-                    <li><a href="{{ route('shop.index', ['category' => 'jersey']) }}"
-                            class="hover:text-ink transition">Jersey Berkualitas Tinggi</a></li>
-                    <li><a href="{{ route('shop.index', ['category' => 'tactical-board']) }}"
-                            class="hover:text-ink transition">Tactical Board</a></li>
-                    <li><a href="{{ route('shop.index', ['category' => 'kaos-kaki']) }}"
-                            class="hover:text-ink transition">Kaos Kaki</a></li>
-                    <li><a href="{{ route('shop.index', ['category' => 'celana']) }}"
-                            class="hover:text-ink transition">Celana</a></li>
-                </ul>
+            <div
+                class="wrap border-t border-hairline-soft pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-mute">
+                <p>&copy; {{ date('Y') }} NGIZAN APPAREL. Seluruh hak cipta dilindungi.</p>
+                <p class="font-medium text-ink tracking-wide uppercase">Bespoke Football Kits & Archive Store</p>
             </div>
-
-            <div>
-                <div class="font-medium text-sm text-ink mb-4">Layanan Pelanggan</div>
-                <ul class="space-y-2.5 text-mute">
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-ink transition">Kustomisasi Sablon &
-                            Nameset</a></li>
-                    <li><a href="{{ route('customer.orders.index') }}" class="hover:text-ink transition">Lacak
-                            Pengiriman Pesanan</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-ink transition">Panduan Ukuran (Size
-                            Chart)</a></li>
-                    <li><a href="{{ route('auth.google') }}" class="hover:text-ink transition">Login 1-Klik
-                            Google</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <div class="font-medium text-sm text-ink mb-4">Kontak & Workshop</div>
-                <p class="text-mute leading-relaxed">
-                    WhatsApp: <span class="text-ink font-medium">+62 812-3456-7890</span><br>
-                    Email: <span class="text-ink font-medium">ngizanapparel@gmail.com</span><br>
-                    Workshop: Yogyakarta, Indonesia
-                </p>
-            </div>
-        </div>
-
-        <div
-            class="wrap border-t border-hairline-soft pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-mute">
-            <p>&copy; {{ date('Y') }} NGIZAN APPAREL. Seluruh hak cipta dilindungi.</p>
-            <p class="font-medium text-ink tracking-wide uppercase">Bespoke Football Kits & Archive Store</p>
-        </div>
-    </footer>
+        </footer>
     @endif
 
     {{-- ===== TOASTR.JS CONFIGURATION & SESSION FLASH HANDLER ===== --}}
@@ -637,14 +660,12 @@
         isLoading: false,
         init() {
             {{-- Auto-popup HANYA di Homepage, 1x per sesi, jika user belum berlangganan premium --}}
-            @if (request()->routeIs('home') && (!auth()->check() || !auth()->user()->isPremiumActive()))
-                if (!sessionStorage.getItem('ngizan_premium_modal_seen')) {
+            @if (request()->routeIs('home') && (!auth()->check() || !auth()->user()->isPremiumActive())) if (!sessionStorage.getItem('ngizan_premium_modal_seen')) {
                     setTimeout(() => {
                         this.isOpen = true;
                         sessionStorage.setItem('ngizan_premium_modal_seen', 'true');
                     }, 3500);
-                }
-            @endif
+                } @endif
         },
         async startSubscription() {
             this.isLoading = true;
@@ -715,22 +736,14 @@
         }
     }" @open-premium-modal.window="isOpen = true" x-cloak>
         {{-- Backdrop Overlay --}}
-        <div x-show="isOpen"
-            x-cloak
-            style="display: none;"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100"
+        <div x-show="isOpen" x-cloak style="display: none;" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-sm overflow-y-auto">
-            
+
             {{-- Modal Box Container --}}
-            <div @click.away="isOpen = false"
-                x-show="isOpen"
-                x-cloak
-                style="display: none;"
+            <div @click.away="isOpen = false" x-show="isOpen" x-cloak style="display: none;"
                 x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-350"
                 x-transition:enter-start="opacity-0 scale-95 translate-y-6"
                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -738,7 +751,7 @@
                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                 x-transition:leave-end="opacity-0 scale-95 translate-y-6"
                 class="relative max-w-lg w-full bg-white text-ink rounded-3xl p-6 sm:p-8 shadow-2xl border border-hairline overflow-hidden my-auto">
-                
+
                 {{-- Close Button --}}
                 <button type="button" @click="isOpen = false"
                     class="absolute top-5 right-5 w-8 h-8 rounded-full bg-soft-cloud hover:bg-neutral-200 text-ink flex items-center justify-center text-lg font-bold transition focus:outline-none"
@@ -749,52 +762,55 @@
                 <div class="space-y-6">
                     {{-- Header with Badge & Display Headline --}}
                     <div>
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-900 text-[10px] font-bold tracking-[0.15em] uppercase">
-                            <span>⭐ VIP CLUB PRIVILEGE</span>
+                        <div
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-900 text-[10px] font-bold tracking-[0.15em] uppercase">
+                            <span>⭐ MEMBER PRIVILEGE</span>
                         </div>
-                        <h2 class="font-display font-medium text-3xl sm:text-4xl uppercase tracking-wider text-ink mt-2.5">
+                        <h2
+                            class="font-display font-medium text-3xl sm:text-4xl uppercase tracking-wider text-ink mt-2.5">
                             NGIZAN <span class="text-amber-500">PREMIUM</span>
                         </h2>
                         <p class="text-xs sm:text-sm text-mute leading-relaxed mt-1">
-                            Akses eksklusif diskon otomatis 5% tanpa syarat di setiap jersey, prioritas antrean pengiriman, dan privilege member.
+                            Dapatkan keuntungan eksklusif potongan harga otomatis 5% di setiap pembelian seluruh jersey
+                            dan produk tanpa batas minimum transaksi.
                         </p>
                     </div>
 
-                    {{-- Features Benefit List --}}
-                    <div class="space-y-2.5 bg-soft-cloud/80 p-4 sm:p-5 rounded-2xl border border-hairline-soft text-xs">
-                        <div class="flex items-start gap-3">
-                            <div class="w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                                ✓
+                    {{-- Features Benefit Box --}}
+                    <div class="bg-soft-cloud/90 p-5 rounded-2xl border border-hairline-soft space-y-3.5">
+                        <div class="flex items-start gap-3.5">
+                            <div
+                                class="w-8 h-8 rounded-full bg-ink text-amber-400 flex items-center justify-center shrink-0 font-bold text-sm shadow-xs">
+                                %
                             </div>
-                            <div>
-                                <strong class="text-ink text-xs font-bold uppercase tracking-wide">Diskon Otomatis 5% Tanpa Batas</strong>
-                                <p class="text-[11px] text-mute mt-0.5 leading-relaxed">
-                                    Potongan harga langsung 5% di setiap produk katalog tanpa minimum belanja & tanpa kuota kupon.
+                            <div class="space-y-1">
+                                <strong class="text-ink text-xs sm:text-sm font-bold uppercase tracking-wide block">
+                                    Diskon 5% Disetiap Pembelian
+                                </strong>
+                                <p class="text-[11px] sm:text-xs text-mute leading-relaxed">
+                                    Potongan harga 5% langsung otomatis terpasang pada semua produk di katalog,
+                                    keranjang belanja, hingga tahap checkout.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="flex items-start gap-3">
-                            <div class="w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                                ✓
+                        <div
+                            class="pt-3 border-t border-hairline-soft/80 grid grid-cols-2 gap-2 text-[11px] text-mute">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-ink font-bold">✓</span>
+                                <span>Semua Produk Katalog</span>
                             </div>
-                            <div>
-                                <strong class="text-ink text-xs font-bold uppercase tracking-wide">Prioritas Warehouse & Dispatch</strong>
-                                <p class="text-[11px] text-mute mt-0.5 leading-relaxed">
-                                    Pesanan Anda masuk antrean prioritas terdepan untuk proses quality check, pengemasan, dan serah terima kurir.
-                                </p>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-ink font-bold">✓</span>
+                                <span>Tanpa Minimum Belanja</span>
                             </div>
-                        </div>
-
-                        <div class="flex items-start gap-3">
-                            <div class="w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                                ✓
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-ink font-bold">✓</span>
+                                <span>Tanpa Kuota / Kode Kupon</span>
                             </div>
-                            <div>
-                                <strong class="text-ink text-xs font-bold uppercase tracking-wide">VIP Badge & Akses Rilisan Khusus</strong>
-                                <p class="text-[11px] text-mute mt-0.5 leading-relaxed">
-                                    Tanda pengenal VIP di akun Anda serta akses prioritas untuk jersey arsip langka dan penawaran terbatas.
-                                </p>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-ink font-bold">✓</span>
+                                <span>Aktif Selama 365 Hari</span>
                             </div>
                         </div>
                     </div>
@@ -802,16 +818,13 @@
                     {{-- Transparent Pricing Box --}}
                     <div class="flex items-center justify-between p-4 bg-neutral-900 text-white rounded-2xl">
                         <div>
-                            <span class="text-[10px] text-neutral-400 uppercase tracking-widest font-bold block">Biaya Keanggotaan</span>
+                            <span class="text-[10px] text-neutral-400 uppercase tracking-widest font-bold block">Biaya
+                                Keanggotaan</span>
                             <div class="flex items-baseline gap-1 mt-0.5">
-                                <span class="font-display font-medium text-2xl sm:text-3xl text-white">Rp 100.000</span>
+                                <span class="font-display font-medium text-2xl sm:text-3xl text-white">Rp
+                                    100.000</span>
                                 <span class="text-[11px] text-neutral-400 font-sans">/ 1 tahun penuh</span>
                             </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="inline-block px-2.5 py-1 bg-white/10 text-amber-300 text-[10px] font-bold rounded-full border border-white/10">
-                                ~Rp 8.300 / bln
-                            </span>
                         </div>
                     </div>
 
@@ -829,7 +842,8 @@
                                         <span>⭐</span> Anda adalah Member Premium Aktif
                                     </p>
                                     <p class="text-[11px] text-amber-800 mt-1">
-                                        Masa aktif berlaku hingga <strong>{{ auth()->user()->premium_until?->format('d F Y') }}</strong>.
+                                        Masa aktif berlaku hingga
+                                        <strong>{{ auth()->user()->premium_until?->format('d F Y') }}</strong>.
                                     </p>
                                 </div>
                             @else
@@ -838,10 +852,14 @@
                                     <span x-show="!isLoading" class="flex items-center gap-1.5">
                                         <span>⭐</span> Aktifkan Membership Sekarang
                                     </span>
-                                    <span x-show="isLoading" class="inline-flex items-center gap-2" style="display: none;">
+                                    <span x-show="isLoading" class="inline-flex items-center gap-2"
+                                        style="display: none;">
                                         <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                            </path>
                                         </svg>
                                         Menyiapkan Pembayaran Midtrans...
                                     </span>

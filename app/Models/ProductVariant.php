@@ -65,7 +65,7 @@ class ProductVariant extends Model
     }
 
     /**
-     * Relasi ke Barang Masuk dari Supplier
+     * Relasi ke Barang Masuk Restock
      */
     public function stockIns(): HasMany
     {

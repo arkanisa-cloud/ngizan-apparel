@@ -236,20 +236,74 @@
 .hairline-b { border-bottom: 1px solid var(--hairline); }
 .hairline-t { border-top: 1px solid var(--hairline); }
 
-/* ── Toastr Nike Overrides ── */
+/* ── Toastr Elegant & Minimalist Overrides ── */
 #toast-container > div {
-  opacity: 1 !important;
-  box-shadow: none !important;
-  border-radius: 9999px !important;
-  padding: 12px 24px 12px 48px !important;
+  opacity: 0.98 !important;
+  border-radius: 16px !important;
+  padding: 14px 20px 14px 48px !important;
   font-family: 'Inter', sans-serif !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-weight: 500 !important;
+  line-height: 1.4 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px) !important;
 }
-.toast-success { background-color: var(--ink) !important; color: #ffffff !important; }
-.toast-error   { background-color: var(--sale) !important; color: #ffffff !important; }
-.toast-info    { background-color: var(--ink) !important; color: #ffffff !important; }
-.toast-warning { background-color: var(--ink) !important; color: #ffffff !important; }
+#toast-container > .toast-success { 
+  background-color: #059669 !important; 
+  color: #ffffff !important; 
+}
+#toast-container > .toast-warning { 
+  background-color: #D97706 !important; 
+  color: #ffffff !important; 
+}
+#toast-container > .toast-error { 
+  background-color: #DC2626 !important; 
+  color: #ffffff !important; 
+}
+#toast-container > .toast-info { 
+  background-color: #1F2937 !important; 
+  color: #ffffff !important; 
+}
+.toast-progress { 
+  background-color: rgba(255, 255, 255, 0.45) !important; 
+  height: 3px !important; 
+  opacity: 0.8 !important;
+}
+.toast-close-button {
+  color: #ffffff !important;
+  opacity: 0.75 !important;
+  text-shadow: none !important;
+  font-weight: 400 !important;
+  margin-top: -2px !important;
+  margin-right: -4px !important;
+}
+.toast-close-button:hover {
+  opacity: 1 !important;
+}
+
+/* ── SweetAlert2 Minimalist Theme ── */
+.swal2-popup {
+  border-radius: 24px !important;
+  padding: 24px !important;
+  font-family: 'Inter', sans-serif !important;
+  border: 1px solid var(--hairline-soft) !important;
+}
+.swal2-title {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  padding: 8px 0 0 0 !important;
+}
+.swal2-html-container {
+  font-size: 13px !important;
+  color: var(--mute) !important;
+  margin-top: 8px !important;
+}
+.swal2-icon {
+  margin: 8px auto 16px !important;
+  border-width: 3px !important;
+}
 
 /* ── Hide Scrollbar utility for horizontal product rails ── */
 .hide-scroll::-webkit-scrollbar { display: none; }

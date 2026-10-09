@@ -32,7 +32,9 @@ class SizeChartController extends Controller
      */
     public function create(): View
     {
-        return view('admin.size-charts.create');
+        $categories = \App\Models\Category::orderBy('name')->get();
+
+        return view('admin.size-charts.create', compact('categories'));
     }
 
     /**
@@ -42,7 +44,7 @@ class SizeChartController extends Controller
     {
         $validated = $request->validate([
             'name'          => 'required|string|max:150|unique:size_charts,name',
-            'category_type' => 'required|string|in:tops,bottoms,outerwear,other',
+            'category_type' => 'required|string|max:100',
             'description'   => 'nullable|string|max:500',
             'columns'       => 'required|array|min:2',
             'columns.*'     => 'required|string|max:100',
@@ -73,7 +75,9 @@ class SizeChartController extends Controller
      */
     public function edit(SizeChart $sizeChart): View
     {
-        return view('admin.size-charts.edit', compact('sizeChart'));
+        $categories = \App\Models\Category::orderBy('name')->get();
+
+        return view('admin.size-charts.edit', compact('sizeChart', 'categories'));
     }
 
     /**
@@ -83,7 +87,7 @@ class SizeChartController extends Controller
     {
         $validated = $request->validate([
             'name'          => 'required|string|max:150|unique:size_charts,name,' . $sizeChart->id,
-            'category_type' => 'required|string|in:tops,bottoms,outerwear,other',
+            'category_type' => 'required|string|max:100',
             'description'   => 'nullable|string|max:500',
             'columns'       => 'required|array|min:2',
             'columns.*'     => 'required|string|max:100',

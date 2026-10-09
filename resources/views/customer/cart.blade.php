@@ -218,7 +218,9 @@
 
                                             {{-- Delete Button --}}
                                             <form :action="item.deleteUrl" method="POST"
-                                                onsubmit="return confirm('Hapus jersey ini dari tas belanja?');">
+                                                data-confirm-title="Hapus dari Tas Belanja?"
+                                                data-confirm-text="Apakah Anda yakin ingin mengeluarkan jersey ini dari tas belanja?"
+                                                data-confirm-btn="Ya, Hapus">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"

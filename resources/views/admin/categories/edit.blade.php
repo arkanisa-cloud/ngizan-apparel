@@ -68,11 +68,55 @@
 
                 {{-- Status --}}
                 <div>
-                    <label for="status" class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Status Publikasi <span class="text-sale">*</span></label>
-                    <select name="status" id="status" class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink focus:outline-none focus:border-ink cursor-pointer" required>
-                        <option value="active" {{ old('status', $category->is_active ? 'active' : 'inactive') == 'active' ? 'selected' : '' }}>Aktif (Tampil di Beranda & Katalog)</option>
-                        <option value="inactive" {{ old('status', $category->is_active ? 'active' : 'inactive') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
-                    </select>
+                    <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Status Publikasi <span class="text-sale">*</span></label>
+                    <div class="relative" x-data="{ 
+                        open: false, 
+                        selected: '{{ old('status', $category->is_active ? 'active' : 'inactive') }}',
+                        options: [
+                            { id: 'active', label: 'Aktif (Tampil di Beranda & Katalog)' },
+                            { id: 'inactive', label: 'Tidak Aktif' }
+                        ],
+                        get currentLabel() {
+                            const found = this.options.find(o => o.id === this.selected);
+                            return found ? found.label : 'Pilih Status';
+                        }
+                    }">
+                        <input type="hidden" name="status" :value="selected" required>
+
+                        <button type="button" 
+                            @click="open = !open" 
+                            @keydown.escape="open = false"
+                            class="w-full flex items-center justify-between bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-2xl px-4 py-2.5 transition focus:outline-none focus:border-ink shadow-2xs cursor-pointer">
+                            <span x-text="currentLabel"></span>
+                            <svg class="w-4 h-4 text-mute transition-transform duration-200"
+                                :class="open ? 'rotate-180 text-ink' : ''" 
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" 
+                            @click.away="open = false" 
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150 transform"
+                            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-100 transform"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute left-0 right-0 mt-2 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl">
+                            
+                            <template x-for="item in options" :key="item.id">
+                                <button type="button" 
+                                    @click="selected = item.id; open = false"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 transition text-left cursor-pointer"
+                                    :class="selected === item.id ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                                    <span x-text="item.label"></span>
+                                    <span x-show="selected === item.id" class="text-ink font-bold">✓</span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
                     @error('status') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 

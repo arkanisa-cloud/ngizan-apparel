@@ -23,12 +23,61 @@
                 <svg class="w-4 h-4 text-mute absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
 
-            <select name="status" onchange="this.form.submit()" class="bg-soft-cloud border border-hairline px-4 py-2 rounded-full text-xs text-ink focus:border-ink focus:ring-0">
-                <option value="">Semua Status</option>
-                @foreach(\App\Enums\OrderStatus::cases() as $st)
-                    <option value="{{ $st->value }}" {{ request('status') === $st->value ? 'selected' : '' }}>{{ $st->label() }}</option>
-                @endforeach
-            </select>
+            @php
+                $orderStatuses = \App\Enums\OrderStatus::cases();
+                $currentStatusVal = request('status');
+                $selectedStatusObj = $currentStatusVal ? \App\Enums\OrderStatus::tryFrom($currentStatusVal) : null;
+                $statusLabel = $selectedStatusObj ? $selectedStatusObj->label() : 'Semua Status';
+            @endphp
+
+            <div class="relative" x-data="{ statusOpen: false }">
+                <button type="button" @click="statusOpen = !statusOpen"
+                    class="inline-flex items-center gap-2 bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-full px-4 py-2 transition focus:outline-none cursor-pointer shadow-2xs select-none">
+                    <span class="text-mute font-normal">Status:</span>
+                    <span class="font-bold">{{ $statusLabel }}</span>
+                    <svg class="w-3.5 h-3.5 text-mute transition-transform duration-200"
+                        :class="statusOpen ? 'rotate-180 text-ink' : ''" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div x-show="statusOpen" @click.away="statusOpen = false" x-cloak
+                    x-transition:enter="transition ease-out duration-150 transform"
+                    x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-100 transform"
+                    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                    class="absolute left-0 mt-2 w-56 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl">
+                    <div class="px-3.5 py-1.5 border-b border-hairline-soft text-[10px] font-bold uppercase tracking-wider text-mute">
+                        Filter Status Pesanan
+                    </div>
+                    <div class="py-1">
+                        <a href="{{ route('admin.orders.index', array_merge(request()->except('page', 'status'), [])) }}"
+                            class="flex items-center justify-between px-3.5 py-2 transition {{ !$currentStatusVal ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium' }}">
+                            <span>Semua Status</span>
+                            @if(!$currentStatusVal)
+                                <svg class="w-4 h-4 text-ink shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                            @endif
+                        </a>
+                        @foreach($orderStatuses as $st)
+                            @php $isStSelected = ($currentStatusVal === $st->value); @endphp
+                            <a href="{{ route('admin.orders.index', array_merge(request()->except('page', 'status'), ['status' => $st->value])) }}"
+                                class="flex items-center justify-between px-3.5 py-2 transition {{ $isStSelected ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium' }}">
+                                <span>{{ $st->label() }}</span>
+                                @if ($isStSelected)
+                                    <svg class="w-4 h-4 text-ink shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
 
             @if(request()->hasAny(['search', 'status']))
                 <a href="{{ route('admin.orders.index') }}" class="text-sale font-medium hover:underline">Reset</a>

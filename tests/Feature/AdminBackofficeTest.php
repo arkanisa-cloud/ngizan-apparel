@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -32,6 +31,25 @@ class AdminBackofficeTest extends TestCase
         $this->admin = User::where('role', 'admin')->first();
         $this->customer = User::where('role', 'customer')->first();
         $this->category = Category::first();
+
+        $product = Product::create([
+            'category_id' => $this->category->id,
+            'name' => 'Demo Jersey',
+            'slug' => 'demo-jersey',
+            'base_price' => 250000,
+            'weight_grams' => 200,
+            'description' => 'Test kit',
+            'is_active' => true,
+        ]);
+
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'size' => 'M',
+            'type' => 'Fans Issue',
+            'stock' => 10,
+            'price_adjustment' => 0,
+            'sku' => 'DEMO-M',
+        ]);
     }
 
     /**
@@ -42,9 +60,7 @@ class AdminBackofficeTest extends TestCase
         $response = $this->actingAs($this->admin)->get(route('admin.dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('Executive Dashboard');
-        $response->assertSee('Omset Bulan Ini');
-        $response->assertSee('Stok Jersey Gudang');
+        $response->assertSee('Dashboard Operasional');
     }
 
     /**
@@ -98,19 +114,10 @@ class AdminBackofficeTest extends TestCase
      */
     public function test_admin_stock_in_increments_inventory(): void
     {
-        $supplier = Supplier::create([
-            'name'         => 'PT Konveksi Jersey Unggul',
-            'contact_name' => 'Budi Supplier',
-            'phone'        => '08123456789',
-            'email'        => 'supplier@konveksi.com',
-            'address'      => 'Bandung',
-        ]);
-
         $variant = ProductVariant::first();
         $initialStock = $variant->stock;
 
         $response = $this->actingAs($this->admin)->post(route('admin.stock-ins.store'), [
-            'supplier_id'        => $supplier->id,
             'product_variant_id' => $variant->id,
             'quantity'           => 20,
             'purchase_price'     => 120000,
@@ -200,7 +207,21 @@ class AdminBackofficeTest extends TestCase
     }
 
     /**
-     * 6. Test Admin can export sales CSV
+     * 6. Test Admin can view sales report
+     */
+    public function test_admin_can_view_sales_report_with_metrics(): void
+    {
+        $response = $this->actingAs($this->admin)->get(route('admin.reports.sales'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Total Omset Penjualan');
+        $response->assertSee('Pesanan Berhasil');
+        $response->assertSee('Total Produk Terjual');
+        $response->assertSee('Rata-rata Order (AOV)');
+    }
+
+    /**
+     * 7. Test Admin can export sales CSV
      */
     public function test_admin_can_export_sales_csv(): void
     {

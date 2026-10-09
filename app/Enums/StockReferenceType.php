@@ -19,7 +19,7 @@ enum StockReferenceType: string
             self::ORDER_PLACED      => 'Pengurangan Pesanan Baru',
             self::RESTOCK_EXPIRED   => 'Pengembalian Stok (Pesanan Kadaluarsa)',
             self::RESTOCK_CANCELLED => 'Pengembalian Stok (Pesanan Dibatalkan)',
-            self::MANUAL_IN         => 'Stok Masuk Manual / Supplier',
+            self::MANUAL_IN         => 'Stok Masuk Manual',
             self::MANUAL_OUT        => 'Stok Keluar Manual / Rusak / Sampel',
         };
     }

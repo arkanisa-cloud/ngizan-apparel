@@ -27,18 +27,12 @@
             <div class="bg-white rounded-2xl border border-hairline-soft p-5 space-y-4 shadow-xs hover:border-hairline transition flex flex-col justify-between">
                 <div class="space-y-3">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
-                            {{ match($chart->category_type) {
-                                'tops' => 'bg-blue-50 text-blue-700 border border-blue-200/60',
-                                'bottoms' => 'bg-emerald-50 text-emerald-700 border border-emerald-200/60',
-                                'outerwear' => 'bg-purple-50 text-purple-700 border border-purple-200/60',
-                                default => 'bg-neutral-100 text-neutral-700 border border-neutral-200'
-                            } }}">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-soft-cloud text-ink border border-hairline-soft">
                             {{ match($chart->category_type) {
                                 'tops' => 'Atasan / Jersey',
                                 'bottoms' => 'Bawahan / Celana',
                                 'outerwear' => 'Jaket / Luaran',
-                                default => 'Lainnya'
+                                default => $chart->category_type
                             } }}
                         </span>
 
@@ -81,10 +75,12 @@
 
                         @if(!$chart->is_default)
                             <form action="{{ route('admin.size-charts.destroy', $chart->id) }}" method="POST"
-                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus template panduan ukuran ini?');">
+                                  data-confirm-title="Hapus Panduan Ukuran?"
+                                  data-confirm-text="Apakah Anda yakin ingin menghapus template '{{ $chart->name }}'?"
+                                  data-confirm-btn="Ya, Hapus Template">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="p-1.5 text-mute hover:text-sale hover:bg-rose-50 rounded-full transition" title="Hapus">
+                                <button type="submit" class="p-1.5 text-mute hover:text-sale hover:bg-rose-50 rounded-full transition cursor-pointer" title="Hapus">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
                             </form>

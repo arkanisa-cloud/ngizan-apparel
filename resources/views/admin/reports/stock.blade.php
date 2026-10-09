@@ -16,21 +16,103 @@
     <form method="GET" action="{{ route('admin.reports.stock') }}" class="bg-white p-4 sm:p-5 rounded-2xl border border-hairline-soft flex flex-wrap gap-3 items-end text-xs">
         <div class="w-full sm:w-auto">
             <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[10px]">Filter Kategori</label>
-            <select name="category_id" class="w-full sm:w-auto bg-soft-cloud border border-hairline px-4 py-2 rounded-full text-xs text-ink font-medium focus:outline-none focus:border-ink cursor-pointer">
-                <option value="">Semua Kategori</option>
-                @foreach($categories as $cat)
-                    <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                @endforeach
-            </select>
+            <div class="relative" x-data="{ 
+                catOpen: false, 
+                selected: '{{ request('category_id', '') }}',
+                options: [
+                    { id: '', label: 'Semua Kategori' },
+                    @foreach($categories as $cat)
+                        { id: '{{ $cat->id }}', label: '{{ $cat->name }}' },
+                    @endforeach
+                ],
+                get currentLabel() {
+                    const found = this.options.find(o => o.id == this.selected);
+                    return found ? found.label : 'Semua Kategori';
+                }
+            }">
+                <input type="hidden" name="category_id" :value="selected">
+
+                <button type="button" 
+                    @click="catOpen = !catOpen" 
+                    @keydown.escape="catOpen = false"
+                    class="w-full sm:w-auto inline-flex items-center justify-between gap-3 bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-full px-4 py-2 transition focus:outline-none cursor-pointer shadow-2xs select-none">
+                    <span x-text="currentLabel"></span>
+                    <svg class="w-3.5 h-3.5 text-mute transition-transform duration-200"
+                        :class="catOpen ? 'rotate-180 text-ink' : ''" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div x-show="catOpen" @click.away="catOpen = false" x-cloak
+                    x-transition:enter="transition ease-out duration-150 transform"
+                    x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-100 transform"
+                    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                    class="absolute left-0 mt-2 w-56 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden max-h-60 overflow-y-auto backdrop-blur-xl">
+                    <template x-for="item in options" :key="item.id">
+                        <button type="button" 
+                            @click="selected = item.id; catOpen = false"
+                            class="w-full flex items-center justify-between px-3.5 py-2 transition text-left cursor-pointer"
+                            :class="selected == item.id ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                            <span x-text="item.label"></span>
+                            <span x-show="selected == item.id" class="text-ink font-bold">✓</span>
+                        </button>
+                    </template>
+                </div>
+            </div>
         </div>
 
         <div class="w-full sm:w-auto">
             <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[10px]">Kondisi Stok</label>
-            <select name="filter" class="w-full sm:w-auto bg-soft-cloud border border-hairline px-4 py-2 rounded-full text-xs text-ink font-medium focus:outline-none focus:border-ink cursor-pointer">
-                <option value="">Semua Kondisi</option>
-                <option value="low" {{ request('filter') === 'low' ? 'selected' : '' }}>Stok Menipis (&le; 3 pcs)</option>
-                <option value="out" {{ request('filter') === 'out' ? 'selected' : '' }}>Stok Habis (0 pcs)</option>
-            </select>
+            <div class="relative" x-data="{ 
+                filterOpen: false, 
+                selected: '{{ request('filter', '') }}',
+                options: [
+                    { id: '', label: 'Semua Kondisi' },
+                    { id: 'low', label: 'Stok Menipis (≤ 3 pcs)' },
+                    { id: 'out', label: 'Stok Habis (0 pcs)' }
+                ],
+                get currentLabel() {
+                    const found = this.options.find(o => o.id === this.selected);
+                    return found ? found.label : 'Semua Kondisi';
+                }
+            }">
+                <input type="hidden" name="filter" :value="selected">
+
+                <button type="button" 
+                    @click="filterOpen = !filterOpen" 
+                    @keydown.escape="filterOpen = false"
+                    class="w-full sm:w-auto inline-flex items-center justify-between gap-3 bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-full px-4 py-2 transition focus:outline-none cursor-pointer shadow-2xs select-none">
+                    <span x-text="currentLabel"></span>
+                    <svg class="w-3.5 h-3.5 text-mute transition-transform duration-200"
+                        :class="filterOpen ? 'rotate-180 text-ink' : ''" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div x-show="filterOpen" @click.away="filterOpen = false" x-cloak
+                    x-transition:enter="transition ease-out duration-150 transform"
+                    x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-100 transform"
+                    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                    class="absolute left-0 mt-2 w-56 bg-white border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl">
+                    <template x-for="item in options" :key="item.id">
+                        <button type="button" 
+                            @click="selected = item.id; filterOpen = false"
+                            class="w-full flex items-center justify-between px-3.5 py-2 transition text-left cursor-pointer"
+                            :class="selected === item.id ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
+                            <span x-text="item.label"></span>
+                            <span x-show="selected === item.id" class="text-ink font-bold">✓</span>
+                        </button>
+                    </template>
+                </div>
+            </div>
         </div>
 
         <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition cursor-pointer">
