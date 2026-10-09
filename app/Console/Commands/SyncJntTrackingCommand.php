@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use App\Services\BiteshipService;
+use App\Services\BinderbyteService;
 use App\Services\WhatsAppService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -23,14 +23,14 @@ class SyncJntTrackingCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Sinkronisasi status perjalanan paket J&T Express via Biteship dan auto-complete pesanan saat delivered';
+    protected $description = 'Sinkronisasi status perjalanan paket J&T Express via Binderbyte API dan auto-complete pesanan saat delivered';
 
     /**
      * Eksekusi command
      */
-    public function handle(BiteshipService $biteshipService, WhatsAppService $whatsAppService): int
+    public function handle(BinderbyteService $binderbyteService, WhatsAppService $whatsAppService): int
     {
-        $this->info('Memulai sinkronisasi status pengiriman paket J&T...');
+        $this->info('Memulai sinkronisasi status pengiriman paket J&T Express via Binderbyte...');
 
         $shippedOrders = Order::where('status', OrderStatus::SHIPPED)
             ->whereNotNull('tracking_number')
@@ -46,7 +46,7 @@ class SyncJntTrackingCommand extends Command
         foreach ($shippedOrders as $order) {
             try {
                 $courier = $order->courier_code ?: 'jnt';
-                $tracking = $biteshipService->getTracking($order->tracking_number, $courier);
+                $tracking = $binderbyteService->getTracking($order->tracking_number, $courier);
 
                 if (!empty($tracking['success'])) {
                     $status = strtolower($tracking['status'] ?? '');

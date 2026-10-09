@@ -91,7 +91,7 @@
                         </div>
                         <input type="text" name="label" id="label" x-model="selectedLabel"
                             class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                            placeholder="Contoh: Rumah, Kantor, Kosan..." required>
+                            placeholder="Label alamat (Rumah, Kantor, Kosan...)" required>
                         @error('label')
                             <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                         @enderror
@@ -106,7 +106,7 @@
                             </label>
                             <input type="text" name="recipient_name" id="recipient_name" x-model="form.recipient_name"
                                 class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                                placeholder="Contoh: Muhammad Alvaro" required>
+                                placeholder="Nama lengkap penerima" required>
                             @error('recipient_name')
                                 <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                             @enderror
@@ -118,7 +118,7 @@
                             </label>
                             <input type="tel" name="phone" id="phone" x-model="form.phone"
                                 class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                                placeholder="Contoh: 081234567890" required>
+                                placeholder="081234567890" required>
                             @error('phone')
                                 <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                             @enderror
@@ -195,7 +195,7 @@
                             <div class="relative">
                                 <input type="text" x-model="areaSearchQuery"
                                     @input.debounce.350ms="searchBiteshipAreas()"
-                                    placeholder="Ketik kecamatan, kelurahan, atau kode pos (misal: Tebet atau 12810)..."
+                                    placeholder="Ketik kecamatan, kelurahan, atau kode pos..."
                                     class="w-full bg-white border border-hairline-soft pl-10 pr-4 py-2.5 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium">
                                 <div class="absolute left-3.5 top-3 text-neutral-400 pointer-events-none">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,7 +233,7 @@
                         </label>
                         <textarea name="address" id="address" rows="3" x-model="form.address"
                             class="w-full bg-soft-cloud border border-hairline-soft p-3.5 rounded-2xl text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                            placeholder="Contoh: Jl. Kemang Raya No. 12B, RT 02/RW 04, Kel. Bangka..." required></textarea>
+                            placeholder="Jl. Kemang Raya No. 12B, RT 02/RW 04, Kel. Bangka..." required></textarea>
                         @error('address')
                             <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                         @enderror
@@ -247,7 +247,7 @@
                             </label>
                             <input type="text" name="district" id="district" x-model="form.district"
                                 class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                                placeholder="Contoh: Mampang Prapatan">
+                                placeholder="Nama kecamatan">
                             @error('district')
                                 <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                             @enderror
@@ -259,7 +259,7 @@
                             </label>
                             <input type="text" name="city" id="city" x-model="form.city"
                                 class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                                placeholder="Contoh: Jakarta Selatan" required>
+                                placeholder="Nama kota / kabupaten" required>
                             @error('city')
                                 <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                             @enderror
@@ -271,7 +271,7 @@
                             </label>
                             <input type="text" name="province" id="province" x-model="form.province"
                                 class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                                placeholder="Contoh: DKI Jakarta" required>
+                                placeholder="Nama provinsi" required>
                             @error('province')
                                 <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                             @enderror
@@ -283,7 +283,7 @@
                             </label>
                             <input type="text" name="postal_code" id="postal_code" x-model="form.postal_code"
                                 class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                                placeholder="Contoh: 12730" required>
+                                placeholder="12730" required>
                             @error('postal_code')
                                 <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                             @enderror
@@ -297,7 +297,7 @@
                         </label>
                         <input type="text" name="benchmark_notes" id="benchmark_notes" x-model="form.benchmark_notes"
                             class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium"
-                            placeholder="Contoh: Rumah tingkat pagar hitam samping minimarket">
+                            placeholder="Patokan alamat (pagar hitam, samping minimarket...)">
                         @error('benchmark_notes')
                             <p class="text-sale text-[11px] mt-1">{{ $message }}</p>
                         @enderror

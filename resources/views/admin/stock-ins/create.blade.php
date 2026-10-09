@@ -177,7 +177,7 @@
 
             <div>
                 <label class="block font-semibold text-ink mb-1.5 uppercase tracking-wider text-[11px]">No. Invoice / Surat Jalan</label>
-                <input type="text" name="invoice_number" value="{{ old('invoice_number') }}" placeholder="Contoh: INV-RESTOCK-2026-001"
+                <input type="text" name="invoice_number" value="{{ old('invoice_number') }}" placeholder="INV-RESTOCK-2026-001"
                        class="w-full bg-soft-cloud focus:bg-white border border-hairline focus:border-ink p-3 rounded-xl text-xs text-ink focus:outline-none transition">
                 @error('invoice_number') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
             </div>

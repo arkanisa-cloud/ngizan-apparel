@@ -216,15 +216,15 @@
                     </a>
 
                     {{-- 3. Contact --}}
-                    <a href="{{ $isHomeRoute ? '#contact' : route('home') . '#contact' }}"
+                    <a href="{{ route('contact') }}"
                         :class="{
                             'text-white hover:text-white': isHome && !isPastHero && !mobileOpen,
                             'text-ink hover:text-black': isPastHero || !isHome || mobileOpen
                         }"
-                        class="relative py-1 opacity-75 hover:opacity-100 transition duration-200 group {{ $isHomeRoute ? 'text-white' : 'text-ink' }}">
+                        class="relative py-1 transition duration-200 group {{ request()->routeIs('contact') ? 'font-bold opacity-100' : 'opacity-75 hover:opacity-100' }} {{ $isHomeRoute ? 'text-white' : 'text-ink' }}">
                         <span>Contact</span>
                         <span
-                            class="absolute left-0 bottom-0 w-full h-[2px] transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100"
+                            class="absolute left-0 bottom-0 w-full h-[2px] transition-transform duration-300 origin-left {{ request()->routeIs('contact') ? 'scale-x-100 bg-ink' : 'scale-x-0 group-hover:scale-x-100 ' . ($isHomeRoute ? 'bg-white shadow-xs' : 'bg-ink') }}"
                             :class="{
                                 'bg-white shadow-xs': isHome && !isPastHero && !mobileOpen,
                                 'bg-ink': isPastHero || !isHome || mobileOpen
@@ -491,9 +491,9 @@
                     <span class="text-[10px] text-neutral-400 font-normal">02</span>
                 </a>
 
-                <a href="{{ request()->routeIs('home') ? '#contact' : route('home') . '#contact' }}"
+                <a href="{{ route('contact') }}"
                     @click="mobileOpen = false"
-                    class="flex items-center justify-between py-2.5 text-neutral-600 hover:text-ink transition">
+                    class="flex items-center justify-between py-2.5 transition {{ request()->routeIs('contact') ? 'text-ink font-bold' : 'text-neutral-600 hover:text-ink' }}">
                     <span>Contact</span>
                     <span class="text-[10px] text-neutral-400 font-normal">03</span>
                 </a>

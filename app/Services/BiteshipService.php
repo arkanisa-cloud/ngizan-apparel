@@ -8,11 +8,10 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Service BiteshipService
- * Mengintegrasikan Biteship Logistics API untuk:
+ * Mengintegrasikan Biteship API untuk:
  * 1. Pencarian area wilayah (kelurahan/kecamatan/kota) standar logistik
- * 2. Kalkulasi tarif multi-kurir (JNE, SiCepat, J&T, Anteraja, Gojek, Grab) secara real-time
- * 3. Pembuatan order pengiriman & booking pickup kurir otomatis
- * 4. Pelacakan resi / waybill secara live
+ * 2. Reverse Geocoding via OpenStreetMap (Nominatim API)
+ * 3. Kalkulasi tarif pengiriman jika diperlukan
  */
 class BiteshipService
 {
@@ -138,187 +137,7 @@ class BiteshipService
     }
 
     /**
-     * 3. Booking Pickup Kurir / Pembuatan Order Pengiriman Resmi
-     *
-     * @param array $orderData Data pengirim, penerima, kurir, dan item
-     * @return array
-     */
-    public function createOrder(array $orderData): array
-    {
-        return $this->request('POST', 'orders', $orderData);
-    }
-
-    /**
-     * 4. Pelacakan Status Perjalanan Paket (Tracking Resi)
-     * Mendukung pelacakan real via Biteship API & Sandbox Mock Simulator untuk development/demo
-     *
-     * @param string $waybillId Nomor resi pengiriman
-     * @param string $courierCode Kode kurir (sicepat, jne, jnt, dll)
-     * @return array
-     */
-    public function getTracking(string $waybillId, string $courierCode = 'jnt'): array
-    {
-        $waybillUpper = strtoupper(trim($waybillId));
-
-        // 1. Cek apakah nomor resi menggunakan pola simulasi resmi (TEST-, DEMO-, MOCK-, SIM-)
-        if (str_starts_with($waybillUpper, 'TEST-') || 
-            str_starts_with($waybillUpper, 'DEMO-') || 
-            str_starts_with($waybillUpper, 'MOCK-') ||
-            str_starts_with($waybillUpper, 'SIM-')) {
-            return $this->getMockTracking($waybillUpper, $courierCode);
-        }
-
-        // 2. Jalur Produksi / Real Biteship API
-        $response = $this->request('GET', "trackings/{$waybillId}/couriers/{$courierCode}");
-
-        if (empty($response['success'])) {
-            $errorMsg = $response['error'] ?? 'Data pelacakan belum tersedia dari server kurir.';
-            if (str_contains(strtolower($errorMsg), 'balance') || str_contains(strtolower($errorMsg), 'top up')) {
-                $errorMsg = 'Paket terdaftar di sistem pengiriman J&T Express. Pelacakan langsung dapat dipantau melalui portal resmi J&T Express.';
-            }
-
-            return [
-                'success'      => false,
-                'waybill_id'   => $waybillId,
-                'status'       => 'on_delivery',
-                'courier'      => [
-                    'company' => $courierCode,
-                    'name'    => strtoupper($courierCode) === 'JNT' ? 'J&T Express' : strtoupper($courierCode),
-                ],
-                'error'        => $errorMsg,
-                'external_url' => 'https://www.jet.co.id/track',
-                'history'      => [],
-            ];
-        }
-
-        return $response;
-    }
-
-    /**
-     * Simulator data pelacakan resi realistis untuk tahap development / demo
-     *
-     * @param string $waybillId
-     * @param string $courierCode
-     * @return array
-     */
-    protected function getMockTracking(string $waybillId, string $courierCode = 'jnt'): array
-    {
-        $isDelivered = str_contains($waybillId, 'DELIVERED') || str_contains($waybillId, 'SELESAI') || str_contains($waybillId, 'SUCCESS');
-        $isTransit   = str_contains($waybillId, 'TRANSIT') || str_contains($waybillId, 'KIRIM');
-        $isPickup    = str_contains($waybillId, 'PICKUP') || str_contains($waybillId, 'DROP');
-
-        // Jika nomor resi simulator tidak sesuai dengan format resmi yang disediakan
-        if (!$isDelivered && !$isTransit && !$isPickup) {
-            return [
-                'success'    => false,
-                'waybill_id' => $waybillId,
-                'status'     => 'not_found',
-                'error'      => 'Nomor resi simulasi tidak valid. Pilih salah satu: TEST-JNT-DELIVERED, TEST-JNT-TRANSIT, atau TEST-JNT-PICKUP.',
-                'history'    => [],
-            ];
-        }
-
-        $courierName = strtoupper($courierCode) === 'JNT' ? 'J&T Express' : strtoupper($courierCode);
-        $now = now();
-
-        if ($isDelivered) {
-            $history = [
-                [
-                    'note'         => 'Paket telah diterima oleh YBS (Penerima yang bersangkutan). Terima kasih telah menggunakan layanan ' . $courierName . '.',
-                    'service_type' => 'EZ',
-                    'updated_at'   => $now->copy()->subMinutes(15)->format('Y-m-d H:i:s'),
-                ],
-                [
-                    'note'         => 'Paket sedang dibawa oleh Kurir (Sprinter) menuju alamat tujuan pengantaran.',
-                    'service_type' => 'EZ',
-                    'updated_at'   => $now->copy()->subHours(2)->format('Y-m-d H:i:s'),
-                ],
-                [
-                    'note'         => 'Paket telah tiba di Drop Point / Gateway Kota Tujuan.',
-                    'service_type' => 'EZ',
-                    'updated_at'   => $now->copy()->subHours(8)->format('Y-m-d H:i:s'),
-                ],
-                [
-                    'note'         => 'Paket telah diberangkatkan dari Pusat Sortir Utama (Hub Transit).',
-                    'service_type' => 'EZ',
-                    'updated_at'   => $now->copy()->subHours(18)->format('Y-m-d H:i:s'),
-                ],
-                [
-                    'note'         => 'Paket telah diserahkan oleh Pengirim (Ngizan Apparel) dan diproses di Drop Point Asal.',
-                    'service_type' => 'EZ',
-                    'updated_at'   => $now->copy()->subDay()->format('Y-m-d H:i:s'),
-                ],
-            ];
-
-            return [
-                'success'    => true,
-                'waybill_id' => $waybillId,
-                'courier'    => [
-                    'company' => $courierCode,
-                    'name'    => $courierName,
-                ],
-                'status'     => 'delivered',
-                'history'    => $history,
-                'is_mock'    => true,
-            ];
-        }
-
-        if ($isTransit) {
-            $history = [
-                [
-                    'note'         => 'Paket sedang dibawa oleh Kurir (Sprinter) menuju alamat tujuan.',
-                    'service_type' => 'EZ',
-                    'updated_at'   => $now->copy()->subMinutes(30)->format('Y-m-d H:i:s'),
-                ],
-                [
-                    'note'         => 'Paket telah tiba di Drop Point / Gateway Kota Tujuan.',
-                    'service_type' => 'EZ',
-                    'updated_at'   => $now->copy()->subHours(4)->format('Y-m-d H:i:s'),
-                ],
-                [
-                    'note'         => 'Paket telah diserahkan oleh Pengirim (Ngizan Apparel) di Drop Point Asal.',
-                    'service_type' => 'EZ',
-                    'updated_at'   => $now->copy()->subHours(12)->format('Y-m-d H:i:s'),
-                ],
-            ];
-
-            return [
-                'success'    => true,
-                'waybill_id' => $waybillId,
-                'courier'    => [
-                    'company' => $courierCode,
-                    'name'    => $courierName,
-                ],
-                'status'     => 'on_delivery',
-                'history'    => $history,
-                'is_mock'    => true,
-            ];
-        }
-
-        // Pickup / Drop Point Awal
-        $history = [
-            [
-                'note'         => 'Paket telah diserahkan oleh Pengirim (Ngizan Apparel) dan diproses di Drop Point Asal ' . $courierName . '.',
-                'service_type' => 'EZ',
-                'updated_at'   => $now->copy()->subMinutes(20)->format('Y-m-d H:i:s'),
-            ],
-        ];
-
-        return [
-            'success'    => true,
-            'waybill_id' => $waybillId,
-            'courier'    => [
-                'company' => $courierCode,
-                'name'    => $courierName,
-            ],
-            'status'     => 'picking_up',
-            'history'    => $history,
-            'is_mock'    => true,
-        ];
-    }
-
-    /**
-     * 5. Reverse Geocoding via OpenStreetMap (Nominatim API)
+     * 3. Reverse Geocoding via OpenStreetMap (Nominatim API)
      * Mengambil komponen alamat (jalan, kelurahan, kecamatan, kota, kode pos) dari koordinat GPS
      *
      * @param float $lat Latitude
@@ -381,4 +200,3 @@ class BiteshipService
         }
     }
 }
-

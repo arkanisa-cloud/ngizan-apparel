@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ShopController::class, 'home'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/product/{product:slug}', [ShopController::class, 'show'])->name('shop.show');
+Route::get('/contact', [ShopController::class, 'contact'])->name('contact');
 
 // Legacy aliases
 Route::get('/customer/shop', [ShopController::class, 'index'])->name('customer.shop.index');
@@ -55,7 +56,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/orders', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [\App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
     Route::put('/orders/{order}/status', [\App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.status');
-    Route::post('/orders/{order}/biteship-booking', [\App\Http\Controllers\Admin\OrderController::class, 'bookBiteshipCourier'])->name('orders.biteship.booking');
     Route::post('/orders/{order}/tracking', [\App\Http\Controllers\Admin\OrderController::class, 'updateTracking'])->name('orders.tracking');
     Route::get('/orders/{order}/print-label', [\App\Http\Controllers\Admin\OrderController::class, 'printShippingLabel'])->name('orders.print.label');
 

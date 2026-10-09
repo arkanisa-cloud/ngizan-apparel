@@ -46,7 +46,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
                     <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Nama Kit / Jersey *</label>
-                    <input type="text" name="name" required value="{{ old('name') }}" placeholder="Contoh: Real Madrid 2024/2025 Home Authentic Kit"
+                    <input type="text" name="name" required value="{{ old('name') }}" placeholder="Real Madrid 2024/2025 Home Authentic Kit"
                            class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink focus:outline-none focus:border-ink">
                 </div>
 

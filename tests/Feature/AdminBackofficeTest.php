@@ -162,16 +162,22 @@ class AdminBackofficeTest extends TestCase
     }
 
     /**
-     * 5. Test Admin can book Biteship pickup and generates waybill resi
+     * 5. Test Admin can input J&T waybill tracking number and changes status to SHIPPED
      */
-    public function test_admin_can_book_biteship_courier(): void
+    public function test_admin_can_input_jnt_waybill_tracking(): void
     {
         Http::fake([
-            'https://api.biteship.com/v1/orders' => Http::response([
-                'success' => true,
-                'id' => 'bit_order_12345',
-                'waybill_id' => 'TKP-00192837465',
-                'status' => 'confirmed'
+            'https://api.binderbyte.com/v1/track*' => Http::response([
+                'status'  => 200,
+                'message' => 'Successfully tracked AWB',
+                'data'    => [
+                    'summary' => [
+                        'courier' => 'J&T Express',
+                        'service' => 'EZ',
+                        'status'  => 'ON PROCESS',
+                    ],
+                    'history' => []
+                ]
             ], 200),
             'https://api.fonnte.com/send' => Http::response(['status' => true], 200),
         ]);
@@ -181,29 +187,30 @@ class AdminBackofficeTest extends TestCase
             'user_id'         => $this->customer->id,
             'status'          => OrderStatus::PAID,
             'subtotal_amount' => 299000,
-            'shipping_cost'   => 15000,
-            'grand_total'     => 314000,
-            'courier_code'    => 'sicepat',
-            'courier_service_code' => 'reg',
+            'shipping_cost'   => 0,
+            'grand_total'     => 299000,
+            'courier_code'    => 'jnt',
+            'courier_service_code' => 'ez',
             'customer_name'   => 'Customer Test',
             'customer_email'  => 'customer@ngizanapparel.com',
             'customer_phone'  => '08123456789',
             'shipping_address_snapshot' => [
-                'recipient_name'   => 'Customer Test',
-                'phone_number'     => '08123456789',
-                'full_address'     => 'Jl. Testing',
-                'biteship_area_id' => 'IDNP6IDNC148IDND840IDZ12730',
+                'recipient_name' => 'Customer Test',
+                'phone_number'   => '08123456789',
+                'full_address'   => 'Jl. Testing',
             ],
         ]);
 
-        $response = $this->actingAs($this->admin)->post(route('admin.orders.biteship.booking', $order->id));
+        $response = $this->actingAs($this->admin)->post(route('admin.orders.tracking', $order->id), [
+            'tracking_number' => 'JX1234567890',
+        ]);
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
         $order->refresh();
         $this->assertEquals(OrderStatus::SHIPPED, $order->status);
-        $this->assertEquals('TKP-00192837465', $order->tracking_number);
+        $this->assertEquals('JX1234567890', $order->tracking_number);
     }
 
     /**

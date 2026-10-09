@@ -45,6 +45,12 @@ return [
         'snap_url'      => env('MIDTRANS_SNAP_URL', 'https://app.sandbox.midtrans.com/snap/snap.js'),
     ],
 
+    // Binderbyte Logistics Tracking API
+    'binderbyte' => [
+        'api_key'  => env('BINDERBYTE_API_KEY', ''),
+        'base_url' => env('BINDERBYTE_BASE_URL', 'https://api.binderbyte.com/v1'),
+    ],
+
     // Biteship Logistics & Shipping API
     'biteship' => [
         'api_key'            => env('BITESHIP_API_KEY', 'biteship_test_demo_key'),

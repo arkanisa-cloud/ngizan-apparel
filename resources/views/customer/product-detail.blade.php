@@ -296,7 +296,7 @@
                                 </label>
                                 <button type="button" @click="sizeModal = true"
                                     class="text-xs font-semibold text-ink underline hover:text-mute">
-                                    Panduan Ukuran
+                                    Panduan Ukuran (Size Chart)
                                 </button>
                             </div>
 

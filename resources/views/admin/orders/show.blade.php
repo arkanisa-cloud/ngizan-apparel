@@ -122,7 +122,7 @@
                     @csrf
                     <div class="relative flex-1 md:w-64">
                         <input type="text" name="tracking_number" x-model="resiInput"
-                               placeholder="Contoh: JNT9827361829" required
+                               placeholder="JNT9827361829" required
                                class="w-full bg-white border border-hairline px-3.5 py-2 text-xs rounded-full font-mono text-ink focus:outline-none focus:border-ink uppercase">
                     </div>
                     <button type="submit" class="px-4 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
@@ -208,11 +208,11 @@
                 </div>
             </div>
 
-            {{-- Biteship Live Tracking Timeline --}}
+            {{-- J&T Express Live Tracking Timeline via Binderbyte --}}
             @if($trackingInfo)
                 <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4 text-xs">
                     <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3 flex justify-between items-center">
-                        <span class="font-bold uppercase tracking-wider text-xs">Pelacakan Logistik Biteship</span>
+                        <span class="font-bold uppercase tracking-wider text-xs">Pelacakan Ekspedisi J&T Express</span>
                         <span class="font-mono text-ink font-bold">{{ $order->tracking_number }}</span>
                     </h2>
 

@@ -23,11 +23,30 @@ class ShopController extends Controller
     {
         $categories = Category::active()->withCount('products')->get();
 
-        $featuredProducts = Product::active()
+        $jerseyProducts = Product::active()
+            ->whereHas('category', function ($q) {
+                $q->where('slug', 'jersey')->orWhere('name', 'like', '%jersey%');
+            })
             ->with(['category', 'variants'])
             ->latest()
             ->take(8)
             ->get();
+
+        $nonJerseyProducts = Product::active()
+            ->whereHas('category', function ($q) {
+                $q->where('slug', '!=', 'jersey')->where('name', 'not like', '%jersey%');
+            })
+            ->with(['category', 'variants'])
+            ->latest()
+            ->take(8)
+            ->get();
+
+        // Fallback jika query jersey khusus kosong, ambil produk terbaru
+        if ($jerseyProducts->isEmpty()) {
+            $jerseyProducts = Product::active()->with(['category', 'variants'])->latest()->take(8)->get();
+        }
+
+        $featuredProducts = $jerseyProducts;
 
         $heroBanner = null;
         $promoBanner = null;
@@ -38,7 +57,7 @@ class ShopController extends Controller
             $promoBanner = $banners->get('promo_banner');
         }
 
-        return view('home', compact('categories', 'featuredProducts', 'heroBanner', 'promoBanner'));
+        return view('home', compact('categories', 'featuredProducts', 'jerseyProducts', 'nonJerseyProducts', 'heroBanner', 'promoBanner'));
     }
 
     /**
@@ -120,5 +139,13 @@ class ShopController extends Controller
             ->get();
 
         return view('customer.product-detail', compact('product', 'relatedProducts'));
+    }
+
+    /**
+     * 4. Halaman Kontak & Bantuan Storefront
+     */
+    public function contact(): View
+    {
+        return view('customer.contact');
     }
 }

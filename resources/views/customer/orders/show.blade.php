@@ -298,7 +298,7 @@
                     </div>
                 </div>
 
-                {{-- Pelacakan Ekspedisi J&T Express (Biteship Live Tracking) --}}
+                {{-- Pelacakan Ekspedisi J&T Express (Binderbyte Live Tracking) --}}
                 @if($order->tracking_number)
                     <div class="bg-white rounded-3xl border border-hairline-soft p-6 sm:p-8 space-y-6 shadow-xs" x-data>
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-hairline-soft pb-4 gap-3">

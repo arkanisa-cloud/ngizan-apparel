@@ -24,7 +24,7 @@
                 {{-- Nama Kategori --}}
                 <div>
                     <label for="name" class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Nama Kategori <span class="text-sale">*</span></label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink focus:outline-none focus:border-ink" placeholder="Contoh: Tim Nasional, Klub Eropa, Retro Classics" required>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink focus:outline-none focus:border-ink" placeholder="Tim Nasional, Klub Eropa, Retro Classics" required>
                     @error('name') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 

@@ -19,17 +19,17 @@ class ProductAndVariantSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ambil ID Kategori
-        $defaultCatId = Category::first()?->id ?? 1;
-        $catEropa = Category::where('slug', 'klub-eropa')->first()?->id ?? $defaultCatId;
-        $catTimnas = Category::where('slug', 'tim-nasional')->first()?->id ?? $defaultCatId;
-        $catRetro = Category::where('slug', 'retro-classics')->first()?->id ?? Category::where('slug', 'bola-sepak')->first()?->id ?? $defaultCatId;
-        $catSpecial = Category::where('slug', 'special-edition')->first()?->id ?? Category::where('slug', 'bola-futsal')->first()?->id ?? $defaultCatId;
+        // Ambil ID Kategori dari seeder
+        $catJersey = Category::where('slug', 'jersey')->first()?->id ?? 1;
+        $catKaosKaki = Category::where('slug', 'kaos-kaki')->first()?->id ?? 2;
+        $catBolaSepak = Category::where('slug', 'bola-sepak')->first()?->id ?? 3;
+        $catBolaFutsal = Category::where('slug', 'bola-futsal')->first()?->id ?? 4;
+        $catManset = Category::where('slug', 'manset')->first()?->id ?? 5;
 
-        // 2. Daftar 5 Produk Realistis
+        // 2. Daftar Produk Realistis (Jersey & Non-Jersey)
         $productsData = [
             [
-                'category_id'          => $catEropa?->id ?? 1,
+                'category_id'          => $catJersey,
                 'name'                 => 'Real Madrid 2024/25 Home Authentic Kit',
                 'slug'                 => 'real-madrid-2024-25-home-authentic-kit',
                 'description'          => 'Jersey kandang Real Madrid musim 2024/2025 dengan pola houndstooth elegan khas tradisi fiesta San Isidro di Madrid. Dilengkapi teknologi HEAT.RDY berpori mikro untuk sirkulasi udara optimal.',
@@ -64,7 +64,7 @@ class ProductAndVariantSeeder extends Seeder
                 ],
             ],
             [
-                'category_id'          => $catEropa?->id ?? 1,
+                'category_id'          => $catJersey,
                 'name'                 => 'Arsenal 2024/25 Away Solar Black Edition',
                 'slug'                 => 'arsenal-2024-25-away-solar-black-edition',
                 'description'          => 'Jersey tandang Arsenal 2024/25 berkolaborasi dengan Labrum London. Mengusung aksen grafis Pan-Afrika hijau-merah dengan emblem Cannon legendaris di bagian dada kiri.',
@@ -97,7 +97,7 @@ class ProductAndVariantSeeder extends Seeder
                 ],
             ],
             [
-                'category_id'          => $catTimnas?->id ?? 2,
+                'category_id'          => $catJersey,
                 'name'                 => 'Timnas Indonesia 2024/25 Home Garuda Kit',
                 'slug'                 => 'timnas-indonesia-2024-25-home-garuda-kit',
                 'description'          => 'Jersey kandang Timnas Indonesia edisi kualifikasi Piala Dunia 2026. Balutan merah membara dengan rajutan motif sayap burung Garuda dan detail kerah putih klasik.',
@@ -130,7 +130,7 @@ class ProductAndVariantSeeder extends Seeder
                 ],
             ],
             [
-                'category_id'          => $catRetro?->id ?? 3,
+                'category_id'          => $catJersey,
                 'name'                 => 'Manchester United 1998/99 Treble Winners Retro',
                 'slug'                 => 'manchester-united-1998-99-treble-winners-retro',
                 'description'          => 'Replika arsip resmi jersey Manchester United Final Camp Nou 1999 saat mengunci gelar Treble bersejarah. Dilengkapi sablon timbul sponsor Sharp dan kerah resleting ikonik.',
@@ -160,7 +160,7 @@ class ProductAndVariantSeeder extends Seeder
                 ],
             ],
             [
-                'category_id'          => $catSpecial?->id ?? 4,
+                'category_id'          => $catJersey,
                 'name'                 => 'Japan National Team 2024 Special Anime Manga Edition',
                 'slug'                 => 'japan-national-team-2024-special-anime-manga-edition',
                 'description'          => 'Jersey edisi khusus Samurai Blue berkolaborasi dengan kreator manga ternama Jepang. Dilengkapi ilustrasi panel manga halus di atas kain jacquard biru origami.',
@@ -187,6 +187,97 @@ class ProductAndVariantSeeder extends Seeder
                     ['size' => JerseySize::L->value, 'type' => JerseyType::PLAYER_ISSUE->value, 'stock' => 12, 'sku' => 'JPN-SP24-PI-L', 'adj' => 40000],
                     ['size' => JerseySize::XL->value, 'type' => JerseyType::PLAYER_ISSUE->value, 'stock' => 7, 'sku' => 'JPN-SP24-PI-XL', 'adj' => 40000],
                     ['size' => JerseySize::XXL->value, 'type' => JerseyType::PLAYER_ISSUE->value, 'stock' => 3, 'sku' => 'JPN-SP24-PI-XXL', 'adj' => 50000],
+                ],
+            ],
+            [
+                'category_id'          => $catKaosKaki,
+                'name'                 => 'Kaos Kaki Grip Anti-Slip Pro Football',
+                'slug'                 => 'kaos-kaki-grip-anti-slip-pro-football',
+                'description'          => 'Kaos kaki sepak bola berteknologi grip bantalan silikon anti-slip di bagian telapak. Mencegah kaki bergeser di dalam sepatu dan meningkatkan stabilitas manuver.',
+                'base_price'           => 49000,
+                'weight_grams'         => 100,
+                'thumbnail_front'      => 'categories/kaos-kaki.webp',
+                'thumbnail_back'       => null,
+                'gallery_images'       => [
+                    'categories/kaos-kaki.webp',
+                ],
+                'is_active'            => true,
+                'allow_custom_nameset' => false,
+                'custom_nameset_price' => 0,
+                'allow_patch'          => false,
+                'patch_price'          => 0,
+                'available_patches'    => [],
+                'variants'             => [
+                    ['size' => 'All Size', 'type' => 'Apparel', 'stock' => 50, 'sku' => 'SOCK-GRIP-BLK', 'adj' => 0],
+                ],
+            ],
+            [
+                'category_id'          => $catBolaSepak,
+                'name'                 => 'Bola Sepak Match Ball FIFA Quality Pro Size 5',
+                'slug'                 => 'bola-sepak-match-ball-fifa-quality-pro-size-5',
+                'description'          => 'Bola pertandingan resmi ukuran 5 standar FIFA. Konstruksi thermally bonded tanpa jahitan (seamless) untuk akurasi tendangan maksimal dan retensi udara sempurna.',
+                'base_price'           => 349000,
+                'weight_grams'         => 430,
+                'thumbnail_front'      => 'categories/bola-sepak.webp',
+                'thumbnail_back'       => null,
+                'gallery_images'       => [
+                    'categories/bola-sepak.webp',
+                ],
+                'is_active'            => true,
+                'allow_custom_nameset' => false,
+                'custom_nameset_price' => 0,
+                'allow_patch'          => false,
+                'patch_price'          => 0,
+                'available_patches'    => [],
+                'variants'             => [
+                    ['size' => 'Size 5', 'type' => 'Equipment', 'stock' => 20, 'sku' => 'BALL-SOCCER-SZ5', 'adj' => 0],
+                ],
+            ],
+            [
+                'category_id'          => $catBolaFutsal,
+                'name'                 => 'Bola Futsal Competition Low Bounce Size 4',
+                'slug'                 => 'bola-futsal-competition-low-bounce-size-4',
+                'description'          => 'Bola futsal resmi dengan teknologi low bounce pantulan rendah untuk kontrol bola yang presisi di lapangan vinyl, parket, dan interlock.',
+                'base_price'           => 289000,
+                'weight_grams'         => 420,
+                'thumbnail_front'      => 'categories/bola-futsal.webp',
+                'thumbnail_back'       => null,
+                'gallery_images'       => [
+                    'categories/bola-futsal.webp',
+                ],
+                'is_active'            => true,
+                'allow_custom_nameset' => false,
+                'custom_nameset_price' => 0,
+                'allow_patch'          => false,
+                'patch_price'          => 0,
+                'available_patches'    => [],
+                'variants'             => [
+                    ['size' => 'Size 4', 'type' => 'Equipment', 'stock' => 25, 'sku' => 'BALL-FUTSAL-SZ4', 'adj' => 0],
+                ],
+            ],
+            [
+                'category_id'          => $catManset,
+                'name'                 => 'Manset Baselayer Compression Long Sleeve Pro',
+                'slug'                 => 'manset-baselayer-compression-long-sleeve-pro',
+                'description'          => 'Pakaian manset baselayer kompresi lengan panjang dengan bahan spandex polyester elastis. Menjaga suhu otot tetap optimal dan menyerap keringat dengan cepat.',
+                'base_price'           => 89000,
+                'weight_grams'         => 150,
+                'thumbnail_front'      => 'categories/manset.webp',
+                'thumbnail_back'       => null,
+                'gallery_images'       => [
+                    'categories/manset.webp',
+                ],
+                'is_active'            => true,
+                'allow_custom_nameset' => false,
+                'custom_nameset_price' => 0,
+                'allow_patch'          => false,
+                'patch_price'          => 0,
+                'available_patches'    => [],
+                'variants'             => [
+                    ['size' => JerseySize::S->value, 'type' => 'Apparel', 'stock' => 15, 'sku' => 'MANSET-BLK-S', 'adj' => 0],
+                    ['size' => JerseySize::M->value, 'type' => 'Apparel', 'stock' => 25, 'sku' => 'MANSET-BLK-M', 'adj' => 0],
+                    ['size' => JerseySize::L->value, 'type' => 'Apparel', 'stock' => 20, 'sku' => 'MANSET-BLK-L', 'adj' => 0],
+                    ['size' => JerseySize::XL->value, 'type' => 'Apparel', 'stock' => 15, 'sku' => 'MANSET-BLK-XL', 'adj' => 0],
                 ],
             ],
         ];

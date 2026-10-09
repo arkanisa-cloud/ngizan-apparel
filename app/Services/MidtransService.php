@@ -85,7 +85,13 @@ class MidtransService
             $response = Http::withBasicAuth($this->serverKey, '')
                 ->acceptJson()
                 ->asJson()
-                ->timeout(20)
+                ->timeout(30)
+                ->connectTimeout(15)
+                ->withOptions([
+                    'curl' => [
+                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                    ],
+                ])
                 ->post($this->snapApiUrl, $payload);
 
             if ($response->successful()) {
@@ -152,7 +158,13 @@ class MidtransService
         try {
             $response = Http::withBasicAuth($this->serverKey, '')
                 ->acceptJson()
-                ->timeout(10)
+                ->timeout(15)
+                ->connectTimeout(10)
+                ->withOptions([
+                    'curl' => [
+                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                    ],
+                ])
                 ->get($statusApiUrl);
 
             if ($response->successful()) {
@@ -290,7 +302,13 @@ class MidtransService
             $response = Http::withBasicAuth($this->serverKey, '')
                 ->acceptJson()
                 ->asJson()
-                ->timeout(20)
+                ->timeout(30)
+                ->connectTimeout(15)
+                ->withOptions([
+                    'curl' => [
+                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                    ],
+                ])
                 ->post($this->snapApiUrl, $payload);
 
             if ($response->successful()) {

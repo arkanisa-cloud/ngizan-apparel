@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\User;
-use App\Services\BiteshipService;
+use App\Services\BinderbyteService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -14,23 +14,41 @@ class JntTrackingTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_biteship_service_get_tracking_fetches_jnt_status(): void
+    public function test_binderbyte_service_get_tracking_fetches_jnt_status(): void
     {
         Http::fake([
-            'https://api.biteship.com/v1/trackings/JX1234567890/couriers/jnt' => Http::response([
-                'success' => true,
-                'status'  => 'in_transit',
-                'history' => [
-                    ['note' => 'Paket sedang dalam perjalanan', 'updated_at' => '2026-09-15 10:00:00']
+            'https://api.binderbyte.com/v1/track*' => Http::response([
+                'status'  => 200,
+                'message' => 'Successfully tracked AWB',
+                'data'    => [
+                    'summary' => [
+                        'courier' => 'J&T Express',
+                        'service' => 'EZ',
+                        'status'  => 'ON PROCESS',
+                        'date'    => '2026-09-15 10:00:00',
+                        'desc'    => 'Paket sedang dalam perjalanan',
+                    ],
+                    'detail' => [
+                        'origin'      => 'JAKARTA',
+                        'destination' => 'SURABAYA',
+                    ],
+                    'history' => [
+                        [
+                            'desc'     => 'Paket sedang dalam perjalanan menuju kota tujuan',
+                            'location' => 'JAKARTA',
+                            'date'     => '2026-09-15 10:00:00',
+                        ]
+                    ]
                 ]
             ], 200),
         ]);
 
-        $service = new BiteshipService();
-        $tracking = $service->getTracking('JX1234567890', 'jnt');
+        $service = new BinderbyteService();
+        $tracking = $service->getTracking('JX1234567890', 'jnt', true);
 
         $this->assertTrue($tracking['success']);
-        $this->assertEquals('in_transit', $tracking['status']);
+        $this->assertEquals('on_delivery', $tracking['status']);
+        $this->assertEquals('ON PROCESS', $tracking['status_raw']);
         $this->assertCount(1, $tracking['history']);
     }
 
@@ -47,11 +65,28 @@ class JntTrackingTest extends TestCase
         ]);
 
         Http::fake([
-            'https://api.biteship.com/v1/trackings/JX9988776655/couriers/jnt' => Http::response([
-                'success' => true,
-                'status'  => 'delivered',
-                'history' => [
-                    ['note' => 'Paket telah sampai di tujuan', 'updated_at' => '2026-09-15 12:00:00']
+            'https://api.binderbyte.com/v1/track*' => Http::response([
+                'status'  => 200,
+                'message' => 'Successfully tracked AWB',
+                'data'    => [
+                    'summary' => [
+                        'courier' => 'J&T Express',
+                        'service' => 'EZ',
+                        'status'  => 'DELIVERED',
+                        'date'    => '2026-09-15 12:00:00',
+                        'desc'    => 'Paket telah sampai di tujuan (Diterima oleh YBS)',
+                    ],
+                    'detail' => [
+                        'origin'      => 'JAKARTA',
+                        'destination' => 'SURABAYA',
+                    ],
+                    'history' => [
+                        [
+                            'desc'     => 'Paket telah diterima oleh YBS',
+                            'location' => 'SURABAYA',
+                            'date'     => '2026-09-15 12:00:00',
+                        ]
+                    ]
                 ]
             ], 200),
         ]);
@@ -77,11 +112,28 @@ class JntTrackingTest extends TestCase
         ]);
 
         Http::fake([
-            'https://api.biteship.com/v1/trackings/JX1122334455/couriers/jnt' => Http::response([
-                'success' => true,
-                'status'  => 'in_transit',
-                'history' => [
-                    ['note' => 'Paket sedang disortir di Gateway', 'updated_at' => '2026-09-15 08:00:00']
+            'https://api.binderbyte.com/v1/track*' => Http::response([
+                'status'  => 200,
+                'message' => 'Successfully tracked AWB',
+                'data'    => [
+                    'summary' => [
+                        'courier' => 'J&T Express',
+                        'service' => 'EZ',
+                        'status'  => 'ON PROCESS',
+                        'date'    => '2026-09-15 08:00:00',
+                        'desc'    => 'Paket sedang disortir di Gateway',
+                    ],
+                    'detail' => [
+                        'origin'      => 'JAKARTA',
+                        'destination' => 'SURABAYA',
+                    ],
+                    'history' => [
+                        [
+                            'desc'     => 'Paket sedang disortir di Gateway',
+                            'location' => 'JAKARTA',
+                            'date'     => '2026-09-15 08:00:00',
+                        ]
+                    ]
                 ]
             ], 200),
         ]);

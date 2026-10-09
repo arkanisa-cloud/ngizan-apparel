@@ -162,7 +162,7 @@
         {{-- Dynamic Horizontally Scrollable Rail (Responsive Card Widths) --}}
         <div x-ref="newArrivalsScroll"
             class="flex gap-3 sm:gap-4 overflow-x-auto pb-1 hide-scroll scroll-smooth snap-x snap-mandatory">
-            @forelse($featuredProducts as $product)
+            @forelse($jerseyProducts ?? $featuredProducts as $product)
                 <div class="w-[170px] sm:w-[220px] md:w-[260px] lg:w-[280px] shrink-0 snap-start">
                     <x-product-card :product="$product" />
                 </div>
@@ -175,7 +175,7 @@
 
         {{-- View All CTA Button --}}
         <div class="mt-5 sm:mt-6 flex justify-center">
-            <a href="{{ route('shop.index') }}"
+            <a href="{{ route('shop.index', ['category' => 'jersey']) }}"
                 class="bg-black text-white px-6 sm:px-8 py-2 sm:py-2.5 text-xs sm:text-sm font-bold tracking-widest uppercase hover:bg-neutral-800 transition-colors rounded-full shadow-sm">
                 View All
             </a>
@@ -193,21 +193,10 @@
         </section>
     @endif
 
-    {{-- ===== 5. KOLEKSI TIMNAS (CONSISTENT INTER-SECTION RHYTHM) ===== --}}
-    @php
-        $timnasList = $featuredProducts->filter(function ($p) {
-            $name = strtolower($p->name);
-            $cat = strtolower($p->category->slug ?? '');
-            return str_contains($name, 'timnas') || str_contains($name, 'garuda') || str_contains($cat, 'tim-nasional');
-        });
-
-        // Fallback jika belum ada produk timnas khusus di DB, tampilkan subset produk
-        $displayTimnas = $timnasList->isNotEmpty() ? $timnasList : $featuredProducts->take(6);
-    @endphp
-
+    {{-- ===== 5. KATALOG NGIZAN (PRODUK SELAIN JERSEY) ===== --}}
     <section class="wrap pt-5 pb-5 sm:pt-8 sm:pb-8" x-data="{
         scroll(direction) {
-            const container = this.$refs.timnasScroll;
+            const container = this.$refs.catalogScroll;
             const scrollAmount = container.clientWidth * 0.75;
             container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
         }
@@ -217,7 +206,7 @@
         <div class="flex items-end justify-between mb-4 sm:mb-6 pb-2.5 sm:pb-3 border-b border-gray-200">
             <div>
                 <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-400 block mb-1">
-                    Produk Selain Jersey
+                    Apparel & Aksesoris Sepakbola
                 </span>
                 <h2 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink uppercase">
                     Katalog Ngizan
@@ -243,22 +232,22 @@
         </div>
 
         {{-- Dynamic Horizontally Scrollable Rail --}}
-        <div x-ref="timnasScroll"
+        <div x-ref="catalogScroll"
             class="flex gap-3 sm:gap-4 overflow-x-auto pb-1 hide-scroll scroll-smooth snap-x snap-mandatory">
-            @forelse($displayTimnas as $product)
+            @forelse($nonJerseyProducts as $product)
                 <div class="w-[170px] sm:w-[220px] md:w-[260px] lg:w-[280px] shrink-0 snap-start">
                     <x-product-card :product="$product" />
                 </div>
             @empty
                 <div class="w-full text-center py-12 text-mute text-sm">
-                    Belum ada produk
+                    Belum ada produk apparel / perlengkapan selain jersey.
                 </div>
             @endforelse
         </div>
 
         {{-- View All CTA Button --}}
         <div class="mt-5 sm:mt-6 flex justify-center">
-            <a href="{{ route('shop.index', ['category' => 'tim-nasional']) }}"
+            <a href="{{ route('shop.index') }}"
                 class="bg-black text-white px-6 sm:px-8 py-2 sm:py-2.5 text-xs sm:text-sm font-bold tracking-widest uppercase hover:bg-neutral-800 transition-colors rounded-full shadow-sm">
                 View All
             </a>

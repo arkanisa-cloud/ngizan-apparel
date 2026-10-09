@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Services\BiteshipService;
+use App\Services\BinderbyteService;
 use App\Services\WhatsAppService;
 use Exception;
 use Illuminate\Contracts\View\View;
@@ -15,12 +15,12 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Controller OrderController (Admin)
- * Mengelola antrian pesanan, status manifest produksi, booking kurir Biteship, dan cetak label pengiriman
+ * Mengelola antrian pesanan, status manifest produksi, pelacakan J&T via Binderbyte, dan cetak label pengiriman
  */
 class OrderController extends Controller
 {
     public function __construct(
-        protected BiteshipService $biteship,
+        protected BinderbyteService $binderbyte,
         protected WhatsAppService $whatsApp
     ) {}
 
@@ -50,15 +50,16 @@ class OrderController extends Controller
     }
 
     /**
-     * Detail Pesanan, Spesifikasi Sablon Nameset, & Pinpoint Alamat
+     * Detail Pesanan, Spesifikasi Sablon Nameset, & Pelacakan Ekspedisi J&T
      */
     public function show(Order $order): View
     {
         $order->load(['user', 'items.product', 'payment']);
 
         $trackingInfo = null;
-        if ($order->tracking_number && $order->courier_code) {
-            $trackingInfo = $this->biteship->getTracking($order->tracking_number, $order->courier_code);
+        if ($order->tracking_number) {
+            $courier = $order->courier_code ?: 'jnt';
+            $trackingInfo = $this->binderbyte->getTracking($order->tracking_number, $courier);
 
             if (!empty($trackingInfo['status']) && in_array(strtolower($trackingInfo['status']), ['delivered', 'selesai', 'sukses'])) {
                 if ($order->status === OrderStatus::SHIPPED) {
@@ -153,8 +154,8 @@ class OrderController extends Controller
             }
         }
 
-        // Ambil info tracking untuk sinkronisasi awal
-        $trackingInfo = $this->biteship->getTracking($trackingNumber, 'jnt');
+        // Ambil info tracking awal via Binderbyte
+        $trackingInfo = $this->binderbyte->getTracking($trackingNumber, 'jnt', true);
 
         $newStatus = OrderStatus::SHIPPED;
         $completedAt = null;
@@ -184,74 +185,9 @@ class OrderController extends Controller
 
         $statusMsg = $newStatus === OrderStatus::COMPLETED 
             ? "Nomor resi {$trackingNumber} berhasil disimpan. Paket berstatus TELAH TIBA (Completed) dan ulasan pelanggan telah aktif."
-            : "Nomor resi {$trackingNumber} berhasil disimpan. Status pesanan diubah menjadi TELAH DIKIRIM (Shipped) dan terlacak otomatis.";
+            : "Nomor resi {$trackingNumber} berhasil disimpan. Status pesanan diubah menjadi TELAH DIKIRIM (Shipped) dan terlacak otomatis via Binderbyte.";
 
         return back()->with('success', $statusMsg);
-    }
-
-    /**
-     * Booking Kurir Penjemputan Otomatis via Biteship API
-     * POST /admin/orders/{order}/biteship-booking
-     */
-    public function bookBiteshipCourier(Request $request, Order $order): RedirectResponse
-    {
-        if ($order->tracking_number) {
-            return back()->with('error', "Pesanan ini sudah memiliki nomor resi Biteship: {$order->tracking_number}");
-        }
-
-        try {
-            // Susun item payload untuk Biteship
-            $items = [];
-            foreach ($order->items as $item) {
-                $items[] = [
-                    'name'        => $item->product_name . ' (' . $item->size . ')',
-                    'description' => 'Jersey Football Kit' . ($item->custom_name ? ' [Custom #' . $item->custom_name . ']' : ''),
-                    'value'       => (int) $item->subtotal,
-                    'length'      => 15,
-                    'width'       => 15,
-                    'height'      => 5,
-                    'weight'      => 250,
-                    'quantity'    => (int) $item->quantity,
-                ];
-            }
-
-            $payload = [
-                'origin_area_id'      => config('services.biteship.origin_area_id', 'IDNP6IDJB164'),
-                'destination_area_id' => $order->shipping_address_snapshot['biteship_area_id'] ?? null,
-                'courier_company'     => $order->courier_code ?: 'sicepat',
-                'courier_type'        => $order->courier_service_code ?: 'reg',
-                'delivery_type'       => 'later',
-                'order_note'          => $order->notes ?: 'Ngizan Apparel Jersey',
-                'items'               => $items,
-                'destination_contact_name'  => $order->customer_name,
-                'destination_contact_phone' => $order->customer_phone,
-                'destination_address'       => $order->shipping_address_snapshot['full_address'] ?? 'Alamat Pemesan',
-            ];
-
-            $booking = $this->biteship->createOrder($payload);
-
-            $waybillId = $booking['waybill_id'] ?? $booking['courier_tracking_id'] ?? 'BTE-' . strtoupper(uniqid());
-            $biteshipOrderId = $booking['id'] ?? null;
-
-            $order->update([
-                'biteship_order_id' => $biteshipOrderId,
-                'tracking_number'   => $waybillId,
-                'status'            => OrderStatus::SHIPPED,
-            ]);
-
-            // Kirim Notifikasi WhatsApp ke Customer dengan Nomor Resi
-            try {
-                $this->whatsApp->sendOrderShipped($order);
-            } catch (Exception $e) {
-                Log::warning('WhatsApp Send Order Shipped Failed: ' . $e->getMessage());
-            }
-
-            return back()->with('success', "Pickup kurir Biteship berhasil dibooking! Nomor Resi: {$waybillId}");
-
-        } catch (Exception $e) {
-            Log::error('Biteship Booking Error: ' . $e->getMessage());
-            return back()->with('error', 'Gagal booking kurir Biteship: ' . $e->getMessage());
-        }
     }
 
     /**

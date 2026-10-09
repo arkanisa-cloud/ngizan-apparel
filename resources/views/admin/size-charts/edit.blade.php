@@ -36,7 +36,7 @@
                     <label class="block font-bold text-ink uppercase text-[11px] tracking-wider mb-1.5">
                         Nama Template *
                     </label>
-                    <input type="text" name="name" required placeholder="Contoh: Trackpants Dewasa (Pria / Unisex)"
+                    <input type="text" name="name" required placeholder="Trackpants Dewasa (Pria / Unisex)"
                            value="{{ old('name', $sizeChart->name) }}"
                            class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-xl text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition font-medium">
                     @error('name') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
@@ -161,7 +161,7 @@
                 <label class="block font-bold text-ink uppercase text-[11px] tracking-wider mb-1.5">
                     Catatan / Petunjuk Pengukuran (Opsional)
                 </label>
-                <textarea name="description" rows="2" placeholder="Contoh: Diukur dalam posisi pakaian terbentang rata di atas meja. Toleransi ± 1-2 cm."
+                <textarea name="description" rows="2" placeholder="Diukur dalam posisi pakaian terbentang rata di atas meja. Toleransi ± 1-2 cm."
                           class="w-full bg-soft-cloud border border-hairline-soft p-4 rounded-xl text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition font-medium">{{ old('description', $sizeChart->description) }}</textarea>
             </div>
 
@@ -217,7 +217,7 @@
                             <tr class="hover:bg-soft-cloud/40 transition">
                                 <td class="p-3">
                                     <input type="text" :name="'rows[' + rowIdx + '][size]'" x-model="row.size"
-                                           placeholder="Size (misal: S)" required
+                                           placeholder="Ukuran (S, M, L...)" required
                                            class="w-full bg-soft-cloud border border-hairline-soft px-2.5 py-1.5 rounded-lg text-xs font-bold text-ink focus:bg-white focus:border-ink">
                                 </td>
                                 <template x-for="(col, colIdx) in columns.slice(1)" :key="colIdx">

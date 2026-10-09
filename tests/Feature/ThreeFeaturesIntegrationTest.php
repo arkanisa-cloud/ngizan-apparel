@@ -47,7 +47,7 @@ class ThreeFeaturesIntegrationTest extends TestCase
         $response = $this->get(route('shop.show', $product->slug));
         $response->assertStatus(200);
         $response->assertSee('5.0');
-        $response->assertSee('1 ulasan');
+        $response->assertSee('1 Ulasan');
         $response->assertSee('Kualitas jersey luar biasa, sablon sangat rapi!');
         $response->assertSee('Verified Buyer');
     }

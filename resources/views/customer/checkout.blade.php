@@ -101,7 +101,7 @@
                                     Nama Lengkap Penerima *
                                 </label>
                                 <input type="text" x-model="form.recipient_name" required
-                                    placeholder="Contoh: Muhammad Alvaro"
+                                    placeholder="Nama lengkap penerima"
                                     class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium">
                             </div>
                             <div>
@@ -109,7 +109,7 @@
                                     Nomor WhatsApp Aktif *
                                 </label>
                                 <input type="tel" x-model="form.phone_number" required
-                                    placeholder="Contoh: 081234567890"
+                                    placeholder="081234567890"
                                     class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium">
                             </div>
                         </div>
@@ -156,7 +156,7 @@
                             <div class="relative">
                                 <input type="text" x-model="areaSearchQuery"
                                     @input.debounce.350ms="searchBiteshipAreas()"
-                                    placeholder="Ketik kecamatan, kelurahan, atau kode pos (misal: Tebet atau 12810)..."
+                                    placeholder="Ketik kecamatan, kelurahan, atau kode pos..."
                                     class="w-full bg-soft-cloud border border-hairline-soft pl-10 pr-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium">
                                 <div class="absolute left-3.5 top-3.5 text-neutral-400 pointer-events-none">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -306,7 +306,7 @@
                                     </template>
                                 </div>
                                 <input type="text" x-model="form.label" required
-                                    placeholder="Contoh: Rumah, Kantor, Kosan..."
+                                    placeholder="Label alamat (Rumah, Kantor, Kosan...)"
                                     class="w-full bg-soft-cloud border border-hairline-soft px-4 py-2.5 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium">
                             </div>
 
@@ -323,7 +323,7 @@
                                     Patokan Rumah / Cat / Pagar (Opsional)
                                 </label>
                                 <input type="text" x-model="form.benchmark_notes"
-                                    placeholder="Contoh: Rumah tingkat pagar hitam samping minimarket"
+                                    placeholder="Patokan alamat (pagar hitam, samping minimarket...)"
                                     class="w-full bg-soft-cloud border border-hairline-soft px-4 py-3 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400 font-medium">
                             </div>
 
@@ -556,7 +556,7 @@
                         <label class="block font-bold text-ink text-[11px] uppercase tracking-wider">Catatan Khusus
                             Pesanan</label>
                         <input type="text" x-model="form.notes"
-                            placeholder="Contoh: Titipkan di pos satpam jika tidak ada orang"
+                            placeholder="Catatan khusus untuk kurir (opsional)"
                             class="w-full bg-soft-cloud border border-hairline-soft px-4 py-2.5 rounded-full text-xs text-ink focus:border-ink focus:bg-white focus:ring-0 transition placeholder:text-neutral-400">
                     </div>
 

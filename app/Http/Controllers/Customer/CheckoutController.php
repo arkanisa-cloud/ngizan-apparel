@@ -9,6 +9,7 @@ use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ShippingAddress;
+use App\Services\BinderbyteService;
 use App\Services\BiteshipService;
 use App\Services\InventoryService;
 use App\Services\MidtransService;
@@ -31,6 +32,7 @@ class CheckoutController extends Controller
 {
     public function __construct(
         protected BiteshipService $biteship,
+        protected BinderbyteService $binderbyte,
         protected MidtransService $midtrans,
         protected WhatsAppService $whatsApp,
         protected InventoryService $inventory
@@ -491,6 +493,12 @@ class CheckoutController extends Controller
             try {
                 $this->midtrans->syncOrderStatus($order);
                 $order->refresh();
+
+                // Jika snap token belum ada, buatkan otomatis
+                if (!$order->payment?->snap_token && !$order->status->isPaid()) {
+                    $this->midtrans->createSnapToken($order);
+                    $order->refresh();
+                }
             } catch (\Throwable $e) {
                 Log::warning("Auto-sync Midtrans error on showOrder for {$order->order_number}: " . $e->getMessage());
             }
@@ -499,8 +507,9 @@ class CheckoutController extends Controller
         $order->load(['items.product', 'payment']);
 
         $trackingInfo = null;
-        if ($order->tracking_number && $order->courier_code) {
-            $trackingInfo = $this->biteship->getTracking($order->tracking_number, $order->courier_code);
+        if ($order->tracking_number) {
+            $courier = $order->courier_code ?: 'jnt';
+            $trackingInfo = $this->binderbyte->getTracking($order->tracking_number, $courier);
 
             // Auto-complete seketika jika paket dinyatakan telah sampai (delivered) oleh kurir
             if (!empty($trackingInfo['status']) && in_array(strtolower($trackingInfo['status']), ['delivered', 'selesai', 'sukses'])) {
