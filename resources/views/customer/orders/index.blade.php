@@ -164,7 +164,9 @@
                                             <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-mute">
                                                 <span
                                                     class="font-semibold text-ink bg-white px-2 py-0.5 rounded-md border border-hairline-soft">{{ $item->size }}</span>
-                                                <span>{{ $item->type }}</span>
+                                                @if($item->type && !in_array(strtolower($item->type), ['standard', 'default', 'fans issue', 'player issue']))
+                                                    <span>{{ $item->type }}</span>
+                                                @endif
                                                 <span>&times; {{ $item->quantity }} pcs</span>
                                             </div>
                                             @if ($item->custom_name || $item->custom_number)

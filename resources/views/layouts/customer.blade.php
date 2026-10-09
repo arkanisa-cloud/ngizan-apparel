@@ -8,13 +8,6 @@
     <title>@yield('title', 'NGIZAN APPAREL · Bespoke Football Kits & Archive Store')</title>
     <meta name="description" content="@yield('meta_description', 'Ngizan Apparel - Toko jersey sepak bola autentik, edisi player issue, dan arsip retro terkurasi.')">
 
-    {{-- Preconnect & Google Fonts CDN with display=swap for instantaneous font render without FOUT --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         [x-cloak] {
@@ -127,10 +120,10 @@
         class="fixed top-0 left-0 right-0 z-50 transform transition-[transform,background-color,border-color,color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] {{ !$isHomeRoute ? 'bg-white/90 backdrop-blur-xl border-b border-black/5 shadow-xs text-ink' : 'bg-gradient-to-b from-black/75 via-black/30 to-transparent text-white border-b-0 border-transparent shadow-none' }}">
 
         <div class="wrap">
-            <div class="flex items-center justify-between h-[64px] gap-2 sm:gap-6">
+            <div class="relative flex items-center justify-between h-[64px] gap-2 sm:gap-6">
 
-                {{-- Kiri: Animated Hamburger Trigger & Logo Wordmark --}}
-                <div class="flex items-center gap-2 sm:gap-3">
+                {{-- Kiri: Animated Hamburger Trigger (Mobile) & Brand Logo (Desktop) --}}
+                <div class="flex items-center gap-3">
                     {{-- Mobile Animated Hamburger Button --}}
                     <div class="lg:hidden flex items-center">
                         <button type="button" @click="mobileOpen = !mobileOpen; if (mobileOpen) searchBarOpen = false;"
@@ -167,13 +160,34 @@
                         </button>
                     </div>
 
+                    {{-- Desktop Brand Link (Kiri) --}}
                     <a href="{{ route('home') }}"
-                        class="font-display font-medium text-2xl sm:text-3xl tracking-wider uppercase transition inline-block select-none {{ !$isHomeRoute ? 'text-ink' : 'text-white' }}"
+                        class="hidden lg:flex items-center gap-2 font-display font-medium text-2xl tracking-wider uppercase transition select-none {{ !$isHomeRoute ? 'text-ink' : 'text-white' }}"
                         :class="{
                             'text-white hover:text-white/85': isHome && !isPastHero && !mobileOpen && !searchBarOpen,
                             'text-ink hover:opacity-80': isPastHero || !isHome || mobileOpen || searchBarOpen
                         }">
-                        NGIZAN
+                        <img src="{{ asset('logo/ngizan-logo.png') }}" alt="Ngizan Apparel"
+                             class="h-6 w-auto object-contain transition-all duration-200 {{ !$isHomeRoute ? 'brightness-0' : 'brightness-0 invert' }}"
+                             :class="{
+                                 'brightness-0 invert': isHome && !isPastHero && !mobileOpen && !searchBarOpen,
+                                 'brightness-0': isPastHero || !isHome || mobileOpen || searchBarOpen
+                             }">
+                        <span class="leading-none pt-0.5">NGIZAN</span>
+                    </a>
+                </div>
+
+                {{-- Mobile Centered Iconic Brand Logo (Tengah) --}}
+                <div class="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
+                    <a href="{{ route('home') }}"
+                        class="flex items-center justify-center p-1 transition select-none"
+                        aria-label="Ngizan Apparel Home">
+                        <img src="{{ asset('logo/ngizan-logo.png') }}" alt="Ngizan Apparel"
+                             class="h-6 w-auto object-contain transition-all duration-200 {{ !$isHomeRoute ? 'brightness-0' : 'brightness-0 invert' }}"
+                             :class="{
+                                 'brightness-0 invert': isHome && !isPastHero && !mobileOpen && !searchBarOpen,
+                                 'brightness-0': isPastHero || !isHome || mobileOpen || searchBarOpen
+                             }">
                     </a>
                 </div>
 

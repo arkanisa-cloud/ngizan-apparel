@@ -339,7 +339,7 @@
                         </div>
                     </div>
 
-                    {{-- CARD 03: PILIHAN LAYANAN KURIR --}}
+                    {{-- CARD 03: KEMITRAAN EKSPEDISI J&T EXPRESS (GRATIS ONGKIR) --}}
                     <div class="bg-white p-6 sm:p-7 rounded-3xl border border-hairline-soft shadow-xs space-y-5">
                         <div class="flex items-center justify-between border-b border-hairline-soft pb-3.5">
                             <div class="flex items-center gap-2.5">
@@ -348,73 +348,56 @@
                                     3
                                 </span>
                                 <h2 class="font-extrabold text-xs sm:text-sm text-ink uppercase tracking-wider">
-                                    Pilihan Layanan Kurir
+                                    Kurir Pengiriman: J&T Express
                                 </h2>
                             </div>
+                            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/50 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                Kemitraan Resmi (Gratis Ongkir)
+                            </span>
                         </div>
 
+                        <p class="text-xs text-mute leading-relaxed">
+                            Seluruh pengiriman jersey di Ngizan Apparel dikirimkan menggunakan ekspedisi resmi <strong>J&T Express</strong> dengan fasilitas <strong>Gratis Ongkir Flat Rp 0</strong> ke seluruh Indonesia disertai pelacakan nomor resi otomatis.
+                        </p>
+
                         {{-- Loading State --}}
-                        <div x-show="isLoadingRates" class="py-8 text-center text-xs text-mute space-y-2.5">
+                        <div x-show="isLoadingRates" class="py-6 text-center text-xs text-mute space-y-2.5">
                             <div
                                 class="inline-block w-6 h-6 border-2 border-ink border-t-transparent rounded-full animate-spin">
                             </div>
-                            <p class="font-semibold text-ink">Mengambil tarif kurir resmi (J&T Express, SiCepat, JNE, Grab,
-                                Gojek)...</p>
+                            <p class="font-semibold text-ink">Memeriksa jangkauan layanan J&T Express...</p>
                         </div>
 
-                        {{-- Courier List Options --}}
+                        {{-- Courier List Options (J&T Express Exclusive) --}}
                         <div x-show="!isLoadingRates && shippingOptions.length > 0"
                             class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
                             <template x-for="(rate, idx) in shippingOptions" :key="idx">
                                 <label
-                                    class="flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition text-xs"
-                                    :class="form.courier_service_code === rate.service_code && form.courier_code === rate
-                                        .courier_code ? 'border-ink bg-soft-cloud/70 ring-1 ring-ink shadow-xs' :
-                                        'border-hairline-soft hover:border-hairline bg-white'">
+                                    class="flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition text-xs border-ink bg-soft-cloud/70 ring-1 ring-ink shadow-xs">
                                     <div class="flex items-center gap-3">
-                                        <input type="radio" name="selected_courier"
-                                            :checked="form.courier_service_code === rate.service_code && form.courier_code ===
-                                                rate.courier_code"
+                                        <input type="radio" name="selected_courier" checked
                                             @change="selectCourier(rate)" class="w-4 h-4 text-ink focus:ring-ink">
                                         <div>
                                             <div class="flex items-center gap-2">
                                                 <span class="font-bold text-ink uppercase tracking-wide"
                                                     x-text="rate.courier_name + ' · ' + rate.service_name"></span>
-                                                <template x-if="rate.price === 0">
-                                                    <span
-                                                        class="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/50 rounded-full text-[10px] font-bold tracking-wider uppercase">
-                                                        Gratis Ongkir
-                                                    </span>
-                                                </template>
+                                                <span
+                                                    class="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/50 rounded-full text-[10px] font-bold tracking-wider uppercase">
+                                                    Gratis Ongkir
+                                                </span>
                                             </div>
                                             <div class="text-[11px] text-mute font-medium"
-                                                x-text="'Estimasi Tiba: ' + (rate.etd || '1-2 Hari') + (rate.description ? ' · ' + rate.description : '')">
+                                                x-text="'Estimasi Tiba: ' + (rate.etd || '1-2 Hari') + (rate.description ? ' · ' + rate.description : ' · Reguler Kilat J&T Express')">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <template x-if="rate.price === 0">
-                                            <div>
-                                                <span
-                                                    class="font-extrabold text-sm text-emerald-700 tracking-tight">GRATIS</span>
-                                                <span class="block text-[10px] text-emerald-600 font-bold">Rp 0</span>
-                                            </div>
-                                        </template>
-                                        <template x-if="rate.price > 0">
-                                            <div class="font-extrabold text-sm text-ink tabular-nums tracking-tight"
-                                                x-text="'Rp ' + (rate.price).toLocaleString('id-ID')"></div>
-                                        </template>
+                                        <span
+                                            class="font-extrabold text-sm text-emerald-700 tracking-tight">GRATIS</span>
+                                        <span class="block text-[10px] text-emerald-600 font-bold">Rp 0</span>
                                     </div>
                                 </label>
                             </template>
-                        </div>
-
-                        {{-- Empty State if no area selected --}}
-                        <div x-show="!isLoadingRates && shippingOptions.length === 0"
-                            class="py-6 text-center text-xs text-mute bg-soft-cloud rounded-2xl border border-hairline-soft space-y-1">
-                            <p class="font-semibold text-ink">Belum ada kurir yang tampil</p>
-                            <p class="text-[11px]">Ketik dan pilih area Biteship di Langkah 2 di atas untuk memuat tarif
-                                pengiriman kurir.</p>
                         </div>
                     </div>
 
@@ -469,10 +452,8 @@
                                     <div class="flex items-center gap-2 text-[11px] text-mute flex-wrap">
                                         <span
                                             class="px-2 py-0.5 bg-soft-cloud border border-hairline-soft rounded-md font-bold text-ink text-[10px]">
-                                            {{ $item->variant->size ?? 'M' }}
+                                            Size {{ $item->variant->size ?? 'M' }}
                                         </span>
-                                        <span class="text-neutral-300">·</span>
-                                        <span>{{ $item->variant->type ?? 'Authentic' }}</span>
                                         <span class="text-neutral-300">·</span>
                                         <span class="font-semibold text-ink">{{ $item->quantity }} pcs</span>
                                     </div>
@@ -939,6 +920,16 @@
                 },
 
                 async submitOrder() {
+                    // Validasi Nomor WhatsApp Indonesia (08... / 628... / +628...)
+                    const phoneVal = (this.form.phone_number || '').trim();
+                    const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{7,11}$/;
+                    if (!phoneRegex.test(phoneVal)) {
+                        if (window.toastr) {
+                            toastr.error('Nomor WhatsApp harus berupa nomor seluler Indonesia yang valid (contoh: 081234567890).');
+                        }
+                        return;
+                    }
+
                     // Otomatis fallback ke kurir resmi J&T jika belum terpilih
                     if (!this.form.courier_service_code) {
                         this.form.courier_code = 'jnt';
@@ -965,8 +956,15 @@
                         const data = await res.json();
 
                         if (!data.success) {
+                            let errorMsg = data.message || 'Gagal memproses pesanan.';
+                            if (data.errors) {
+                                const firstKey = Object.keys(data.errors)[0];
+                                if (data.errors[firstKey] && data.errors[firstKey][0]) {
+                                    errorMsg = data.errors[firstKey][0];
+                                }
+                            }
                             if (window.toastr) {
-                                toastr.error(data.message || 'Gagal memproses pesanan.');
+                                toastr.error(errorMsg);
                             }
                             this.isSubmitting = false;
                             return;

@@ -15,7 +15,7 @@
     @endphp
 
     <header id="hero-section"
-        class="relative w-full h-[65vh] sm:h-[85vh] lg:h-[125vh] min-h-[440px] sm:min-h-[550px] bg-neutral-950 overflow-hidden">
+        class="relative w-full h-[45vh] xs:h-[55vh] sm:h-[75vh] md:h-[90vh] lg:h-[125vh] min-h-[260px] xs:min-h-[320px] sm:min-h-[480px] lg:min-h-[600px] bg-neutral-950 overflow-hidden">
         {{-- Full Screen Pure Hero Image --}}
         <img src="{{ $heroImage }}" alt="Ngizan Apparel Hero Campaign"
             class="w-full h-full object-cover object-center select-none pointer-events-none">
@@ -162,13 +162,13 @@
         {{-- Dynamic Horizontally Scrollable Rail (Responsive Card Widths) --}}
         <div x-ref="newArrivalsScroll"
             class="flex gap-3 sm:gap-4 overflow-x-auto pb-1 hide-scroll scroll-smooth snap-x snap-mandatory">
-            @forelse($jerseyProducts ?? $featuredProducts as $product)
+            @forelse($jerseyProducts as $product)
                 <div class="w-[170px] sm:w-[220px] md:w-[260px] lg:w-[280px] shrink-0 snap-start">
                     <x-product-card :product="$product" />
                 </div>
             @empty
                 <div class="w-full text-center py-12 text-mute text-sm">
-                    Belum ada produk rilis terbaru.
+                    Belum ada produk jersey yang tersedia.
                 </div>
             @endforelse
         </div>
@@ -206,7 +206,7 @@
         <div class="flex items-end justify-between mb-4 sm:mb-6 pb-2.5 sm:pb-3 border-b border-gray-200">
             <div>
                 <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-neutral-400 block mb-1">
-                    Apparel & Aksesoris Sepakbola
+                    Apparel, Bola & Aksesoris
                 </span>
                 <h2 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-ink uppercase">
                     Katalog Ngizan
@@ -240,7 +240,7 @@
                 </div>
             @empty
                 <div class="w-full text-center py-12 text-mute text-sm">
-                    Belum ada produk apparel / perlengkapan selain jersey.
+                    Belum ada produk selain jersey yang tersedia.
                 </div>
             @endforelse
         </div>

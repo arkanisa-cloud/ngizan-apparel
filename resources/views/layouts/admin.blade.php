@@ -44,11 +44,9 @@
 
                 {{-- Brand Header & Close --}}
                 <div class="flex items-center justify-between px-6 py-5 border-b border-neutral-800">
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="flex items-center justify-center w-8 h-8 rounded-full bg-white text-ink font-display text-lg font-bold">
-                            N
-                        </div>
+                    <div class="flex items-center gap-2.5">
+                        <img src="{{ asset('logo/ngizan-logo.png') }}" alt="Ngizan Apparel"
+                            class="h-6 w-auto object-contain brightness-0 invert">
                         <div>
                             <span
                                 class="font-display font-medium text-lg tracking-wider text-white uppercase block leading-none">NGIZAN</span>
@@ -144,7 +142,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        <span>Penyesuaian Keluar</span>
+                        <span>Stock Keluar</span>
                     </a>
 
                     <div class="pt-4 pb-1">
@@ -165,7 +163,21 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
-                        <span>Audit Stok Gudang</span>
+                        <span>Stok Gudang</span>
+                    </a>
+
+                    {{-- Section: Pengguna & Akses --}}
+                    <div class="pt-4 pb-1">
+                        <p class="px-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">Pengguna &
+                            Akses</p>
+                    </div>
+                    <a href="{{ route('admin.users.index') }}"
+                        class="flex items-center gap-3 px-3.5 py-2.5 rounded-full transition {{ request()->routeIs('admin.users.*') ? 'bg-white text-ink font-bold shadow-xs' : 'text-neutral-400 hover:text-white hover:bg-neutral-800' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span>Akun Pengguna</span>
                     </a>
 
                     <div class="pt-4 pb-1">
@@ -181,17 +193,6 @@
                         <span>Profil & Keamanan</span>
                     </a>
                 </nav>
-
-                <div class="p-4 border-t border-neutral-800">
-                    <a href="{{ route('home') }}" target="_blank"
-                        class="flex items-center justify-center gap-2 p-2.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white rounded-full text-xs font-semibold uppercase tracking-wider transition border border-neutral-800">
-                        <span>Lihat Toko Online</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
-                </div>
             </div>
         </div>
 
@@ -200,11 +201,9 @@
             <div class="flex flex-col flex-grow bg-[#111111] text-white overflow-y-auto border-r border-neutral-800">
 
                 {{-- Brand Header --}}
-                <div class="flex items-center gap-3 px-6 py-5 border-b border-neutral-800">
-                    <div
-                        class="flex items-center justify-center w-8 h-8 rounded-full bg-white text-ink font-display text-lg font-bold">
-                        N
-                    </div>
+                <div class="flex items-center gap-2.5 px-6 py-5 border-b border-neutral-800">
+                    <img src="{{ asset('logo/ngizan-logo.png') }}" alt="Ngizan Apparel"
+                        class="h-6 w-auto object-contain brightness-0 invert">
                     <div>
                         <span
                             class="font-display font-medium text-lg tracking-wider text-white uppercase block leading-none">NGIZAN</span>
@@ -297,7 +296,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        <span>Penyesuaian Keluar</span>
+                        <span>Stock Keluar</span>
                     </a>
 
                     {{-- Section: Laporan Finansial --}}
@@ -320,6 +319,20 @@
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         <span>Audit Stok Gudang</span>
+                    </a>
+
+                    {{-- Section: Pengguna & Akses --}}
+                    <div class="pt-4 pb-1">
+                        <p class="px-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">Pengguna &
+                            Akses</p>
+                    </div>
+                    <a href="{{ route('admin.users.index') }}"
+                        class="flex items-center gap-3 px-3.5 py-2.5 rounded-full transition {{ request()->routeIs('admin.users.*') ? 'bg-white text-ink font-bold shadow-xs' : 'text-neutral-400 hover:text-white hover:bg-neutral-800' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span>Akun Pengguna</span>
                     </a>
 
                     <div class="pt-4 pb-1">

@@ -206,22 +206,21 @@ class CheckoutController extends Controller
             destLat: isset($validated['destination_latitude']) ? (float)$validated['destination_latitude'] : null,
             destLng: isset($validated['destination_longitude']) ? (float)$validated['destination_longitude'] : null,
             items: $items,
-            couriers: 'jne,sicepat,jnt,anteraja,gojek,grab'
+            couriers: 'jnt'
         );
 
-        // Kemitraan J&T Express: Gratis Ongkir Flat Rp 0
-        $hasJnt = false;
-        foreach ($rates as &$r) {
+        // Kemitraan Eksklusif J&T Express: Gratis Ongkir Flat Rp 0
+        $jntRates = [];
+        foreach ($rates as $r) {
             if (strtolower($r['courier_code'] ?? '') === 'jnt') {
                 $r['price'] = 0;
                 $r['badge'] = 'Kemitraan Resmi (Gratis Ongkir)';
-                $hasJnt = true;
+                $jntRates[] = $r;
             }
         }
-        unset($r);
 
-        if (!$hasJnt) {
-            array_unshift($rates, [
+        if (empty($jntRates)) {
+            $jntRates[] = [
                 'courier_code' => 'jnt',
                 'courier_name' => 'J&T Express',
                 'service_code' => 'ez',
@@ -230,12 +229,12 @@ class CheckoutController extends Controller
                 'badge'        => 'Kemitraan Resmi (Gratis Ongkir)',
                 'etd'          => '1-2 Hari',
                 'description'  => 'Gratis Ongkir Kemitraan Resmi J&T Express x Ngizan Apparel'
-            ]);
+            ];
         }
 
         return response()->json([
             'success' => true,
-            'pricing' => $rates,
+            'pricing' => $jntRates,
         ]);
     }
 
@@ -246,7 +245,7 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'recipient_name'        => 'required|string|max:100',
-            'phone_number'          => 'required|string|max:20',
+            'phone_number'          => ['required', 'string', 'regex:/^(\+62|62|0)8[1-9][0-9]{7,11}$/'],
             'label'                 => 'nullable|string|max:100',
             'full_address'          => 'required|string|max:500',
             'biteship_area_id'      => 'nullable|string|max:100',
@@ -263,7 +262,19 @@ class CheckoutController extends Controller
             'shipping_cost'         => 'nullable|numeric|min:0',
             'notes'                 => 'nullable|string|max:500',
             'selected_items'        => 'nullable',
+        ], [
+            'recipient_name.required' => 'Nama lengkap penerima wajib diisi.',
+            'phone_number.required'   => 'Nomor WhatsApp aktif wajib diisi.',
+            'phone_number.regex'      => 'Nomor WhatsApp harus berupa nomor seluler Indonesia yang valid (contoh: 081234567890 atau 6281234567890).',
+            'full_address.required'   => 'Alamat lengkap wajib diisi.',
         ]);
+
+        // Normalisasi Nomor WhatsApp (08...)
+        $cleanPhone = preg_replace('/[^0-9]/', '', (string) $validated['phone_number']);
+        if (str_starts_with($cleanPhone, '62')) {
+            $cleanPhone = '0' . substr($cleanPhone, 2);
+        }
+        $validated['phone_number'] = $cleanPhone;
 
         $cart = Cart::where('user_id', Auth::id())
             ->with(['items.product', 'items.variant'])

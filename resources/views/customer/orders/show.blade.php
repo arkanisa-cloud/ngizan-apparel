@@ -185,8 +185,10 @@
                                                 <span class="font-bold text-ink bg-soft-cloud px-2.5 py-0.5 rounded-full border border-hairline-soft">
                                                     Ukuran {{ $item->size }}
                                                 </span>
-                                                <span>{{ $item->type }}</span>
-                                                <span>&bull;</span>
+                                                @if($item->type && !in_array(strtolower($item->type), ['standard', 'default', 'fans issue', 'player issue']))
+                                                    <span>{{ $item->type }}</span>
+                                                    <span>&bull;</span>
+                                                @endif
                                                 <span>{{ $item->quantity }} pcs</span>
                                             </div>
                                             <div class="flex flex-wrap gap-1.5 pt-1">

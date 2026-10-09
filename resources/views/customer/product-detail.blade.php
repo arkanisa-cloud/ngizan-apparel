@@ -61,7 +61,6 @@
         sizeModal: false,
         selectedVariantId: {{ $initialVariant?->id ?? 0 }},
         selectedSize: '{{ $defaultSize }}',
-        selectedType: '{{ $initialVariant?->type ?? 'Fans Issue' }}',
         selectedStock: {{ (int) ($initialVariant?->stock ?? 0) }},
         isPremium: {{ $isPremium ? 'true' : 'false' }},
         basePrice: {{ (int) $product->base_price }},
@@ -98,10 +97,9 @@
         get grandTotal() {
             return this.unitPrice * this.qty;
         },
-        selectVariant(id, size, type, adj, stock) {
+        selectVariant(id, size, adj, stock) {
             this.selectedVariantId = id;
             this.selectedSize = size;
-            this.selectedType = type;
             this.priceAdj = adj;
             this.selectedStock = stock;
             if (this.qty > stock) {
@@ -287,32 +285,31 @@
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <input type="hidden" name="product_variant_id" :value="selectedVariantId">
 
-                        {{-- 1. Pilihan Ukuran & Tipe (Simpel & Kecil) --}}
+                        {{-- 1. Pilihan Ukuran (Simpel & Bersih) --}}
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
                                 <label class="block font-bold text-xs uppercase tracking-wider text-ink">
-                                    Ukuran & Tipe: <span class="text-mute font-normal normal-case"
-                                        x-text="selectedSize + ' (' + selectedType + ')'"></span>
+                                    Pilih Ukuran: <span class="text-mute font-normal normal-case" x-text="selectedSize"></span>
                                 </label>
-                                <button type="button" @click="sizeModal = true"
-                                    class="text-xs font-semibold text-ink underline hover:text-mute">
-                                    Panduan Ukuran (Size Chart)
-                                </button>
+                                @if ($product->sizeChart)
+                                    <button type="button" @click="sizeModal = true"
+                                        class="text-xs font-semibold text-ink underline hover:text-mute">
+                                        Panduan Ukuran (Size Chart)
+                                    </button>
+                                @endif
                             </div>
 
                             {{-- Compact & Clean Variant Badges --}}
                             <div class="flex flex-wrap gap-2">
                                 @foreach ($product->variants as $variant)
                                     <button type="button"
-                                        @click="selectVariant({{ $variant->id }}, '{{ $variant->size }}', '{{ $variant->type }}', {{ (int) $variant->price_adjustment }}, {{ (int) $variant->stock }})"
+                                        @click="selectVariant({{ $variant->id }}, '{{ $variant->size }}', {{ (int) $variant->price_adjustment }}, {{ (int) $variant->stock }})"
                                         @if ($variant->stock <= 0) disabled @endif
                                         :class="selectedVariantId == {{ $variant->id }} ?
                                             'bg-ink text-white border-ink shadow-xs' :
                                             '{{ $variant->stock <= 0 ? 'opacity-40 bg-soft-cloud text-stone line-through border-hairline-soft cursor-not-allowed' : 'bg-soft-cloud text-ink border-hairline hover:border-ink hover:bg-neutral-200' }}'"
-                                        class="px-3.5 py-2 rounded-xl border text-xs font-semibold transition inline-flex items-center gap-1.5 select-none">
+                                        class="px-3.5 py-2 rounded-xl border text-xs font-semibold transition inline-flex items-center gap-1.5 select-none cursor-pointer">
                                         <span class="font-bold">{{ $variant->size }}</span>
-                                        <span class="text-[10px] opacity-75 font-normal uppercase">·
-                                            {{ $variant->type }}</span>
                                     </button>
                                 @endforeach
                             </div>
@@ -523,102 +520,102 @@
 
         </div>
 
-        {{-- ===== DYNAMIC SIZE CHART MODAL ===== --}}
-        @php
-            $activeSizeChart =
-                $product->sizeChart ??
-                (\App\Models\SizeChart::where('is_default', true)->first() ?? \App\Models\SizeChart::first());
-        @endphp
+        {{-- ===== DYNAMIC SIZE CHART MODAL (ONLY IF PRODUCT HAS SIZE CHART) ===== --}}
+        @if ($product->sizeChart)
+            @php
+                $activeSizeChart = $product->sizeChart;
+            @endphp
 
-        <div x-show="sizeModal" x-cloak
-            class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-            <div @click.away="sizeModal = false"
-                class="bg-white border border-hairline w-full max-w-2xl rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl my-auto">
+            <div x-show="sizeModal" x-cloak
+                class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+                <div @click.away="sizeModal = false"
+                    class="bg-white border border-hairline w-full max-w-2xl rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl my-auto">
 
-                {{-- Header --}}
-                <div class="flex justify-between items-start border-b border-hairline-soft pb-4 gap-4">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span
-                                class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-soft-cloud text-ink border border-hairline-soft">
-                                {{ match ($activeSizeChart?->category_type) {
-                                    'tops' => 'Atasan / Jersey',
-                                    'bottoms' => 'Bawahan / Celana',
-                                    'outerwear' => 'Jaket / Luaran',
-                                    default => ($activeSizeChart?->category_type ?? 'Fitting Guide'),
-                                } }}
-                            </span>
-                            <span class="text-[10px] text-mute uppercase font-bold tracking-widest">· Standar
-                                Autentik</span>
+                    {{-- Header --}}
+                    <div class="flex justify-between items-start border-b border-hairline-soft pb-4 gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span
+                                    class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-soft-cloud text-ink border border-hairline-soft">
+                                    {{ match ($activeSizeChart->category_type) {
+                                        'tops' => 'Atasan / Jersey',
+                                        'bottoms' => 'Bawahan / Celana',
+                                        'outerwear' => 'Jaket / Luaran',
+                                        default => ($activeSizeChart->category_type ?? 'Fitting Guide'),
+                                    } }}
+                                </span>
+                                <span class="text-[10px] text-mute uppercase font-bold tracking-widest">· Standar
+                                    Autentik</span>
+                            </div>
+                            <h3 class="font-extrabold text-lg sm:text-xl text-ink uppercase tracking-tight">
+                                {{ $activeSizeChart->name }}
+                            </h3>
                         </div>
-                        <h3 class="font-extrabold text-lg sm:text-xl text-ink uppercase tracking-tight">
-                            {{ $activeSizeChart?->name ?? 'Panduan Ukuran (Size Chart)' }}
-                        </h3>
+                        <button @click="sizeModal = false"
+                            class="w-8 h-8 rounded-full bg-soft-cloud flex items-center justify-center text-ink hover:bg-neutral-200 text-lg transition font-bold shrink-0 cursor-pointer">&times;</button>
                     </div>
-                    <button @click="sizeModal = false"
-                        class="w-8 h-8 rounded-full bg-soft-cloud flex items-center justify-center text-ink hover:bg-neutral-200 text-lg transition font-bold shrink-0 cursor-pointer">&times;</button>
-                </div>
 
-                {{-- Deskripsi Petunjuk Ukur --}}
-                <div
-                    class="p-3.5 bg-soft-cloud rounded-2xl border border-hairline-soft text-xs text-mute flex items-start gap-2.5">
-                    <span class="text-base shrink-0">📏</span>
-                    <p class="leading-relaxed">
-                        {{ $activeSizeChart?->description ?? 'Ukur pakaian dalam posisi terbentang rata di permukaan datar tanpa ditarik. Toleransi jahitan & material elastis: ± 1-2 cm.' }}
-                    </p>
-                </div>
+                    {{-- Deskripsi Petunjuk Ukur --}}
+                    <div
+                        class="p-3.5 bg-soft-cloud rounded-2xl border border-hairline-soft text-xs text-mute flex items-start gap-2.5">
+                        <span class="text-base shrink-0">📏</span>
+                        <p class="leading-relaxed">
+                            {{ $activeSizeChart->description ?? 'Ukur pakaian dalam posisi terbentang rata di permukaan datar tanpa ditarik. Toleransi jahitan & material elastis: ± 1-2 cm.' }}
+                        </p>
+                    </div>
 
-                {{-- Dynamic Table --}}
-                @if ($activeSizeChart && !empty($activeSizeChart->columns) && !empty($activeSizeChart->rows))
-                    <div class="overflow-x-auto border border-hairline-soft rounded-2xl">
-                        <table class="w-full text-xs text-left">
-                            <thead
-                                class="bg-soft-cloud border-b border-hairline-soft font-bold text-ink uppercase text-[10px] tracking-wider">
-                                <tr>
-                                    @foreach ($activeSizeChart->columns as $col)
-                                        <th class="p-3 sm:p-3.5 whitespace-nowrap">{{ $col }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-hairline-soft">
-                                @foreach ($activeSizeChart->rows as $r)
-                                    <tr class="hover:bg-soft-cloud/40 transition">
-                                        <td class="p-3 sm:p-3.5 font-bold text-ink whitespace-nowrap">
-                                            <span
-                                                class="px-2 py-0.5 bg-soft-cloud border border-hairline-soft rounded-md inline-block">
-                                                {{ $r['size'] ?? '-' }}
-                                            </span>
-                                        </td>
-                                        @for ($i = 1; $i < count($activeSizeChart->columns); $i++)
-                                            <td class="p-3 sm:p-3.5 text-mute font-medium whitespace-nowrap">
-                                                {{ $r['col' . $i] ?? '-' }}
-                                            </td>
-                                        @endfor
+                    {{-- Dynamic Table --}}
+                    @if (!empty($activeSizeChart->columns) && !empty($activeSizeChart->rows))
+                        <div class="overflow-x-auto border border-hairline-soft rounded-2xl">
+                            <table class="w-full text-xs text-left">
+                                <thead
+                                    class="bg-soft-cloud border-b border-hairline-soft font-bold text-ink uppercase text-[10px] tracking-wider">
+                                    <tr>
+                                        @foreach ($activeSizeChart->columns as $col)
+                                            <th class="p-3 sm:p-3.5 whitespace-nowrap">{{ $col }}</th>
+                                        @endforeach
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="divide-y divide-hairline-soft">
+                                    @foreach ($activeSizeChart->rows as $r)
+                                        <tr class="hover:bg-soft-cloud/40 transition">
+                                            <td class="p-3 sm:p-3.5 font-bold text-ink whitespace-nowrap">
+                                                <span
+                                                    class="px-2 py-0.5 bg-soft-cloud border border-hairline-soft rounded-md inline-block">
+                                                    {{ $r['size'] ?? '-' }}
+                                                </span>
+                                            </td>
+                                            @for ($i = 1; $i < count($activeSizeChart->columns); $i++)
+                                                <td class="p-3 sm:p-3.5 text-mute font-medium whitespace-nowrap">
+                                                    {{ $r['col' . $i] ?? '-' }}
+                                                </td>
+                                            @endfor
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-xs text-mute text-center py-6">Data tabel ukuran sedang disiapkan.</p>
+                    @endif
+
+                    {{-- Footer Tips & Close Button --}}
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-hairline-soft">
+                        <span class="text-[11px] text-mute flex items-center gap-1.5">
+                            <span class="text-emerald-600 font-bold">✓</span>
+                            <span>Jika ragu di antara dua ukuran, disarankan memilih <strong>1 size lebih besar</strong>.</span>
+                        </span>
+
+                        <button type="button" @click="sizeModal = false"
+                            class="bg-ink text-white py-2.5 px-6 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-black transition self-end sm:self-auto cursor-pointer shadow-xs">
+                            Mengerti
+                        </button>
                     </div>
-                @else
-                    <p class="text-xs text-mute text-center py-6">Data tabel ukuran sedang disiapkan.</p>
-                @endif
 
-                {{-- Footer Tips & Close Button --}}
-                <div
-                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-hairline-soft">
-                    <span class="text-[11px] text-mute flex items-center gap-1.5">
-                        <span class="text-emerald-600 font-bold">✓</span>
-                        <span>Jika ragu di antara dua ukuran, disarankan memilih <strong>1 size lebih besar</strong>.</span>
-                    </span>
-
-                    <button type="button" @click="sizeModal = false"
-                        class="bg-ink text-white py-2.5 px-6 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-black transition self-end sm:self-auto cursor-pointer shadow-xs">
-                        Mengerti
-                    </button>
                 </div>
-
             </div>
-        </div>
+        @endif
 
     </div>
 

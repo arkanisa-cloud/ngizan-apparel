@@ -9,6 +9,7 @@ use App\Services\BinderbyteService;
 use App\Services\WhatsAppService;
 use Exception;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -23,6 +24,32 @@ class OrderController extends Controller
         protected BinderbyteService $binderbyte,
         protected WhatsAppService $whatsApp
     ) {}
+
+    /**
+     * Endpoint API Verifikasi Resi Real-Time via Binderbyte
+     * POST /admin/orders/verify-tracking
+     */
+    public function verifyTracking(Request $request): JsonResponse
+    {
+        $waybill = strtoupper(preg_replace('/[^A-Za-z0-9\-]/', '', trim((string) $request->input('waybill', ''))));
+        if (empty($waybill)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor resi tidak boleh kosong.'
+            ], 422);
+        }
+
+        $trackingInfo = $this->binderbyte->getTracking($waybill, 'jnt', true);
+
+        return response()->json([
+            'success'      => (bool) ($trackingInfo['success'] ?? false),
+            'status'       => $trackingInfo['status'] ?? 'unknown',
+            'status_label' => $trackingInfo['status_label'] ?? ($trackingInfo['status'] ?? 'Unknown'),
+            'summary'      => $trackingInfo['summary'] ?? null,
+            'error'        => $trackingInfo['error'] ?? null,
+            'history'      => $trackingInfo['history'] ?? [],
+        ]);
+    }
 
     /**
      * Daftar Pesanan Masuk
@@ -120,7 +147,8 @@ class OrderController extends Controller
             'tracking_number.min'      => 'Nomor resi minimal terdiri dari 6 karakter.',
         ]);
 
-        $trackingNumber = strtoupper(trim($validated['tracking_number']));
+        // Sanitasi: Uppercase dan hapus spasi / karakter non-alfanumerik kecuali strip
+        $trackingNumber = strtoupper(preg_replace('/[^A-Za-z0-9\-]/', '', trim($validated['tracking_number'])));
 
         // 1. Validasi karakter (hanya huruf, angka, dan strip)
         if (!preg_match('/^[A-Z0-9\-]+$/', $trackingNumber)) {
@@ -145,17 +173,22 @@ class OrderController extends Controller
             }
         } else {
             // Validasi format nomor resi kurir J&T Express asli
-            // Standar J&T Express: awalan JO, JX, JP, JS, JT, JD, JNT, TJNT, EZ atau deretan digit angka 8-20 karakter alfanumerik
             $isValidJntFormat = preg_match('/^(JO|JX|JP|JS|JT|JD|JNT|TJNT|EZ|[0-9]{8,20})[A-Z0-9]{4,18}$/i', $trackingNumber) ||
                                 (strlen($trackingNumber) >= 8 && strlen($trackingNumber) <= 25 && ctype_alnum($trackingNumber));
 
             if (!$isValidJntFormat || strlen($trackingNumber) < 8) {
-                return back()->withInput()->with('error', 'Format nomor resi "' . $trackingNumber . '" tidak valid! Resi J&T Express resmi umumnya berawalan JO, JX, JP, JT, JNT atau 8-20 karakter alfanumerik (Contoh: JO0325803121). Untuk uji coba, silakan gunakan tombol Quick Test Resi.');
+                return back()->withInput()->with('error', 'Format nomor resi "' . $trackingNumber . '" tidak valid! Resi J&T Express resmi umumnya berawalan JO, JX, JP, JT, JNT atau 8-20 karakter alfanumerik (Contoh: JO0325803121).');
             }
         }
 
-        // Ambil info tracking awal via Binderbyte
+        // 2. Pre-flight Verification: Hubungi API Binderbyte J&T
         $trackingInfo = $this->binderbyte->getTracking($trackingNumber, 'jnt', true);
+
+        // Jika bukan simulator dan API Binderbyte menyatakan resi tidak ditemukan / error
+        if (!$isSimulator && (empty($trackingInfo['success']) || ($trackingInfo['status'] ?? '') === 'not_found')) {
+            $errorDetail = !empty($trackingInfo['error']) ? $trackingInfo['error'] : 'Nomor resi tidak terdaftar di sistem J&T Express';
+            return back()->withInput()->with('error', "Gagal Menyimpan Resi: {$errorDetail}. Pastikan nomor resi J&T pada fisik paket sudah benar dan tidak ada salah ketik/kurang angka.");
+        }
 
         $newStatus = OrderStatus::SHIPPED;
         $completedAt = null;
@@ -172,6 +205,7 @@ class OrderController extends Controller
             'courier_code'         => 'jnt',
             'courier_service_name' => 'J&T Express (Gratis Ongkir)',
             'status'               => $newStatus,
+            'shipped_at'           => $order->shipped_at ?? now(),
             'completed_at'         => $completedAt,
         ]);
 
@@ -184,8 +218,8 @@ class OrderController extends Controller
         }
 
         $statusMsg = $newStatus === OrderStatus::COMPLETED 
-            ? "Nomor resi {$trackingNumber} berhasil disimpan. Paket berstatus TELAH TIBA (Completed) dan ulasan pelanggan telah aktif."
-            : "Nomor resi {$trackingNumber} berhasil disimpan. Status pesanan diubah menjadi TELAH DIKIRIM (Shipped) dan terlacak otomatis via Binderbyte.";
+            ? "Nomor resi {$trackingNumber} TERVERIFIKASI & berhasil disimpan. Paket berstatus TELAH TIBA (Completed) dan ulasan pelanggan telah aktif."
+            : "Nomor resi {$trackingNumber} TERVERIFIKASI resmi J&T Express. Status pesanan diubah menjadi TELAH DIKIRIM (Shipped) dan terlacak otomatis.";
 
         return back()->with('success', $statusMsg);
     }

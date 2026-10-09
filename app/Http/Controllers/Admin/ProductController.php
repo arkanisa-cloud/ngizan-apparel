@@ -84,8 +84,8 @@ class ProductController extends Controller
             'thumbnail_front'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'thumbnail_back'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'variants'              => 'required|array|min:1',
-            'variants.*.size'       => 'required|string|max:10',
-            'variants.*.type'       => 'required|string|max:50',
+            'variants.*.size'       => 'required|string|max:50',
+            'variants.*.type'       => 'nullable|string|max:50',
             'variants.*.stock'      => 'required|integer|min:0',
             'variants.*.price_adj'  => 'nullable|numeric|min:0',
         ]);
@@ -129,27 +129,22 @@ class ProductController extends Controller
                 'is_active'            => true,
             ]);
 
-            // 3. Buat Matriks Varian Ukuran & Tipe dengan SKU Unik
+            // 3. Buat Matriks Varian Ukuran dengan SKU Unik
             $baseSku = 'NGZ-' . strtoupper(Str::random(6));
             foreach ($validated['variants'] as $v) {
-                $typeCode = match(strtolower(trim($v['type']))) {
-                    'player issue' => 'PI',
-                    'fans issue'   => 'FI',
-                    'retro'        => 'RETRO',
-                    default        => strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $v['type']), 0, 3) ?: 'VAR'),
-                };
-                
-                $variantSku = $baseSku . '-' . $typeCode . '-' . strtoupper($v['size']);
+                $typeVal = !empty(trim($v['type'] ?? '')) ? trim($v['type']) : 'Standard';
+                $sizeCode = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $v['size'])) ?: 'STD';
+                $variantSku = $baseSku . '-' . $sizeCode;
                 
                 // Pastikan SKU benar-benar unik di tabel product_variants
                 while (ProductVariant::where('sku', $variantSku)->exists()) {
-                    $variantSku = 'NGZ-' . strtoupper(Str::random(6)) . '-' . $typeCode . '-' . strtoupper($v['size']);
+                    $variantSku = 'NGZ-' . strtoupper(Str::random(6)) . '-' . $sizeCode;
                 }
 
                 $variant = ProductVariant::create([
                     'product_id'       => $product->id,
-                    'size'             => $v['size'],
-                    'type'             => $v['type'],
+                    'size'             => trim($v['size']),
+                    'type'             => $typeVal,
                     'sku'              => $variantSku,
                     'price_adjustment' => $v['price_adj'] ?? 0,
                     'stock'            => (int) $v['stock'],
@@ -171,7 +166,7 @@ class ProductController extends Controller
 
             DB::commit();
             return redirect()->route('admin.products.index')
-                ->with('success', "Produk jersey '{$product->name}' berhasil ditambahkan ke katalog!");
+                ->with('success', "Produk '{$product->name}' berhasil ditambahkan ke katalog!");
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -223,6 +218,12 @@ class ProductController extends Controller
             'thumbnail_front'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'thumbnail_back'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'is_active'             => 'nullable|boolean',
+            'variants'              => 'nullable|array|min:1',
+            'variants.*.id'         => 'nullable|integer|exists:product_variants,id',
+            'variants.*.size'       => 'required_with:variants|string|max:50',
+            'variants.*.type'       => 'nullable|string|max:50',
+            'variants.*.stock'      => 'required_with:variants|integer|min:0',
+            'variants.*.price_adj'  => 'nullable|numeric|min:0',
         ]);
 
         DB::beginTransaction();
@@ -244,9 +245,88 @@ class ProductController extends Controller
 
             $product->update($validated);
 
+            // Sinkronisasi Varian Ukuran & Stok
+            if (isset($validated['variants']) && is_array($validated['variants'])) {
+                $submittedVariantIds = [];
+                $baseSku = 'NGZ-' . strtoupper(Str::random(6));
+
+                foreach ($validated['variants'] as $v) {
+                    $priceAdj = isset($v['price_adj']) ? (float)$v['price_adj'] : 0;
+                    $stockVal = (int)($v['stock'] ?? 0);
+
+                    if (!empty($v['id'])) {
+                        // Update existing variant
+                        $variant = ProductVariant::where('product_id', $product->id)->find($v['id']);
+                        if ($variant) {
+                            $stockDiff = $stockVal - $variant->stock;
+                            $oldStock = $variant->stock;
+
+                            $variant->update([
+                                'size'             => trim($v['size']),
+                                'price_adjustment' => $priceAdj,
+                                'stock'            => $stockVal,
+                            ]);
+
+                            if ($stockDiff != 0) {
+                                StockHistory::create([
+                                    'product_id'         => $product->id,
+                                    'product_variant_id' => $variant->id,
+                                    'reference_type'     => StockReferenceType::MANUAL_ADJUST,
+                                    'quantity_change'    => $stockDiff,
+                                    'stock_before'       => $oldStock,
+                                    'stock_after'        => $stockVal,
+                                    'notes'              => 'Penyesuaian stok via edit katalog produk',
+                                ]);
+                            }
+
+                            $submittedVariantIds[] = $variant->id;
+                        }
+                    } else {
+                        // Create new variant
+                        $sizeCode = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $v['size'])) ?: 'STD';
+                        $variantSku = $baseSku . '-' . $sizeCode;
+                        while (ProductVariant::where('sku', $variantSku)->exists()) {
+                            $variantSku = 'NGZ-' . strtoupper(Str::random(6)) . '-' . $sizeCode;
+                        }
+
+                        $newVariant = ProductVariant::create([
+                            'product_id'       => $product->id,
+                            'size'             => trim($v['size']),
+                            'type'             => 'Standard',
+                            'sku'              => $variantSku,
+                            'price_adjustment' => $priceAdj,
+                            'stock'            => $stockVal,
+                        ]);
+
+                        if ($newVariant->stock > 0) {
+                            StockHistory::create([
+                                'product_id'         => $product->id,
+                                'product_variant_id' => $newVariant->id,
+                                'reference_type'     => StockReferenceType::MANUAL_IN,
+                                'quantity_change'    => $newVariant->stock,
+                                'stock_before'       => 0,
+                                'stock_after'        => $newVariant->stock,
+                                'notes'              => 'Stok varian baru via edit katalog',
+                            ]);
+                        }
+
+                        $submittedVariantIds[] = $newVariant->id;
+                    }
+                }
+
+                // Delete variants removed by admin
+                $variantsToDelete = ProductVariant::where('product_id', $product->id)
+                    ->whereNotIn('id', $submittedVariantIds)
+                    ->get();
+
+                foreach ($variantsToDelete as $delVariant) {
+                    $delVariant->delete();
+                }
+            }
+
             DB::commit();
             return redirect()->route('admin.products.index')
-                ->with('success', "Katalog jersey '{$product->name}' berhasil diperbarui.");
+                ->with('success', "Katalog produk '{$product->name}' berhasil diperbarui.");
 
         } catch (Exception $e) {
             DB::rollBack();

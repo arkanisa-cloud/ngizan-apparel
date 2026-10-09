@@ -20,6 +20,7 @@
         $variantOptions = [];
         foreach($products as $prod) {
             foreach($prod->variants as $variant) {
+                $typeSuffix = ($variant->type && !in_array(strtolower($variant->type), ['standard', 'default', ''])) ? ' (' . $variant->type . ')' : '';
                 $variantOptions[] = [
                     'id'    => (string)$variant->id,
                     'name'  => $prod->name,
@@ -27,7 +28,7 @@
                     'type'  => $variant->type,
                     'sku'   => $variant->sku,
                     'stock' => $variant->stock,
-                    'label' => $prod->name . ' — ' . $variant->size . ' (' . $variant->type . ') [Stok: ' . $variant->stock . ' pcs]'
+                    'label' => $prod->name . ' — ' . $variant->size . $typeSuffix . ' [Stok: ' . $variant->stock . ' pcs]'
                 ];
             }
         }

@@ -80,7 +80,6 @@
                         <thead class="bg-soft-cloud uppercase font-medium text-mute border-b border-hairline-soft">
                             <tr>
                                 <th class="p-3">Ukuran</th>
-                                <th class="p-3">Tipe</th>
                                 <th class="p-3">SKU Varian</th>
                                 <th class="p-3">Harga Akhir</th>
                                 <th class="p-3 text-right">Stok Fisik</th>
@@ -90,7 +89,6 @@
                             @foreach($product->variants as $variant)
                                 <tr>
                                     <td class="p-3 font-medium text-ink">{{ $variant->size }}</td>
-                                    <td class="p-3 uppercase text-[11px] text-mute">{{ $variant->type }}</td>
                                     <td class="p-3 font-mono text-[10px] text-mute">{{ $variant->sku }}</td>
                                     <td class="p-3 font-medium text-ink">{{ $variant->formatted_final_price }}</td>
                                     <td class="p-3 text-right font-medium text-sm {{ $variant->stock <= 3 ? 'text-sale' : 'text-ink' }}">

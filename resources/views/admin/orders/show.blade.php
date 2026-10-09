@@ -103,8 +103,44 @@
             @endif
         </div>
 
-        {{-- J&T Express Tracking Input Form --}}
-        <div class="p-5 bg-soft-cloud rounded-2xl border border-hairline-soft space-y-3" x-data="{ resiInput: '{{ old('tracking_number', $order->tracking_number ?? '') }}' }">
+        {{-- J&T Express Tracking Input Form with Live Verification --}}
+        <div class="p-5 bg-soft-cloud rounded-2xl border border-hairline-soft space-y-3" x-data="{
+            resiInput: '{{ old('tracking_number', $order->tracking_number ?? '') }}',
+            isVerifying: false,
+            verificationResult: null,
+            async checkResi() {
+                const cleanResi = this.resiInput.replace(/[^A-Za-z0-9\-]/g, '').toUpperCase().trim();
+                if (!cleanResi || cleanResi.length < 6) {
+                    if (window.toastr) toastr.warning('Masukkan nomor resi minimal 6 karakter.');
+                    return;
+                }
+                this.isVerifying = true;
+                this.verificationResult = null;
+                try {
+                    const token = document.querySelector('meta[name=csrf-token]')?.getAttribute('content') || '';
+                    const res = await fetch('{{ route('admin.orders.verify.tracking') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        },
+                        body: JSON.stringify({ waybill: cleanResi })
+                    });
+                    const data = await res.json();
+                    this.verificationResult = data;
+                    if (data.success) {
+                        if (window.toastr) toastr.success('Resi terverifikasi valid di J&T Express!');
+                    } else {
+                        if (window.toastr) toastr.error(data.error || 'Resi tidak ditemukan di sistem J&T.');
+                    }
+                } catch (e) {
+                    if (window.toastr) toastr.error('Gagal menghubungi server verifikasi Binderbyte.');
+                } finally {
+                    this.isVerifying = false;
+                }
+            }
+        }">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="space-y-0.5">
                     <div class="flex items-center gap-2">
@@ -114,40 +150,74 @@
                         @endif
                     </div>
                     <p class="text-xs text-mute">
-                        Masukkan nomor resi J&T. Pesanan otomatis berstatus <strong>Telah Dikirim (Shipped)</strong> dan terlacak otomatis.
+                        Sistem melakukan <strong>verifikasi otomatis ke J&T Express</strong> sebelum resi disimpan untuk mencegah salah ketik.
                     </p>
                 </div>
 
-                <form action="{{ route('admin.orders.tracking', $order->id) }}" method="POST" class="flex items-center gap-2 w-full md:w-auto">
+                <form action="{{ route('admin.orders.tracking', $order->id) }}" method="POST" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
                     @csrf
                     <div class="relative flex-1 md:w-64">
                         <input type="text" name="tracking_number" x-model="resiInput"
-                               placeholder="JNT9827361829" required
+                               placeholder="Contoh: JX1234567890" required
+                               @input="verificationResult = null"
                                class="w-full bg-white border border-hairline px-3.5 py-2 text-xs rounded-full font-mono text-ink focus:outline-none focus:border-ink uppercase">
                     </div>
-                    <button type="submit" class="px-4 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                        <span>Simpan & Kirim Resi</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="checkResi()" :disabled="isVerifying || !resiInput"
+                            class="px-3.5 py-2 bg-white hover:bg-neutral-100 text-ink border border-hairline rounded-full text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50">
+                            <template x-if="!isVerifying">
+                                <span>🔍 Cek Resi</span>
+                            </template>
+                            <template x-if="isVerifying">
+                                <span class="flex items-center gap-1">
+                                    <span class="inline-block w-3 h-3 border-2 border-ink border-t-transparent rounded-full animate-spin"></span>
+                                    <span>Memeriksa...</span>
+                                </span>
+                            </template>
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-ink hover:opacity-90 text-white rounded-full text-xs font-medium transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            <span>Simpan & Kirim Resi</span>
+                        </button>
+                    </div>
                 </form>
             </div>
+
+            {{-- Live Verification Feedback Box --}}
+            <template x-if="verificationResult">
+                <div class="p-3 rounded-xl text-xs transition"
+                    :class="verificationResult.success ? 'bg-emerald-50 border border-emerald-200 text-emerald-900' : 'bg-rose-50 border border-rose-200 text-rose-900'">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span x-text="verificationResult.success ? '✓' : '⚠️'" class="font-bold"></span>
+                            <span class="font-bold" x-text="verificationResult.success ? 'Resi Valid Terdaftar di J&T Express!' : 'Resi Tidak Ditemukan / Tidak Valid!'"></span>
+                        </div>
+                        <template x-if="verificationResult.status_label">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                :class="verificationResult.success ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'"
+                                x-text="'Status: ' + verificationResult.status_label"></span>
+                        </template>
+                    </div>
+                    <p class="text-[11px] mt-1" x-text="verificationResult.success ? 'Nomor resi terverifikasi aktif di server kurir J&T. Anda dapat langsung menekan tombol Simpan & Kirim Resi.' : (verificationResult.error || 'Nomor resi tidak terdaftar di sistem J&T Express. Mohon periksa kembali nomor fisik paket.')"></p>
+                </div>
+            </template>
 
             {{-- Development Simulator Chips (Tidak mengganggu production) --}}
             <div class="pt-2 border-t border-hairline-soft/80 flex flex-wrap items-center gap-2 text-[11px]">
                 <span class="font-bold text-neutral-500 uppercase tracking-wider text-[10px] flex items-center gap-1">
                     <span>⚡ Quick Test Resi:</span>
                 </span>
-                <button type="button" @click="resiInput = 'TEST-JNT-DELIVERED'"
+                <button type="button" @click="resiInput = 'TEST-JNT-DELIVERED'; checkResi();"
                     class="px-2.5 py-1 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full font-mono font-medium transition cursor-pointer"
                     title="Simulasi kurir telah mengantar paket ke penerima (Auto-Completed & Buka Ulasan)">
                     ✓ TEST-JNT-DELIVERED (Paket Sampai)
                 </button>
-                <button type="button" @click="resiInput = 'TEST-JNT-TRANSIT'"
+                <button type="button" @click="resiInput = 'TEST-JNT-TRANSIT'; checkResi();"
                     class="px-2.5 py-1 bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 rounded-full font-mono font-medium transition cursor-pointer"
                     title="Simulasi paket sedang dalam perjalanan kurir">
                     🚚 TEST-JNT-TRANSIT (Sedang Dikirim)
                 </button>
-                <button type="button" @click="resiInput = 'TEST-JNT-PICKUP'"
+                <button type="button" @click="resiInput = 'TEST-JNT-PICKUP'; checkResi();"
                     class="px-2.5 py-1 bg-white hover:bg-amber-50 text-amber-800 border border-amber-200 rounded-full font-mono font-medium transition cursor-pointer"
                     title="Simulasi paket baru masuk gerai Drop Point">
                     📦 TEST-JNT-PICKUP (Drop Point)

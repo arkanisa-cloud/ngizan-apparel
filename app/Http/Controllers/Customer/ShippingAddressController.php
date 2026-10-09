@@ -42,7 +42,7 @@ class ShippingAddressController extends Controller
         $validated = $request->validate([
             'label'            => 'nullable|string|max:100',
             'recipient_name'   => 'required|string|max:255',
-            'phone'            => 'required|string|max:50',
+            'phone'            => ['required', 'string', 'regex:/^(\+62|62|0)8[1-9][0-9]{7,11}$/'],
             'address'          => 'required|string',
             'district'         => 'nullable|string|max:100',
             'city'             => 'required|string|max:100',
@@ -53,7 +53,17 @@ class ShippingAddressController extends Controller
             'biteship_area_id' => 'nullable|string|max:100',
             'latitude'         => 'nullable|numeric',
             'longitude'        => 'nullable|numeric',
+        ], [
+            'recipient_name.required' => 'Nama lengkap penerima wajib diisi.',
+            'phone.required'          => 'Nomor WhatsApp wajib diisi.',
+            'phone.regex'             => 'Nomor WhatsApp harus berupa nomor seluler Indonesia yang valid (contoh: 081234567890).',
+            'address.required'        => 'Alamat lengkap wajib diisi.',
         ]);
+
+        $cleanPhone = preg_replace('/[^0-9]/', '', (string) $validated['phone']);
+        if (str_starts_with($cleanPhone, '62')) {
+            $cleanPhone = '0' . substr($cleanPhone, 2);
+        }
 
         $hasAddresses = Auth::user()->shippingAddresses()->exists();
         $isPrimary = $request->boolean('is_primary') || !$hasAddresses;
@@ -65,7 +75,7 @@ class ShippingAddressController extends Controller
         Auth::user()->shippingAddresses()->create([
             'label'            => $validated['label'] ?: ($hasAddresses ? 'Alamat Saya' : 'Rumah'),
             'recipient_name'   => $validated['recipient_name'],
-            'phone_number'     => $validated['phone'],
+            'phone_number'     => $cleanPhone,
             'full_address'     => $validated['address'],
             'city_name'        => $validated['city'],
             'province_name'    => $validated['province'],
@@ -128,7 +138,7 @@ class ShippingAddressController extends Controller
         $validated = $request->validate([
             'label'            => 'nullable|string|max:100',
             'recipient_name'   => 'required|string|max:255',
-            'phone'            => 'required|string|max:50',
+            'phone'            => ['required', 'string', 'regex:/^(\+62|62|0)8[1-9][0-9]{7,11}$/'],
             'address'          => 'required|string',
             'district'         => 'nullable|string|max:100',
             'city'             => 'required|string|max:100',
@@ -139,7 +149,17 @@ class ShippingAddressController extends Controller
             'biteship_area_id' => 'nullable|string|max:100',
             'latitude'         => 'nullable|numeric',
             'longitude'        => 'nullable|numeric',
+        ], [
+            'recipient_name.required' => 'Nama lengkap penerima wajib diisi.',
+            'phone.required'          => 'Nomor WhatsApp wajib diisi.',
+            'phone.regex'             => 'Nomor WhatsApp harus berupa nomor seluler Indonesia yang valid (contoh: 081234567890).',
+            'address.required'        => 'Alamat lengkap wajib diisi.',
         ]);
+
+        $cleanPhone = preg_replace('/[^0-9]/', '', (string) $validated['phone']);
+        if (str_starts_with($cleanPhone, '62')) {
+            $cleanPhone = '0' . substr($cleanPhone, 2);
+        }
 
         $isPrimary = $request->has('is_primary') ? $request->boolean('is_primary') : $shippingAddress->is_primary;
 
@@ -150,7 +170,7 @@ class ShippingAddressController extends Controller
         $shippingAddress->update([
             'label'            => $validated['label'] ?: $shippingAddress->label,
             'recipient_name'   => $validated['recipient_name'],
-            'phone_number'     => $validated['phone'],
+            'phone_number'     => $cleanPhone,
             'full_address'     => $validated['address'],
             'city_name'        => $validated['city'],
             'province_name'    => $validated['province'],

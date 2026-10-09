@@ -3,7 +3,23 @@
 @section('title', 'Edit Produk: ' . $product->name . ' · NGIZAN APPAREL')
 
 @section('content')
-<div class="max-w-4xl space-y-6">
+<div class="max-w-4xl space-y-6" x-data="{
+    allowNameset: {{ $product->allow_custom_nameset ? 'true' : 'false' }},
+    variants: @js($product->variants->map(fn($v) => [
+        'id' => $v->id,
+        'size' => $v->size,
+        'stock' => (int)$v->stock,
+        'price_adj' => (int)$v->price_adjustment,
+    ])->values()),
+    addVariant() {
+        this.variants.push({ id: null, size: '', stock: 0, price_adj: 0 });
+    },
+    removeVariant(index) {
+        if (this.variants.length > 1) {
+            this.variants.splice(index, 1);
+        }
+    }
+}">
     
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-hairline-soft pb-5">
@@ -89,9 +105,9 @@
                         selected: '{{ old('size_chart_id', $product->size_chart_id ?? '') }}',
                         sizeCharts: @js($sizeCharts),
                         get currentLabel() {
-                            if (!this.selected) return 'Gunakan Default Sistem';
+                            if (!this.selected) return 'Tanpa Panduan Ukuran (Tidak Ditampilkan)';
                             const found = this.sizeCharts.find(sc => sc.id == this.selected);
-                            return found ? found.name : 'Gunakan Default Sistem';
+                            return found ? found.name : 'Tanpa Panduan Ukuran (Tidak Ditampilkan)';
                         }
                     }">
                         <input type="hidden" name="size_chart_id" :value="selected">
@@ -123,7 +139,7 @@
                                 @click="selected = ''; open = false"
                                 class="w-full flex items-center justify-between px-4 py-2.5 transition text-left cursor-pointer border-b border-hairline-soft/60"
                                 :class="!selected ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium'">
-                                <span>Gunakan Default Sistem</span>
+                                <span>Tanpa Panduan Ukuran (Tidak Ditampilkan)</span>
                                 <span x-show="!selected" class="text-ink font-bold">✓</span>
                             </button>
 
@@ -169,26 +185,66 @@
         </div>
 
         {{-- 2. DUAL POV IMAGE UPLOAD --}}
-        <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4 text-xs">
+        <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4 text-xs" x-data="{ frontPreview: null, backPreview: null }">
             <h2 class="font-medium text-sm text-ink border-b border-hairline-soft pb-3">2. Foto Dual POV Jersey</h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                     <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Foto Tampak Depan (Front POV)</label>
-                    @if($product->thumbnail_front)
-                        <img src="{{ asset('storage/' . $product->thumbnail_front) }}" alt="Front POV" class="w-24 h-28 object-cover rounded-xl border border-hairline-soft mb-2">
-                    @endif
-                    <input type="file" name="thumbnail_front" accept="image/*" class="w-full text-xs text-mute file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-soft-cloud file:text-ink hover:file:bg-neutral-200 cursor-pointer">
+                    
+                    {{-- Current & New Image Preview --}}
+                    <div class="mb-3 flex items-center gap-4">
+                        @if($product->thumbnail_front)
+                            <div>
+                                <span class="text-[10px] text-mute block mb-1">Foto Saat Ini:</span>
+                                <div class="w-28 h-32 rounded-xl overflow-hidden border border-hairline bg-soft-cloud">
+                                    <img src="{{ asset('storage/' . $product->thumbnail_front) }}" alt="Front POV" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                        @endif
+
+                        <div x-show="frontPreview" x-cloak>
+                            <span class="text-[10px] text-mute block mb-1">Preview Baru:</span>
+                            <div class="w-28 h-32 rounded-xl overflow-hidden border border-ink bg-soft-cloud">
+                                <img :src="frontPreview" alt="Preview Baru" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="file" name="thumbnail_front" id="thumbnail_front" accept="image/*"
+                           @change="const file = $event.target.files[0]; if(file) { const reader = new FileReader(); reader.onload = (e) => { frontPreview = e.target.result; }; reader.readAsDataURL(file); }"
+                           class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-ink file:text-white hover:file:opacity-80 cursor-pointer">
                     <p class="text-[11px] text-mute mt-1">Kosongkan jika tidak diganti (JPG, PNG, WEBP Maks. 10MB, auto resize & WebP).</p>
+                    @error('thumbnail_front') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label class="block font-medium text-mute mb-1 uppercase tracking-wider text-[11px]">Foto Tampak Belakang (Back POV / Studio)</label>
-                    @if($product->thumbnail_back)
-                        <img src="{{ asset('storage/' . $product->thumbnail_back) }}" alt="Back POV" class="w-24 h-28 object-cover rounded-xl border border-hairline-soft mb-2">
-                    @endif
-                    <input type="file" name="thumbnail_back" accept="image/*" class="w-full text-xs text-mute file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-soft-cloud file:text-ink hover:file:bg-neutral-200 cursor-pointer">
+                    
+                    {{-- Current & New Image Preview --}}
+                    <div class="mb-3 flex items-center gap-4">
+                        @if($product->thumbnail_back)
+                            <div>
+                                <span class="text-[10px] text-mute block mb-1">Foto Saat Ini:</span>
+                                <div class="w-28 h-32 rounded-xl overflow-hidden border border-hairline bg-soft-cloud">
+                                    <img src="{{ asset('storage/' . $product->thumbnail_back) }}" alt="Back POV" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                        @endif
+
+                        <div x-show="backPreview" x-cloak>
+                            <span class="text-[10px] text-mute block mb-1">Preview Baru:</span>
+                            <div class="w-28 h-32 rounded-xl overflow-hidden border border-ink bg-soft-cloud">
+                                <img :src="backPreview" alt="Preview Baru" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="file" name="thumbnail_back" id="thumbnail_back" accept="image/*"
+                           @change="const file = $event.target.files[0]; if(file) { const reader = new FileReader(); reader.onload = (e) => { backPreview = e.target.result; }; reader.readAsDataURL(file); }"
+                           class="w-full bg-soft-cloud border border-hairline p-2.5 rounded-xl text-xs text-ink file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-ink file:text-white hover:file:opacity-80 cursor-pointer">
                     <p class="text-[11px] text-mute mt-1">Kosongkan jika tidak diganti (Maks. 10MB, auto resize & WebP).</p>
+                    @error('thumbnail_back') <p class="text-sale text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
@@ -200,10 +256,10 @@
             <div class="max-w-md">
                 <div class="space-y-3 p-4 bg-soft-cloud rounded-xl border border-hairline-soft">
                     <label class="flex items-center gap-2 font-medium text-ink cursor-pointer">
-                        <input type="checkbox" name="allow_custom_nameset" value="1" {{ $product->allow_custom_nameset ? 'checked' : '' }} class="rounded text-ink focus:ring-ink">
+                        <input type="checkbox" name="allow_custom_nameset" value="1" x-model="allowNameset" class="rounded text-ink focus:ring-ink">
                         <span>Aktifkan Kustom Sablon Nameset</span>
                     </label>
-                    <div>
+                    <div x-show="allowNameset">
                         <label class="block text-mute font-medium mb-1 text-[11px]">Biaya Tambahan Sablon (Rp)</label>
                         <input type="number" name="custom_nameset_price" value="{{ old('custom_nameset_price', (int)$product->custom_nameset_price) }}" step="1000"
                                class="w-full bg-white border border-hairline p-2 rounded-lg text-xs text-ink focus:outline-none focus:border-ink">
@@ -212,26 +268,48 @@
             </div>
         </div>
 
-        {{-- 4. DAFTAR VARIAN & STOK (READONLY) --}}
+        {{-- 4. VARIAN UKURAN & STOK --}}
         <div class="bg-white p-6 rounded-2xl border border-hairline-soft space-y-4 text-xs">
             <div class="flex justify-between items-center border-b border-hairline-soft pb-3">
                 <div>
-                    <h2 class="font-medium text-sm text-ink">4. Varian Ukuran & Stok Saat Ini</h2>
-                    <p class="text-mute text-[11px]">Untuk menambah atau mengurangi stok, gunakan modul Stok Masuk / Stok Keluar.</p>
+                    <h2 class="font-medium text-sm text-ink">4. Varian Ukuran & Stok</h2>
+                    <p class="text-mute text-[11px]">Kelola ukuran, tipe rilis, stok fisik, atau tambah varian ukuran baru.</p>
                 </div>
-                <a href="{{ route('admin.stock-ins.create') }}" class="text-xs font-medium text-ink underline">+ Restock Masuk</a>
+                <button type="button" @click="addVariant()" class="px-4 py-2 bg-soft-cloud hover:bg-neutral-200 text-ink rounded-full text-xs font-medium transition cursor-pointer">
+                    + Tambah Ukuran / Varian
+                </button>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                @foreach($product->variants as $variant)
-                    <div class="p-3 bg-soft-cloud border border-hairline-soft rounded-xl text-center space-y-1">
-                        <span class="font-medium text-xs text-ink block">{{ $variant->size }} ({{ $variant->type }})</span>
-                        <span class="font-mono text-[10px] text-mute block">{{ $variant->sku }}</span>
-                        <div class="font-medium text-base {{ $variant->stock <= 3 ? 'text-sale' : 'text-ink' }}">
-                            {{ $variant->stock }} pcs
+            <div class="space-y-3">
+                <template x-for="(v, index) in variants" :key="index">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-3.5 bg-soft-cloud border border-hairline-soft rounded-xl">
+                        <input type="hidden" :name="'variants[' + index + '][id]'" :value="v.id">
+
+                        <div class="flex-1 min-w-[150px]">
+                            <label class="block text-[10px] font-medium text-mute uppercase mb-1">Ukuran *</label>
+                            <input type="text" :name="'variants[' + index + '][size]'" x-model="v.size" placeholder="S, M, L, XL, 28, 30, All Size..." required
+                                   class="w-full bg-white border border-hairline p-2 rounded-lg text-xs text-ink font-semibold focus:outline-none focus:border-ink">
+                        </div>
+
+                        <div class="w-full sm:w-36">
+                            <label class="block text-[10px] font-medium text-mute uppercase mb-1">Stok Fisik *</label>
+                            <input type="number" :name="'variants[' + index + '][stock]'" x-model="v.stock" min="0" required
+                                   class="w-full bg-white border border-hairline p-2 rounded-lg text-xs text-ink focus:outline-none focus:border-ink">
+                        </div>
+
+                        <div class="w-full sm:w-44">
+                            <label class="block text-[10px] font-medium text-mute uppercase mb-1">Penyesuaian Harga</label>
+                            <input type="number" :name="'variants[' + index + '][price_adj]'" x-model="v.price_adj" min="0" step="1000"
+                                   class="w-full bg-white border border-hairline p-2 rounded-lg text-xs text-ink focus:outline-none focus:border-ink" placeholder="+Rp 0">
+                        </div>
+
+                        <div class="self-end sm:self-auto sm:pt-4">
+                            <button type="button" @click="removeVariant(index)" class="p-2 text-mute hover:text-sale rounded-full transition cursor-pointer" title="Hapus Baris">
+                                ✕
+                            </button>
                         </div>
                     </div>
-                @endforeach
+                </template>
             </div>
         </div>
 

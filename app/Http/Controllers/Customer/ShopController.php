@@ -33,18 +33,17 @@ class ShopController extends Controller
             ->get();
 
         $nonJerseyProducts = Product::active()
-            ->whereHas('category', function ($q) {
-                $q->where('slug', '!=', 'jersey')->where('name', 'not like', '%jersey%');
+            ->where(function ($query) {
+                $query->whereDoesntHave('category')
+                    ->orWhereHas('category', function ($q) {
+                        $q->where('slug', '!=', 'jersey')
+                          ->where('name', 'not like', '%jersey%');
+                    });
             })
             ->with(['category', 'variants'])
             ->latest()
             ->take(8)
             ->get();
-
-        // Fallback jika query jersey khusus kosong, ambil produk terbaru
-        if ($jerseyProducts->isEmpty()) {
-            $jerseyProducts = Product::active()->with(['category', 'variants'])->latest()->take(8)->get();
-        }
 
         $featuredProducts = $jerseyProducts;
 

@@ -66,6 +66,13 @@ class StorefrontTest extends TestCase
             'sku' => 'ARS-L',
         ]);
 
+        $sizeChart = \App\Models\SizeChart::create([
+            'name' => 'Jersey Dewasa',
+            'columns' => ['Size', 'Lebar', 'Panjang'],
+            'rows' => [['L', '54', '74']],
+        ]);
+        $product->update(['size_chart_id' => $sizeChart->id]);
+
         $response = $this->get(route('shop.show', $product->slug));
 
         $response->assertStatus(200);

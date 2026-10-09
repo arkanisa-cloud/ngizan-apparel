@@ -151,8 +151,8 @@
                                         <div class="space-y-1.5 flex-1 min-w-0">
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <span
-                                                    class="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 bg-soft-cloud border border-hairline-soft rounded-full text-mute"
-                                                    x-text="item.type">
+                                                    class="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 bg-soft-cloud border border-hairline-soft rounded-full text-ink font-semibold"
+                                                    x-text="'Ukuran ' + item.size">
                                                 </span>
                                                 <span class="text-[10px] text-mute font-medium">
                                                     Sisa stok: <strong class="text-ink font-bold"
@@ -285,9 +285,7 @@
                                         <div class="flex items-center gap-2 text-[11px] text-mute flex-wrap">
                                             <span
                                                 class="px-2 py-0.5 bg-soft-cloud border border-hairline-soft rounded-md font-bold text-ink text-[10px]"
-                                                x-text="item.size"></span>
-                                            <span class="text-neutral-300">·</span>
-                                            <span x-text="item.type"></span>
+                                                x-text="'Size ' + item.size"></span>
                                             <span class="text-neutral-300">·</span>
                                             <span class="font-semibold text-ink" x-text="item.quantity + ' pcs'"></span>
                                         </div>
