@@ -127,22 +127,22 @@
                 {{-- ===== 1. LEFT: SWIPEABLE GALLERY (7 COLS) ===== --}}
                 <div class="lg:col-span-7 space-y-4 select-none">
 
-                    {{-- View Toggle Tabs (Pills) --}}
-                    <div class="flex items-center gap-2 overflow-x-auto pb-1 hide-scroll">
-                        @if (count($galleryList) > 2)
-                            @foreach (array_slice($galleryList, 2) as $idx => $g)
-                                <button type="button" @click="goToSlide({{ $idx + 2 }})"
-                                    :class="currentSlide === {{ $idx + 2 }} ? 'bg-ink text-white shadow-xs' :
-                                        'bg-soft-cloud text-ink hover:bg-neutral-200'"
-                                    class="px-4 py-1.5 rounded-full text-xs font-semibold transition shrink-0">
+                    {{-- View Toggle Tabs (Pills) on Mobile/Desktop --}}
+                    @if (count($galleryList) > 2)
+                        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                            @foreach ($galleryList as $idx => $g)
+                                <button type="button" @click="goToSlide({{ $idx }})"
+                                    :class="currentSlide === {{ $idx }} ? 'bg-ink text-white shadow-2xs' :
+                                        'bg-soft-cloud text-ink border border-hairline-soft hover:bg-neutral-200'"
+                                    class="px-3.5 py-1.5 rounded-full text-xs font-semibold transition shrink-0 cursor-pointer">
                                     {{ $g['label'] }}
                                 </button>
                             @endforeach
-                        @endif
-                    </div>
+                        </div>
+                    @endif
 
                     {{-- Interactive Swipeable Gallery Frame on Soft Cloud --}}
-                    <div class="relative bg-soft-cloud rounded-2xl sm:rounded-3xl overflow-hidden aspect-square border border-hairline-soft shadow-xs group"
+                    <div class="relative bg-soft-cloud rounded-2xl sm:rounded-none overflow-hidden aspect-square border border-hairline-soft group select-none"
                         @touchstart="handleTouchStart($event)" @touchend="handleTouchEnd($event)">
 
                         {{-- SLIDE 0: Front View --}}
@@ -178,56 +178,51 @@
 
                         {{-- Floating Navigation Chevrons (< and >) --}}
                         <button type="button" @click="prevSlide()"
-                            class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-ink border border-hairline flex items-center justify-center shadow-md opacity-80 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95"
+                            class="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-ink border border-hairline flex items-center justify-center shadow-xs opacity-80 sm:opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                             aria-label="Foto Sebelumnya">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
 
                         <button type="button" @click="nextSlide()"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-ink border border-hairline flex items-center justify-center shadow-md opacity-80 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95"
+                            class="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-ink border border-hairline flex items-center justify-center shadow-xs opacity-80 sm:opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                             aria-label="Foto Selanjutnya">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
                             </svg>
                         </button>
 
                         {{-- Swipe Hint & Counter Badge --}}
                         <div
-                            class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/70 backdrop-blur-md text-white text-[11px] font-semibold px-3.5 py-1 rounded-full flex items-center gap-2 pointer-events-none">
+                            class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/75 backdrop-blur-md text-white text-[10px] sm:text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1.5 pointer-events-none select-none">
                             <span x-text="(currentSlide + 1) + ' / ' + totalSlides"></span>
                             <span class="opacity-60">· Geser foto</span>
                         </div>
                     </div>
 
-                    {{-- Horizontal Thumbnail Selector Strip --}}
-                    <div class="grid grid-cols-4 sm:grid-cols-5 gap-2.5 pt-1">
+                    {{-- Horizontal Thumbnail Selector Strip (Scrollable & Responsive) --}}
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
                         @foreach ($galleryList as $idx => $item)
                             <button type="button" @click="goToSlide({{ $idx }})"
-                                :class="currentSlide === {{ $idx }} ? 'ring-2 ring-ink border-ink' :
-                                    'border-hairline-soft opacity-70 hover:opacity-100'"
-                                class="aspect-square rounded-xl bg-soft-cloud overflow-hidden border transition-all relative">
+                                :class="currentSlide === {{ $idx }} ? 'ring-2 ring-ink border-ink opacity-100' :
+                                    'border-hairline-soft opacity-65 hover:opacity-100'"
+                                class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl sm:rounded-none bg-soft-cloud overflow-hidden border transition-all relative cursor-pointer">
                                 <img src="{{ $item['url'] }}" alt="{{ $item['label'] }}"
                                     class="w-full h-full object-cover">
                             </button>
                         @endforeach
                     </div>
-
-                    <p class="text-[11px] text-mute text-center pt-1">
-                        *Foto resolusi tinggi autentik studio. Geser atau klik tombol panah untuk melihat sudut jersey
-                        lainnya.
-                    </p>
                 </div>
 
                 {{-- ===== 2. RIGHT: PRODUCT DETAILS & VARIANT SELECTION (5 COLS) ===== --}}
-                <div class="lg:col-span-5 space-y-6">
+                <div class="lg:col-span-5 space-y-5 sm:space-y-6">
 
                     {{-- Header: Category, Title & Real Dynamic Ratings --}}
-                    <div class="border-b border-hairline-soft pb-5">
+                    <div class="border-b border-hairline-soft pb-4 sm:pb-5">
                         <div class="flex items-center justify-between gap-2 mb-1.5">
-                            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-mute">
+                            <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-mute">
                                 {{ $product->category->name ?? 'Official Archive' }}
                             </span>
 
@@ -244,7 +239,7 @@
                                     </a>
                                 @else
                                     <span
-                                        class="text-mute text-xs bg-soft-cloud px-2.5 py-0.5 rounded-full border border-hairline-soft">
+                                        class="text-mute text-[11px] bg-soft-cloud px-2.5 py-0.5 rounded-full border border-hairline-soft">
                                         Belum ada ulasan
                                     </span>
                                 @endif
@@ -256,7 +251,7 @@
                         </h1>
 
                         {{-- Price Display --}}
-                        <div class="mt-3 flex items-baseline gap-3 flex-wrap">
+                        <div class="mt-2.5 flex items-baseline gap-2.5 flex-wrap">
                             <div class="text-2xl sm:text-3xl font-extrabold text-ink tabular-nums tracking-tight"
                                 x-text="'Rp ' + unitPrice.toLocaleString('id-ID')">
                                 Rp {{ number_format($effectiveBasePrice, 0, ',', '.') }}
@@ -267,7 +262,7 @@
                                     {{ $product->formatted_price }}
                                 </span>
                                 <span
-                                    class="px-2.5 py-0.5 bg-premium-gold text-ink text-[11px] font-bold rounded-full uppercase shadow-xs">
+                                    class="px-2.5 py-0.5 bg-amber-400 text-ink text-[10px] font-bold rounded-full uppercase shadow-2xs tracking-wider">
                                     ★ Member 5% OFF
                                 </span>
                             @endif
@@ -280,7 +275,8 @@
                     </div>
 
                     {{-- Form Add to Cart --}}
-                    <form action="{{ route('customer.cart.store') }}" method="POST" class="space-y-6">
+                    <form id="add-to-cart-form" action="{{ route('customer.cart.store') }}" method="POST"
+                        class="space-y-5 sm:space-y-6">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <input type="hidden" name="product_variant_id" :value="selectedVariantId">
@@ -289,17 +285,18 @@
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
                                 <label class="block font-bold text-xs uppercase tracking-wider text-ink">
-                                    Pilih Ukuran: <span class="text-mute font-normal normal-case" x-text="selectedSize"></span>
+                                    Pilih Ukuran: <span class="text-mute font-normal normal-case"
+                                        x-text="selectedSize"></span>
                                 </label>
                                 @if ($product->sizeChart)
                                     <button type="button" @click="sizeModal = true"
-                                        class="text-xs font-semibold text-ink underline hover:text-mute">
+                                        class="text-xs font-semibold text-ink underline hover:text-mute cursor-pointer">
                                         Panduan Ukuran (Size Chart)
                                     </button>
                                 @endif
                             </div>
 
-                            {{-- Compact & Clean Variant Badges --}}
+                            {{-- Compact & Clean Variant Badges (Touch-Friendly min 44px) --}}
                             <div class="flex flex-wrap gap-2">
                                 @foreach ($product->variants as $variant)
                                     <button type="button"
@@ -308,15 +305,16 @@
                                         :class="selectedVariantId == {{ $variant->id }} ?
                                             'bg-ink text-white border-ink shadow-xs' :
                                             '{{ $variant->stock <= 0 ? 'opacity-40 bg-soft-cloud text-stone line-through border-hairline-soft cursor-not-allowed' : 'bg-soft-cloud text-ink border-hairline hover:border-ink hover:bg-neutral-200' }}'"
-                                        class="px-3.5 py-2 rounded-xl border text-xs font-semibold transition inline-flex items-center gap-1.5 select-none cursor-pointer">
-                                        <span class="font-bold">{{ $variant->size }}</span>
+                                        class="min-h-[44px] min-w-[44px] px-4 py-2 rounded-xl border text-xs font-bold transition inline-flex items-center justify-center gap-1.5 select-none cursor-pointer">
+                                        <span>{{ $variant->size }}</span>
                                     </button>
                                 @endforeach
                             </div>
                         </div>
 
-                        {{-- 2. Kuantitas (Qty) dengan Validasi Max Stok & Keterangan Sisa Stok Disamping Counter --}}
-                        <div class="flex items-center justify-between border-t border-hairline-soft pt-4 gap-4">
+                        {{-- 2. Kuantitas (Qty) & Total Harga Subtotal --}}
+                        <div
+                            class="flex flex-col xs:flex-row xs:items-center xs:justify-between border-t border-hairline-soft pt-4 gap-3">
                             <div>
                                 <span
                                     class="text-xs font-bold uppercase tracking-wider text-ink block mb-1.5">Kuantitas</span>
@@ -327,7 +325,7 @@
                                         class="flex items-center border border-hairline rounded-full overflow-hidden bg-white">
                                         <button type="button" @click="if(qty > 1) qty--" :disabled="qty <= 1"
                                             :class="qty <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-neutral-200'"
-                                            class="px-3.5 py-1.5 bg-soft-cloud text-ink font-bold transition select-none"
+                                            class="w-9 h-9 bg-soft-cloud text-ink font-bold transition select-none flex items-center justify-center cursor-pointer"
                                             aria-label="Kurangi Kuantitas">-</button>
                                         <input type="number" name="quantity" x-model.number="qty" min="1"
                                             :max="selectedStock"
@@ -337,7 +335,7 @@
                                             :disabled="qty >= selectedStock || selectedStock <= 0"
                                             :class="(qty >= selectedStock || selectedStock <= 0) ?
                                             'opacity-40 cursor-not-allowed' : 'hover:bg-neutral-200'"
-                                            class="px-3.5 py-1.5 bg-soft-cloud text-ink font-bold transition select-none"
+                                            class="w-9 h-9 bg-soft-cloud text-ink font-bold transition select-none flex items-center justify-center cursor-pointer"
                                             aria-label="Tambah Kuantitas">+</button>
                                     </div>
 
@@ -364,9 +362,9 @@
                             </div>
 
                             {{-- Total Harga Subtotal --}}
-                            <div class="text-right">
-                                <span class="text-xs text-mute font-medium">Total Harga</span>
-                                <div class="text-2xl font-extrabold text-ink tabular-nums mt-0.5"
+                            <div class="xs:text-right pt-2 xs:pt-0 border-t xs:border-t-0 border-hairline-soft/60">
+                                <span class="text-[11px] text-mute font-medium">Total Harga</span>
+                                <div class="text-xl sm:text-2xl font-extrabold text-ink tabular-nums mt-0.5"
                                     x-text="'Rp ' + grandTotal.toLocaleString('id-ID')"></div>
                             </div>
                         </div>
@@ -374,8 +372,8 @@
                         {{-- Submit Button (Nike Primary CTA Pill) --}}
                         <button type="submit" :disabled="selectedStock <= 0"
                             :class="selectedStock <= 0 ? 'opacity-50 cursor-not-allowed bg-neutral-400' :
-                                'bg-ink hover:bg-black'"
-                            class="w-full text-white py-4 text-xs sm:text-sm font-bold uppercase tracking-widest rounded-full transition shadow-md flex items-center justify-center gap-2">
+                                'bg-ink hover:bg-black cursor-pointer'"
+                            class="w-full text-white py-3.5 sm:py-4 text-xs sm:text-sm font-bold uppercase tracking-widest rounded-full transition shadow-md flex items-center justify-center gap-2">
                             <span x-text="selectedStock > 0 ? 'Masukkan ke Tas Belanja' : 'Stok Jersey Habis'"></span>
                             <span x-show="selectedStock > 0">&rarr;</span>
                         </button>
@@ -384,6 +382,24 @@
 
                 </div>
 
+            </div>
+
+            {{-- ===== MOBILE FLOATING STICKY BUY BAR (Muncul di layar < 1024px) ===== --}}
+            <div
+                class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-hairline-soft px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <span class="text-[10px] text-mute block leading-none">Total · Size <strong class="text-ink"
+                            x-text="selectedSize"></strong></span>
+                    <span class="text-base font-extrabold text-ink tabular-nums truncate block mt-0.5"
+                        x-text="'Rp ' + grandTotal.toLocaleString('id-ID')"></span>
+                </div>
+                <button type="button" @click="document.getElementById('add-to-cart-form').requestSubmit()"
+                    :disabled="selectedStock <= 0"
+                    :class="selectedStock <= 0 ? 'opacity-50 cursor-not-allowed bg-neutral-400' :
+                        'bg-ink hover:bg-black active:scale-95 cursor-pointer'"
+                    class="shrink-0 bg-ink text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-full transition shadow-md flex items-center gap-1.5">
+                    <span x-text="selectedStock > 0 ? '+ Tas Belanja' : 'Habis'"></span>
+                </button>
             </div>
 
             {{-- ===== 3. DYNAMIC REVIEWS & RATINGS SECTION ===== --}}
@@ -406,8 +422,9 @@
 
                     {{-- Rating Summary Box --}}
                     @if ($reviewsCount > 0)
-                        <div class="flex items-center gap-4 bg-soft-cloud p-4 rounded-2xl border border-hairline">
-                            <div class="text-center">
+                        <div
+                            class="flex flex-col xs:flex-row items-center gap-4 bg-soft-cloud p-4 rounded-2xl border border-hairline w-full sm:w-auto">
+                            <div class="text-center shrink-0">
                                 <div class="text-3xl font-extrabold text-ink tabular-nums">
                                     {{ number_format($avgRating, 1) }}
                                 </div>
@@ -420,20 +437,21 @@
                             </div>
 
                             {{-- Star Breakdown Progress Bars --}}
-                            <div class="space-y-1 text-[11px] border-l border-hairline-soft pl-4 min-w-[150px]">
+                            <div
+                                class="space-y-1 text-[11px] border-t xs:border-t-0 xs:border-l border-hairline-soft pt-3 xs:pt-0 xs:pl-4 w-full xs:w-auto xs:min-w-[150px]">
                                 @foreach ([5, 4, 3, 2, 1] as $star)
                                     @php
                                         $count = $starDistribution[$star];
                                         $pct = $reviewsCount > 0 ? round(($count / $reviewsCount) * 100) : 0;
                                     @endphp
                                     <div class="flex items-center gap-1.5">
-                                        <span class="text-mute font-mono w-4">{{ $star }}★</span>
+                                        <span class="text-mute font-mono w-4 shrink-0">{{ $star }}★</span>
                                         <div class="flex-1 h-1.5 bg-neutral-200 rounded-full overflow-hidden">
                                             <div class="h-full bg-ink rounded-full" style="width: {{ $pct }}%">
                                             </div>
                                         </div>
                                         <span
-                                            class="text-[10px] text-mute font-mono w-4 text-right">{{ $count }}</span>
+                                            class="text-[10px] text-mute font-mono w-4 text-right shrink-0">{{ $count }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -541,7 +559,7 @@
                                         'tops' => 'Atasan / Jersey',
                                         'bottoms' => 'Bawahan / Celana',
                                         'outerwear' => 'Jaket / Luaran',
-                                        default => ($activeSizeChart->category_type ?? 'Fitting Guide'),
+                                        default => $activeSizeChart->category_type ?? 'Fitting Guide',
                                     } }}
                                 </span>
                                 <span class="text-[10px] text-mute uppercase font-bold tracking-widest">· Standar
@@ -604,7 +622,8 @@
                         class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-hairline-soft">
                         <span class="text-[11px] text-mute flex items-center gap-1.5">
                             <span class="text-emerald-600 font-bold">✓</span>
-                            <span>Jika ragu di antara dua ukuran, disarankan memilih <strong>1 size lebih besar</strong>.</span>
+                            <span>Jika ragu di antara dua ukuran, disarankan memilih <strong>1 size lebih
+                                    besar</strong>.</span>
                         </span>
 
                         <button type="button" @click="sizeModal = false"

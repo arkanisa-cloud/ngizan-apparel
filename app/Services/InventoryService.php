@@ -43,7 +43,7 @@ class InventoryService
 
                 if ($variant->stock < $quantity) {
                     $productName = $variant->product ? $variant->product->name : 'Jersey';
-                    throw new Exception("Stok untuk {$productName} (Ukuran {$variant->size} - {$variant->type}) tidak mencukupi. Sisa stok: {$variant->stock}.");
+                    throw new Exception("Stok untuk {$productName} (Ukuran {$variant->size}) tidak mencukupi. Sisa stok: {$variant->stock}.");
                 }
 
                 $stockBefore = $variant->stock;

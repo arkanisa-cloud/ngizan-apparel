@@ -407,7 +407,7 @@ class CheckoutController extends Controller
                         'product_variant_id' => $cartItem->product_variant_id,
                         'product_name'       => $cartItem->product->name,
                         'size'               => $cartItem->variant->size ?? 'M',
-                        'type'               => $cartItem->variant->type ?? 'Fans Issue',
+                        'type'               => $cartItem->variant->type ?? 'Standard',
                         'custom_name'        => $cartItem->custom_name,
                         'custom_number'      => $cartItem->custom_number,
                         'selected_patch'     => $cartItem->selected_patch,

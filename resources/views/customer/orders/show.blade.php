@@ -27,7 +27,7 @@
     }
 @endphp
 
-<div class="py-10 sm:py-16 bg-canvas" x-data="{
+<div class="py-8 sm:py-14 bg-canvas {{ $isPending ? 'pb-28 sm:pb-16' : '' }}" x-data="{
     expiresAt: {{ $expiresAtTimestamp ?? 'null' }},
     timeLeft: '',
     timerInterval: null,
@@ -95,7 +95,7 @@
     <div class="wrap">
         
         {{-- Breadcrumb Navigation --}}
-        <nav class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-mute mb-8">
+        <nav class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-mute mb-6 sm:mb-8 flex-wrap">
             <a href="{{ route('home') }}" class="hover:text-ink transition">Beranda</a>
             <span class="text-stone">/</span>
             <a href="{{ route('customer.orders.index') }}" class="hover:text-ink transition">Pesanan Saya</a>
@@ -104,14 +104,14 @@
         </nav>
 
         {{-- Hero Status Banner --}}
-        <div class="rounded-3xl border p-6 sm:p-8 mb-8 sm:mb-10 transition {{ $isPending ? 'bg-ink text-white border-ink shadow-lg' : 'bg-white border-hairline-soft text-ink shadow-xs' }}">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div class="rounded-2xl sm:rounded-3xl border p-5 sm:p-8 mb-6 sm:mb-8 transition {{ $isPending ? 'bg-ink text-white border-ink shadow-md' : 'bg-white border-hairline-soft text-ink shadow-2xs' }}">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
                 <div class="space-y-2">
-                    <div class="flex items-center gap-3 flex-wrap">
+                    <div class="flex items-center gap-2.5 sm:gap-3 flex-wrap">
                         <span class="font-display text-2xl sm:text-4xl tracking-tight uppercase leading-none {{ $isPending ? 'text-white' : 'text-ink' }}">
                             PESANAN #{{ $order->order_number }}
                         </span>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-3.5 py-1 rounded-full {{ $isPending ? 'bg-amber-400 text-ink font-extrabold' : $order->status->badgeClass() }} inline-flex items-center gap-1.5">
+                        <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full {{ $isPending ? 'bg-amber-400 text-ink font-extrabold' : $order->status->badgeClass() }} inline-flex items-center gap-1.5">
                             @if($isPending)
                                 <span class="w-1.5 h-1.5 rounded-full bg-ink animate-pulse"></span>
                             @endif
@@ -125,7 +125,7 @@
 
                 {{-- Action / Countdown Button --}}
                 @if($isPending)
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2 lg:pt-0 border-t lg:border-t-0 border-white/15">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-3 lg:pt-0 border-t lg:border-t-0 border-white/15">
                         <div class="text-left sm:text-right" x-show="timeLeft">
                             <span class="text-[10px] text-neutral-300 font-bold uppercase tracking-widest block">Sisa Waktu Pembayaran</span>
                             <span class="font-mono font-extrabold text-lg sm:text-xl text-amber-300 tabular-nums" x-text="timeLeft"></span>
@@ -133,9 +133,9 @@
 
                         <button type="button" 
                                 @click="payNow()" 
-                                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-neutral-100 text-ink text-xs font-bold uppercase tracking-[0.12em] rounded-full shadow-2xs hover:shadow-xs transition active:scale-95 cursor-pointer w-full sm:w-auto">
+                                class="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-white hover:bg-neutral-100 text-ink text-xs font-bold uppercase tracking-[0.12em] rounded-full shadow-2xs hover:shadow-xs transition active:scale-95 cursor-pointer w-full sm:w-auto">
                             <span>Bayar Sekarang</span>
-                            <span>&rarr;</span>
+                            <span aria-hidden="true">&rarr;</span>
                         </button>
                     </div>
                 @else
@@ -150,16 +150,16 @@
         </div>
 
         {{-- 2-Column Content Grid --}}
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
             
             {{-- 1. LEFT COLUMN: Order Items & J&T Tracking (8 Cols) --}}
-            <div class="lg:col-span-8 space-y-8">
+            <div class="lg:col-span-8 space-y-6 sm:space-y-8">
                 
                 {{-- Daftar Jersey Pesanan --}}
-                <div class="bg-white rounded-3xl border border-hairline-soft p-6 sm:p-8 space-y-6 shadow-xs">
+                <div class="bg-white rounded-2xl sm:rounded-3xl border border-hairline-soft p-5 sm:p-7 lg:p-8 space-y-6 shadow-2xs">
                     <div class="flex items-center justify-between border-b border-hairline-soft pb-4">
-                        <h2 class="font-display text-xl sm:text-2xl text-ink uppercase tracking-wide">
-                            Daftar Jersey Pesanan ({{ $order->items->count() }} Item)
+                        <h2 class="font-display text-lg sm:text-2xl text-ink uppercase tracking-wide">
+                            Daftar Jersey Pesanan ({{ $order->items->count() }})
                         </h2>
                         <span class="text-xs font-bold uppercase tracking-wider text-mute">
                             {{ $order->items->sum('quantity') }} Total Pcs
@@ -168,10 +168,10 @@
 
                     <div class="divide-y divide-hairline-soft">
                         @foreach($order->items as $item)
-                            <div class="py-6 first:pt-0 last:pb-0 space-y-4">
+                            <div class="py-5 sm:py-6 first:pt-0 last:pb-0 space-y-4">
                                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-20 h-24 sm:w-24 sm:h-28 bg-soft-cloud rounded-2xl overflow-hidden border border-hairline-soft flex-shrink-0">
+                                    <div class="flex items-center gap-3.5 sm:gap-4 min-w-0">
+                                        <div class="w-20 h-24 sm:w-24 sm:h-28 bg-soft-cloud rounded-2xl overflow-hidden border border-hairline-soft shrink-0">
                                             @php
                                                 $img = $item->product?->thumbnail_front ? asset('storage/' . $item->product->thumbnail_front) : 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=250&q=80';
                                             @endphp
@@ -182,7 +182,7 @@
                                                 {{ $item->product_name }}
                                             </h3>
                                             <div class="flex items-center gap-2 flex-wrap text-xs text-mute">
-                                                <span class="font-bold text-ink bg-soft-cloud px-2.5 py-0.5 rounded-full border border-hairline-soft">
+                                                <span class="font-bold text-ink bg-soft-cloud px-2.5 py-0.5 rounded-full border border-hairline-soft text-[11px]">
                                                     Ukuran {{ $item->size }}
                                                 </span>
                                                 @if($item->type && !in_array(strtolower($item->type), ['standard', 'default', 'fans issue', 'player issue']))
@@ -232,7 +232,7 @@
                                             <div class="space-y-1">
                                                 <div class="flex items-center gap-2">
                                                     <span class="font-bold text-xs uppercase tracking-wider">Ulasan Anda:</span>
-                                                    <div class="flex text-premium-gold text-sm tracking-tighter">
+                                                    <div class="flex text-amber-500 text-sm tracking-tighter">
                                                         @for($s = 1; $s <= 5; $s++)
                                                             <span>{{ $s <= $userReview->rating ? '★' : '☆' }}</span>
                                                         @endfor
@@ -248,15 +248,15 @@
                                     @else
                                         <div class="pt-2" x-data="{ openReviewModal: false }">
                                             <button type="button" @click="openReviewModal = true" 
-                                                class="inline-flex items-center gap-2 px-4 py-2 bg-soft-cloud hover:bg-neutral-200 border border-hairline-soft text-ink text-xs font-bold uppercase tracking-[0.12em] rounded-full shadow-2xs hover:shadow-xs transition active:scale-95 cursor-pointer">
+                                                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[40px] bg-soft-cloud hover:bg-neutral-200 border border-hairline-soft text-ink text-xs font-bold uppercase tracking-[0.12em] rounded-full shadow-2xs hover:shadow-xs transition active:scale-95 cursor-pointer w-full sm:w-auto">
                                                 <span>⭐ Tulis Ulasan & Rating</span>
                                             </button>
 
                                             {{-- Modal Ulasan --}}
                                             <div x-show="openReviewModal" @click.away="openReviewModal = false" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs">
-                                                <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-hairline-soft text-left animate-in fade-in zoom-in-95 duration-200">
+                                                <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-hairline-soft text-left animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
                                                     <div class="flex justify-between items-center border-b border-hairline-soft pb-4">
-                                                        <h3 class="font-display text-xl text-ink uppercase tracking-wide">Ulas {{ $item->product_name }}</h3>
+                                                        <h3 class="font-display text-lg sm:text-xl text-ink uppercase tracking-wide">Ulas {{ $item->product_name }}</h3>
                                                         <button type="button" @click="openReviewModal = false" class="text-mute hover:text-ink text-2xl font-bold transition">&times;</button>
                                                     </div>
                                                     <p class="text-xs text-mute leading-relaxed">
@@ -272,7 +272,7 @@
                                                             <label class="block text-xs font-bold uppercase tracking-wider text-ink mb-2">Kepuasan Produk</label>
                                                             <div class="flex items-center gap-1.5 bg-soft-cloud p-3 rounded-2xl border border-hairline-soft">
                                                                 <template x-for="star in [1, 2, 3, 4, 5]">
-                                                                    <button type="button" @click="currentRating = star" class="text-2xl transition transform hover:scale-125 focus:outline-none" :class="star <= currentRating ? 'text-amber-500' : 'text-neutral-300'">
+                                                                    <button type="button" @click="currentRating = star" class="text-2xl transition transform hover:scale-125 focus:outline-none cursor-pointer" :class="star <= currentRating ? 'text-amber-500' : 'text-neutral-300'">
                                                                         ★
                                                                     </button>
                                                                 </template>
@@ -286,7 +286,7 @@
                                                         </div>
 
                                                         <div class="flex items-center justify-end gap-3 pt-3 border-t border-hairline-soft">
-                                                            <button type="button" @click="openReviewModal = false" class="px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-mute hover:text-ink transition active:scale-95">Batal</button>
+                                                            <button type="button" @click="openReviewModal = false" class="px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-mute hover:text-ink transition active:scale-95 cursor-pointer">Batal</button>
                                                             <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-ink hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-[0.12em] rounded-full shadow-2xs hover:shadow-xs transition active:scale-95 cursor-pointer">Kirim Ulasan</button>
                                                         </div>
                                                     </form>
@@ -302,17 +302,17 @@
 
                 {{-- Pelacakan Ekspedisi J&T Express (Binderbyte Live Tracking) --}}
                 @if($order->tracking_number)
-                    <div class="bg-white rounded-3xl border border-hairline-soft p-6 sm:p-8 space-y-6 shadow-xs" x-data>
+                    <div class="bg-white rounded-2xl sm:rounded-3xl border border-hairline-soft p-5 sm:p-7 lg:p-8 space-y-6 shadow-2xs" x-data>
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-hairline-soft pb-4 gap-3">
                             <div class="flex items-center gap-2.5 flex-wrap">
-                                <h2 class="font-display text-xl sm:text-2xl text-ink uppercase tracking-wide">
-                                    🚚 Pelacakan Ekspedisi J&T Express
+                                <h2 class="font-display text-lg sm:text-2xl text-ink uppercase tracking-wide">
+                                    🚚 Pelacakan J&T Express
                                 </h2>
                                 <span class="text-[10px] font-bold bg-soft-cloud border border-hairline-soft text-ink px-3 py-1 rounded-full uppercase tracking-wider">
                                     Kemitraan Resmi
                                 </span>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-xs font-mono font-bold text-ink bg-soft-cloud px-3 py-1.5 rounded-full border border-hairline-soft">
                                     {{ $order->tracking_number }}
                                 </span>
@@ -324,7 +324,7 @@
                             </div>
                         </div>
 
-                        <div class="space-y-6 text-xs">
+                        <div class="space-y-5 sm:space-y-6 text-xs">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-soft-cloud p-4 rounded-2xl border border-hairline-soft">
                                 <div>
                                     <span class="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">Layanan Kurir</span>
@@ -340,11 +340,11 @@
                             </div>
 
                             @if(!empty($trackingInfo['history']))
-                                <div class="border-l-2 border-ink pl-5 space-y-5 ml-3 my-2">
+                                <div class="relative border-l-2 border-ink pl-6 space-y-6 ml-3 my-2">
                                     @foreach($trackingInfo['history'] as $history)
                                         <div class="relative">
-                                            <div class="absolute -left-[27px] top-1 w-3 h-3 rounded-full bg-ink ring-4 ring-white"></div>
-                                            <p class="font-bold text-xs text-ink">{{ $history['note'] ?? $history['message'] }}</p>
+                                            <div class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-ink ring-4 ring-white"></div>
+                                            <p class="font-bold text-xs text-ink leading-relaxed">{{ $history['note'] ?? $history['message'] }}</p>
                                             <p class="text-[11px] text-mute font-mono mt-0.5">{{ $history['updated_at'] ?? '' }}</p>
                                         </div>
                                     @endforeach
@@ -360,9 +360,9 @@
                                     </div>
                                     <div class="pt-1 pl-6">
                                         <a href="https://www.jet.co.id/track" target="_blank" rel="noopener noreferrer"
-                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-full font-bold text-[10px] uppercase tracking-wider transition">
+                                           class="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-full font-bold text-[10px] uppercase tracking-wider transition">
                                             <span>🌐 Buka Portal Pelacakan Resmi J&T Express</span>
-                                            <span>&rarr;</span>
+                                            <span aria-hidden="true">&rarr;</span>
                                         </a>
                                     </div>
                                 </div>
@@ -384,9 +384,9 @@
             <div class="lg:col-span-4 space-y-6">
                 
                 {{-- Alamat Pengiriman Snapshot --}}
-                <div class="bg-white rounded-3xl border border-hairline-soft p-6 sm:p-7 space-y-4 shadow-xs text-xs">
+                <div class="bg-white rounded-2xl sm:rounded-3xl border border-hairline-soft p-5 sm:p-7 space-y-4 shadow-2xs text-xs">
                     <div class="flex items-center justify-between border-b border-hairline-soft pb-3">
-                        <h2 class="font-display text-lg sm:text-xl text-ink uppercase tracking-wide">
+                        <h2 class="font-display text-base sm:text-xl text-ink uppercase tracking-wide">
                             Alamat Pengiriman
                         </h2>
                         @if(!empty($addr['label']))
@@ -415,21 +415,21 @@
                     @endif
 
                     @if($gmapsUrl)
-                        <div class="pt-2">
+                        <div class="pt-1">
                             <a href="{{ $gmapsUrl }}" target="_blank" rel="noopener noreferrer" 
-                               class="inline-flex items-center justify-center gap-2 w-full px-5 py-2.5 bg-soft-cloud hover:bg-neutral-200 border border-hairline-soft text-ink text-xs font-bold uppercase tracking-[0.12em] rounded-full shadow-2xs hover:shadow-xs transition active:scale-95 cursor-pointer">
-                                <svg class="w-3.5 h-3.5 text-sale shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                               class="inline-flex items-center justify-center gap-2 w-full px-5 py-2.5 min-h-[44px] bg-soft-cloud hover:bg-neutral-200 border border-hairline-soft text-ink text-xs font-bold uppercase tracking-[0.12em] rounded-full shadow-2xs hover:shadow-xs transition active:scale-95 cursor-pointer">
+                                <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                 </svg>
-                                <span>Lihat di Maps</span>
+                                <span>Buka Google Maps</span>
                             </a>
                         </div>
                     @endif
                 </div>
 
                 {{-- Rincian Pembayaran --}}
-                <div class="bg-soft-cloud rounded-3xl border border-hairline-soft p-6 sm:p-7 space-y-4 shadow-xs text-xs">
-                    <h2 class="font-display text-lg sm:text-xl text-ink uppercase tracking-wide border-b border-hairline-soft pb-3">
+                <div class="bg-soft-cloud rounded-2xl sm:rounded-3xl border border-hairline-soft p-5 sm:p-7 space-y-4 shadow-2xs text-xs">
+                    <h2 class="font-display text-base sm:text-xl text-ink uppercase tracking-wide border-b border-hairline-soft pb-3">
                         Rincian Pembayaran
                     </h2>
 
@@ -460,7 +460,7 @@
                 </div>
 
                 {{-- Support & Guarantee Card --}}
-                <div class="bg-white rounded-3xl border border-hairline-soft p-6 space-y-3 text-xs shadow-xs">
+                <div class="bg-white rounded-2xl sm:rounded-3xl border border-hairline-soft p-5 sm:p-6 space-y-3 text-xs shadow-2xs">
                     <h3 class="font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5">
                         <span>🛡️</span>
                         <span>Jaminan Kualitas Ngizan</span>
@@ -471,7 +471,7 @@
                     <div class="pt-1">
                         <a href="https://wa.me/6281234567890?text=Halo%20Admin%20Ngizan%20Apparel,%20saya%20ingin%20menanyakan%20pesanan%20nomor%20{{ $order->order_number }}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-ink hover:underline inline-flex items-center gap-1">
                             <span>Hubungi Bantuan CS via WhatsApp</span>
-                            <span>&rarr;</span>
+                            <span aria-hidden="true">&rarr;</span>
                         </a>
                     </div>
                 </div>
@@ -481,6 +481,30 @@
         </div>
 
     </div>
+
+    {{-- Sticky Floating Bottom Bar for Mobile when Pending Payment --}}
+    @if($isPending)
+        <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-hairline-soft px-4 py-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] shadow-lg">
+            <div class="wrap !px-0 flex items-center justify-between gap-3">
+                <div class="min-w-0" x-show="timeLeft">
+                    <span class="text-[9px] uppercase tracking-wider font-bold text-mute block leading-tight">Sisa Waktu</span>
+                    <span class="font-mono font-bold text-sm text-amber-600 tabular-nums" x-text="timeLeft"></span>
+                </div>
+                <div class="text-right shrink-0" x-show="!timeLeft">
+                    <span class="text-[9px] uppercase tracking-wider font-bold text-mute block leading-tight">Total Tagihan</span>
+                    <span class="font-bold text-sm text-ink tabular-nums">{{ $order->formatted_grand_total }}</span>
+                </div>
+
+                <button type="button" 
+                        @click="payNow()" 
+                        class="flex-1 max-w-[200px] inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] bg-ink text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-[0.12em] rounded-full shadow-md active:scale-95 transition cursor-pointer">
+                    <span>Bayar Sekarang</span>
+                    <span aria-hidden="true">&rarr;</span>
+                </button>
+            </div>
+        </div>
+    @endif
+
 </div>
 
 @push('scripts')

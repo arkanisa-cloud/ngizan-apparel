@@ -38,9 +38,8 @@
 
             <!-- Email Address -->
             <div>
-                <x-input-label for="email" :value="__('Alamat Email')" />
+                <x-input-label for="email" :value="__('Email (Gmail, Yahoo, Outlook, dsb)')" />
                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="nama@gmail.com" />
-                <p class="text-[10px] text-mute mt-1">Gunakan akun Gmail, Yahoo, Outlook, atau iCloud resmi Anda.</p>
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 

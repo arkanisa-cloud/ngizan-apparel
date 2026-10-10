@@ -41,11 +41,13 @@ class MidtransService
         // Susun daftar item pesanan
         $itemDetails = [];
         foreach ($order->items as $item) {
+            $displayName = $item->size ? "{$item->product_name} ({$item->size})" : $item->product_name;
+
             $itemDetails[] = [
                 'id'       => 'VAR-' . ($item->product_variant_id ?? $item->id),
                 'price'    => (int) ($item->unit_price + $item->custom_fee),
                 'quantity' => (int) $item->quantity,
-                'name'     => substr($item->product_name . ' (' . $item->size . ' - ' . $item->type . ')', 0, 50),
+                'name'     => substr($displayName, 0, 50),
             ];
         }
 

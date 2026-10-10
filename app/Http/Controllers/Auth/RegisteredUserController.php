@@ -45,26 +45,27 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        // 3. Whitelist Provider Email Resmi Terpercaya (Opsi B: Gmail, Yahoo, Outlook, iCloud)
+        // 3. Whitelist Provider Email Resmi Terpercaya (Opsi B)
         $emailInput = strtolower(trim((string) $request->email));
         $emailParts = explode('@', $emailInput);
         $domain = end($emailParts);
 
         $trustedDomains = [
-            'gmail.com',
-            'googlemail.com',
-            'yahoo.com',
-            'yahoo.co.id',
-            'ymail.com',
-            'outlook.com',
-            'hotmail.com',
-            'live.com',
-            'icloud.com',
+            // Google
+            'gmail.com', 'googlemail.com',
+            // Yahoo
+            'yahoo.com', 'yahoo.co.id', 'ymail.com',
+            // Microsoft
+            'outlook.com', 'hotmail.com', 'live.com', 'msn.com',
+            // Apple
+            'icloud.com', 'me.com', 'mac.com',
+            // Proton
+            'proton.me', 'protonmail.com',
         ];
 
         if (! in_array($domain, $trustedDomains, true)) {
             throw ValidationException::withMessages([
-                'email' => "Pendaftaran manual hanya menerima email dari penyedia resmi terpercaya (@gmail.com, @yahoo.com, @outlook.com, @icloud.com). Domain '{$domain}' tidak diizinkan. Silakan gunakan Gmail atau tombol 'Daftar Cepat dengan Google'.",
+                'email' => 'Pendaftaran manual hanya mendukung akun email resmi terpercaya (seperti @gmail.com, @yahoo.com, @outlook.com, @icloud.com). Untuk akun Google, Anda juga dapat menggunakan tombol "Daftar Cepat dengan Google".',
             ]);
         }
 

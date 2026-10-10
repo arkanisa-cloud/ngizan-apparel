@@ -112,8 +112,8 @@
         :class="{
             '-translate-y-full': isHidden && !mobileOpen && !searchBarOpen,
             'translate-y-0': !isHidden || mobileOpen || searchBarOpen,
-            'bg-white/90 backdrop-blur-xl border-b border-black/5 shadow-xs text-ink': isPastHero || !isHome ||
-                mobileOpen || searchBarOpen,
+            'bg-white text-ink border-b border-black/5 shadow-xs': mobileOpen,
+            'bg-white/90 backdrop-blur-xl border-b border-black/5 shadow-xs text-ink': (isPastHero || !isHome || searchBarOpen) && !mobileOpen,
             'bg-gradient-to-b from-black/75 via-black/30 to-transparent text-white border-b-0 border-transparent shadow-none':
                 !isPastHero && isHome && !mobileOpen && !searchBarOpen
         }"
@@ -321,7 +321,7 @@
                         @endif
                     </a>
 
-                    {{-- 4. 1 Tombol Login / Profil Dropdown --}}
+                    {{-- 4. 1 Tombol Login / Profil Dropdown (Desktop Only untuk Guest) --}}
                     @guest
                         <a href="{{ route('login') }}"
                             :class="{
@@ -330,7 +330,7 @@
                                 'bg-ink text-white hover:bg-neutral-800 shadow-sm': isPastHero || !isHome ||
                                     mobileOpen || searchBarOpen
                             }"
-                            class="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-semibold tracking-wide uppercase transition duration-200 inline-flex items-center justify-center shrink-0 {{ $isHomeRoute ? 'bg-white text-ink hover:bg-white/90 shadow-sm' : 'bg-ink text-white hover:bg-neutral-800 shadow-sm' }}">
+                            class="hidden lg:inline-flex px-5 py-2 rounded-full text-xs font-semibold tracking-wide uppercase transition duration-200 items-center justify-center shrink-0 {{ $isHomeRoute ? 'bg-white text-ink hover:bg-white/90 shadow-sm' : 'bg-ink text-white hover:bg-neutral-800 shadow-sm' }}">
                             Masuk
                         </a>
                     @else
@@ -464,7 +464,8 @@
             x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150 transform"
             x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
-            class="md:hidden absolute top-[64px] left-0 right-0 p-3 bg-white/95 backdrop-blur-2xl border-t border-b border-black/5 shadow-xl z-50">
+            class="md:hidden absolute top-[64px] left-0 right-0 p-3 bg-white border-t border-b border-black/5 shadow-xl z-50"
+            style="background-color: #ffffff;">
             <form action="{{ route('shop.index') }}" method="GET" class="relative flex items-center">
                 <input x-ref="mobileSearchInput" type="text" name="search" value="{{ request('search') }}"
                     placeholder="Cari jersey klub, timnas, retro..."
@@ -484,39 +485,195 @@
             </form>
         </div>
 
+        {{-- Mobile Backdrop Dimmer (Menutup Konten Latar saat Menu Terbuka) --}}
+        <div x-show="mobileOpen" x-cloak
+            @click="mobileOpen = false"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="lg:hidden fixed inset-0 top-[64px] bg-black/60 z-40">
+        </div>
+
         {{-- Mobile Full-Height Smooth Slide Overlay & Drawer --}}
-        <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-300 transform"
+        <div x-show="mobileOpen" x-cloak 
+            @click.away="mobileOpen = false"
+            x-transition:enter="transition ease-out duration-300 transform"
             x-transition:enter-start="opacity-0 -translate-y-3" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200 transform"
             x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-3"
-            class="lg:hidden fixed top-[64px] left-0 right-0 max-h-[calc(100vh-64px)] overflow-y-auto bg-white/95 backdrop-blur-2xl border-t border-b border-black/5 p-4 shadow-xl text-ink space-y-3">
+            class="lg:hidden fixed top-[64px] left-0 right-0 max-h-[calc(100vh-64px)] overflow-y-auto bg-white border-t border-b border-hairline-soft p-5 shadow-2xl text-ink space-y-4 z-50"
+            style="background-color: #ffffff;">
 
-            {{-- Mobile Main Navlinks (Simple & Sederhana) --}}
+            {{-- 1. Mobile Main Navlinks --}}
             <nav class="flex flex-col divide-y divide-neutral-100 text-xs uppercase tracking-wider font-semibold">
                 <a href="{{ route('home') }}" @click="mobileOpen = false"
-                    class="flex items-center justify-between py-2.5 transition {{ request()->routeIs('home') ? 'text-ink font-bold' : 'text-neutral-600 hover:text-ink' }}">
-                    <span>Home</span>
+                    class="flex items-center justify-between py-3 transition {{ request()->routeIs('home') ? 'text-ink font-bold' : 'text-neutral-600 hover:text-ink' }}">
+                    <span class="flex items-center gap-2.5">
+                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        <span>Home</span>
+                    </span>
                     <span class="text-[10px] text-neutral-400 font-normal">01</span>
                 </a>
 
                 <a href="{{ route('shop.index') }}" @click="mobileOpen = false"
-                    class="flex items-center justify-between py-2.5 transition {{ request()->routeIs('shop.index') ? 'text-ink font-bold' : 'text-neutral-600 hover:text-ink' }}">
-                    <span>Katalog</span>
+                    class="flex items-center justify-between py-3 transition {{ request()->routeIs('shop.index') ? 'text-ink font-bold' : 'text-neutral-600 hover:text-ink' }}">
+                    <span class="flex items-center gap-2.5">
+                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <span>Katalog Jersey</span>
+                    </span>
                     <span class="text-[10px] text-neutral-400 font-normal">02</span>
                 </a>
 
-                <a href="{{ route('contact') }}"
-                    @click="mobileOpen = false"
-                    class="flex items-center justify-between py-2.5 transition {{ request()->routeIs('contact') ? 'text-ink font-bold' : 'text-neutral-600 hover:text-ink' }}">
-                    <span>Contact</span>
+                <a href="{{ route('contact') }}" @click="mobileOpen = false"
+                    class="flex items-center justify-between py-3 transition {{ request()->routeIs('contact') ? 'text-ink font-bold' : 'text-neutral-600 hover:text-ink' }}">
+                    <span class="flex items-center gap-2.5">
+                        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Contact & Bantuan</span>
+                    </span>
                     <span class="text-[10px] text-neutral-400 font-normal">03</span>
                 </a>
             </nav>
 
-            {{-- Mobile Quick Status --}}
+            {{-- 2. Banner / Tombol Gabung Ngizan Premium --}}
+            <div class="pt-1">
+                <button type="button"
+                    @click="$dispatch('open-premium-modal'); mobileOpen = false"
+                    class="w-full flex items-center justify-between p-3.5 bg-ink hover:bg-neutral-900 text-white rounded-2xl border border-neutral-800 shadow-md group transition active:scale-[0.99] text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-400 font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+                            ⭐
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">Membership Privilege</div>
+                            <div class="text-xs font-bold text-white tracking-wide">Gabung Ngizan Premium</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 text-[11px] font-bold text-amber-300 group-hover:translate-x-0.5 transition-transform shrink-0">
+                        <span>Diskon 5%</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </button>
+            </div>
+
+            {{-- 3. Area Akun: Login / Daftar (Guest) ATAU Profil & Opsi Menu (Auth) --}}
+            @guest
+                <div class="pt-2 border-t border-hairline-soft space-y-2">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-mute">
+                        Akses Akun
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <a href="{{ route('login') }}" @click="mobileOpen = false"
+                            class="w-full py-2.5 px-4 bg-ink text-white hover:bg-neutral-800 rounded-full text-xs font-semibold tracking-wider uppercase text-center transition shadow-xs flex items-center justify-center gap-1.5 active:scale-95">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            <span>Masuk</span>
+                        </a>
+                        <a href="{{ route('register') }}" @click="mobileOpen = false"
+                            class="w-full py-2.5 px-4 bg-soft-cloud text-ink hover:bg-neutral-200 border border-hairline rounded-full text-xs font-semibold tracking-wider uppercase text-center transition shadow-2xs flex items-center justify-center gap-1.5 active:scale-95">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            <span>Daftar</span>
+                        </a>
+                    </div>
+                </div>
+            @else
+                <div class="pt-2 border-t border-hairline-soft space-y-3">
+                    {{-- User Card Info --}}
+                    <div class="flex items-center justify-between p-3 bg-soft-cloud rounded-2xl border border-hairline-soft">
+                        <div class="flex items-center gap-3">
+                            @if (Auth::user()->avatar)
+                                <img src="{{ Auth::user()->avatar }}" class="w-9 h-9 rounded-full object-cover">
+                            @else
+                                <span class="w-9 h-9 rounded-full bg-ink text-white text-xs flex items-center justify-center font-bold">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </span>
+                            @endif
+                            <div class="min-w-0">
+                                <p class="font-bold text-xs text-ink truncate">{{ Auth::user()->name }}</p>
+                                <p class="text-[11px] text-mute truncate">{{ Auth::user()->email }}</p>
+                            </div>
+                        </div>
+                        @if (Auth::user()->isPremiumActive())
+                            <span class="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300/60 rounded-full text-[9px] font-bold shrink-0">
+                                ⭐ Premium
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- Customer Quick Navigation Links --}}
+                    <div class="grid grid-cols-1 gap-1 text-xs">
+                        @if (Auth::user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" @click="mobileOpen = false"
+                                class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-soft-cloud font-medium text-ink transition">
+                                <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                <span>Backoffice Admin</span>
+                            </a>
+                        @endif
+
+                        <a href="{{ route('customer.orders.index') }}" @click="mobileOpen = false"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-soft-cloud font-medium text-ink transition">
+                            <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            <span>Pesanan Saya</span>
+                        </a>
+
+                        <a href="{{ route('customer.addresses.index') }}" @click="mobileOpen = false"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-soft-cloud font-medium text-ink transition">
+                            <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>Alamat Pengiriman</span>
+                        </a>
+
+                        <a href="{{ route('profile.edit') }}" @click="mobileOpen = false"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-soft-cloud font-medium text-ink transition">
+                            <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span>Profil & Akun</span>
+                        </a>
+
+                        {{-- Tombol Logout --}}
+                        <form method="POST" action="{{ route('logout') }}" class="pt-1">
+                            @csrf
+                            <button type="submit"
+                                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-rose-50 text-sale font-medium transition text-left">
+                                <svg class="w-4 h-4 text-sale" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <span>Keluar</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endguest
+
+            {{-- 4. Mobile Quick Status --}}
             <div
                 class="pt-2 border-t border-neutral-100 flex items-center justify-between text-[11px] text-neutral-400">
-                <span>Free Shipping J&T Express</span>
+                <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                    </svg>
+                    <span>Gratis Ongkir J&T Express</span>
+                </span>
                 <span class="font-semibold text-neutral-600 uppercase tracking-widest text-[10px]">Ngizan
                     Apparel</span>
             </div>
