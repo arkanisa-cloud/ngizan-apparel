@@ -15,7 +15,7 @@ class AdminSeeder extends Seeder
     {
         // Superadmin Akun
         User::updateOrCreate(
-            ['email' => 'admin@ngizanapparel.com'],
+            ['email' => 'adminngizan@gmail.com'],
             [
                 'name'              => 'Super Admin Ngizan',
                 'password'          => Hash::make('password'),
