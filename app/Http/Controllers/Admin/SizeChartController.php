@@ -49,7 +49,9 @@ class SizeChartController extends Controller
             'columns'       => 'required|array|min:2',
             'columns.*'     => 'required|string|max:100',
             'rows'          => 'required|array|min:1',
+            'rows.*'        => 'required|array',
             'rows.*.size'   => 'required|string|max:50',
+            'rows.*.*'      => 'nullable|string|max:100',
             'is_default'    => 'nullable|boolean',
         ]);
 
@@ -57,12 +59,27 @@ class SizeChartController extends Controller
             SizeChart::query()->update(['is_default' => false]);
         }
 
+        $cleanColumns = array_values($validated['columns']);
+        $rawRows = $request->input('rows', []);
+        $cleanRows = [];
+
+        foreach ($rawRows as $row) {
+            if (!is_array($row) || empty($row['size'])) {
+                continue;
+            }
+            $cleanRow = ['size' => trim($row['size'])];
+            for ($i = 1; $i < count($cleanColumns); $i++) {
+                $cleanRow['col' . $i] = isset($row['col' . $i]) ? trim((string)$row['col' . $i]) : '';
+            }
+            $cleanRows[] = $cleanRow;
+        }
+
         SizeChart::create([
             'name'          => $validated['name'],
             'category_type' => $validated['category_type'],
             'description'   => $validated['description'] ?? null,
-            'columns'       => array_values($validated['columns']),
-            'rows'          => array_values($validated['rows']),
+            'columns'       => $cleanColumns,
+            'rows'          => $cleanRows,
             'is_default'    => !empty($validated['is_default']),
         ]);
 
@@ -92,7 +109,9 @@ class SizeChartController extends Controller
             'columns'       => 'required|array|min:2',
             'columns.*'     => 'required|string|max:100',
             'rows'          => 'required|array|min:1',
+            'rows.*'        => 'required|array',
             'rows.*.size'   => 'required|string|max:50',
+            'rows.*.*'      => 'nullable|string|max:100',
             'is_default'    => 'nullable|boolean',
         ]);
 
@@ -100,12 +119,27 @@ class SizeChartController extends Controller
             SizeChart::where('id', '!=', $sizeChart->id)->update(['is_default' => false]);
         }
 
+        $cleanColumns = array_values($validated['columns']);
+        $rawRows = $request->input('rows', []);
+        $cleanRows = [];
+
+        foreach ($rawRows as $row) {
+            if (!is_array($row) || empty($row['size'])) {
+                continue;
+            }
+            $cleanRow = ['size' => trim($row['size'])];
+            for ($i = 1; $i < count($cleanColumns); $i++) {
+                $cleanRow['col' . $i] = isset($row['col' . $i]) ? trim((string)$row['col' . $i]) : '';
+            }
+            $cleanRows[] = $cleanRow;
+        }
+
         $sizeChart->update([
             'name'          => $validated['name'],
             'category_type' => $validated['category_type'],
             'description'   => $validated['description'] ?? null,
-            'columns'       => array_values($validated['columns']),
-            'rows'          => array_values($validated['rows']),
+            'columns'       => $cleanColumns,
+            'rows'          => $cleanRows,
             'is_default'    => !empty($validated['is_default']),
         ]);
 

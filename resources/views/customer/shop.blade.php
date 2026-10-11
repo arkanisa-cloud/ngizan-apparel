@@ -5,30 +5,32 @@
     'Jelajahi koleksi lengkap jersey sepak bola autentik, player issue, edisi retro, dan tim
     nasional dengan opsi kustomisasi sablon nama resmi.')
 
-@php
-    $activeCategory = request('category')
-        ? $categories->first(fn($c) => $c->slug == request('category') || (string)$c->id == (string)request('category'))
-        : null;
+    @php
+        $activeCategory = request('category')
+            ? $categories->first(
+                fn($c) => $c->slug == request('category') || (string) $c->id == (string) request('category'),
+            )
+            : null;
 
-    $currentSort = request('sort', 'latest');
-    $sortLabels = [
-        'latest' => 'Rilis Terbaru',
-        'price_low' => 'Harga: Terendah',
-        'price_high' => 'Harga: Tertinggi',
-        'name' => 'Nama: A - Z',
-    ];
-    $currentSortLabel = $sortLabels[$currentSort] ?? 'Rilis Terbaru';
+        $currentSort = request('sort', 'latest');
+        $sortLabels = [
+            'latest' => 'Rilis Terbaru',
+            'price_low' => 'Harga: Terendah',
+            'price_high' => 'Harga: Tertinggi',
+            'name' => 'Nama: A - Z',
+        ];
+        $currentSortLabel = $sortLabels[$currentSort] ?? 'Rilis Terbaru';
 
-    $activeFiltersCount = collect([request('category'), request('size'), request('type'), request('search')])->filter()->count();
-@endphp
+        $activeFiltersCount = collect([request('category'), request('size'), request('type'), request('search')])
+            ->filter()
+            ->count();
+    @endphp
 
 @section('content')
-    <div class="bg-canvas min-h-screen" 
-         x-data="{
-             showSidebar: true,
-             mobileFilterOpen: false
-         }"
-         x-init="$watch('mobileFilterOpen', value => document.body.classList.toggle('overflow-hidden', value))">
+    <div class="bg-canvas min-h-screen" x-data="{
+        showSidebar: true,
+        mobileFilterOpen: false
+    }" x-init="$watch('mobileFilterOpen', value => document.body.classList.toggle('overflow-hidden', value))">
 
         {{-- Main Container --}}
         <div class="wrap pt-4 pb-16 sm:pt-8 sm:pb-24">
@@ -44,9 +46,6 @@
                             <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-ink uppercase">
                                 Katalog Ngizan
                             </h1>
-                            <span class="text-[11px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full bg-soft-cloud border border-hairline text-mute">
-                                {{ $products->total() }} Produk
-                            </span>
                         </div>
                     </div>
 
@@ -55,34 +54,17 @@
                         <span>Koleksi jersey, apparel, dan arsip olahraga terkurasi</span>
                     </div>
                 </div>
-
-                {{-- Mobile Quick Horizontal Category Rail (1-Tap Switching) --}}
-                <div class="lg:hidden mt-3.5 pt-3 border-t border-hairline-soft/60">
-                    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 -mx-2 px-2 select-none">
-                        {{-- Semua Kategori --}}
-                        <a href="{{ route('shop.index', request()->except('category', 'page')) }}"
-                           class="shrink-0 text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 {{ !request('category') ? 'bg-ink text-white' : 'bg-soft-cloud text-ink border border-hairline hover:bg-neutral-200' }}">
-                            Semua
-                        </a>
-                        @foreach ($categories as $cat)
-                            <a href="{{ route('shop.index', array_merge(request()->except('page'), ['category' => $cat->slug])) }}"
-                               class="shrink-0 text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 {{ request('category') === $cat->slug ? 'bg-ink text-white' : 'bg-soft-cloud text-ink border border-hairline hover:bg-neutral-200' }}">
-                                {{ $cat->name }}
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
             </div>
 
             {{-- ===== 2. ACTION TOOLBAR (Search, Sidebar Toggle, Sort) ===== --}}
             <div class="pb-3 mb-5 border-b border-hairline-soft/40 space-y-2.5 sm:space-y-0">
-                
+
                 {{-- Flex Container yang Adaptif Antara Mobile dan Desktop --}}
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
 
                     {{-- Baris Kontrol Filter & Sort untuk Mobile (< 640px) / Kiri untuk Desktop --}}
                     <div class="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
-                        
+
                         {{-- Mobile Filter Drawer Trigger --}}
                         <button type="button" @click="mobileFilterOpen = true"
                             class="lg:hidden inline-flex items-center gap-2 px-3.5 py-2 bg-soft-cloud hover:bg-neutral-200 text-ink text-xs font-bold rounded-full border border-hairline transition shadow-2xs cursor-pointer select-none">
@@ -92,7 +74,8 @@
                             </svg>
                             <span>Filter</span>
                             @if ($activeFiltersCount > 0)
-                                <span class="w-4 h-4 rounded-full bg-ink text-white text-[10px] flex items-center justify-center font-bold">
+                                <span
+                                    class="w-4 h-4 rounded-full bg-ink text-white text-[10px] flex items-center justify-center font-bold">
                                     {{ $activeFiltersCount }}
                                 </span>
                             @endif
@@ -114,9 +97,10 @@
                                 class="inline-flex items-center gap-1.5 bg-soft-cloud hover:bg-neutral-200 border border-hairline text-ink text-xs font-semibold rounded-full px-3.5 py-2 transition focus:outline-none cursor-pointer shadow-2xs select-none">
                                 <span class="font-bold">{{ $currentSortLabel }}</span>
                                 <svg class="w-3 h-3 text-mute transition-transform duration-200"
-                                    :class="sortOpenMobile ? 'rotate-180 text-ink' : ''" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7" />
+                                    :class="sortOpenMobile ? 'rotate-180 text-ink' : ''" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                                        d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
 
@@ -129,7 +113,8 @@
                                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                                 x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
                                 class="absolute right-0 mt-2 w-52 bg-white/95 border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl">
-                                <div class="px-3.5 py-1.5 border-b border-hairline-soft text-[10px] font-bold uppercase tracking-wider text-mute">
+                                <div
+                                    class="px-3.5 py-1.5 border-b border-hairline-soft text-[10px] font-bold uppercase tracking-wider text-mute">
                                     Urutkan Berdasarkan
                                 </div>
                                 <div class="py-1">
@@ -139,8 +124,10 @@
                                             class="flex items-center justify-between px-3.5 py-2.5 transition {{ $isSelected ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium' }}">
                                             <span>{{ $label }}</span>
                                             @if ($isSelected)
-                                                <svg class="w-4 h-4 text-ink shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                                <svg class="w-4 h-4 text-ink shrink-0" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M5 13l4 4L19 7" />
                                                 </svg>
                                             @endif
                                         </a>
@@ -155,7 +142,8 @@
                     <div class="flex items-center gap-2.5 w-full sm:w-auto">
 
                         {{-- Quick Search Input (Lebar Penuh di Mobile, Standar di Desktop) --}}
-                        <form method="GET" action="{{ route('shop.index') }}" class="relative w-full sm:w-auto flex-1 sm:flex-initial">
+                        <form method="GET" action="{{ route('shop.index') }}"
+                            class="relative w-full sm:w-auto flex-1 sm:flex-initial">
                             @if (request('category'))
                                 <input type="hidden" name="category" value="{{ request('category') }}">
                             @endif
@@ -172,13 +160,13 @@
                             <input type="text" name="search" value="{{ request('search') }}"
                                 placeholder="Cari jersey, klub, negara..."
                                 class="w-full sm:w-56 bg-soft-cloud border border-hairline px-3.5 py-2 pl-8 pr-7 rounded-full text-xs text-ink placeholder:text-stone focus:ring-1 focus:ring-ink focus:border-ink transition-all">
-                            
-                            <svg class="w-3.5 h-3.5 text-mute absolute left-2.5 top-2.5" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+
+                            <svg class="w-3.5 h-3.5 text-mute absolute left-2.5 top-2.5" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
-                            
+
                             @if (request('search'))
                                 <a href="{{ route('shop.index', request()->except('search', 'page')) }}"
                                     class="absolute right-2.5 top-2 text-xs text-stone hover:text-ink font-bold">&times;</a>
@@ -209,7 +197,8 @@
                                 x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
                                 class="absolute right-0 mt-2 w-56 bg-white/95 border border-hairline-soft rounded-2xl py-1.5 shadow-xl z-40 text-xs overflow-hidden backdrop-blur-xl">
 
-                                <div class="px-3.5 py-1.5 border-b border-hairline-soft text-[10px] font-bold uppercase tracking-wider text-mute">
+                                <div
+                                    class="px-3.5 py-1.5 border-b border-hairline-soft text-[10px] font-bold uppercase tracking-wider text-mute">
                                     Urutkan Berdasarkan
                                 </div>
 
@@ -220,8 +209,8 @@
                                             class="flex items-center justify-between px-3.5 py-2.5 transition {{ $isSelected ? 'bg-soft-cloud text-ink font-bold' : 'text-neutral-600 hover:text-ink hover:bg-soft-cloud/70 font-medium' }}">
                                             <span>{{ $label }}</span>
                                             @if ($isSelected)
-                                                <svg class="w-4 h-4 text-ink shrink-0" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
+                                                <svg class="w-4 h-4 text-ink shrink-0" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2.5" d="M5 13l4 4L19 7" />
                                                 </svg>
@@ -332,19 +321,23 @@
 
                     {{-- Active Filter Tags Row --}}
                     @if ($activeFiltersCount > 0)
-                        <div class="flex flex-wrap items-center gap-2 bg-soft-cloud p-3 rounded-2xl border border-hairline-soft text-xs">
+                        <div
+                            class="flex flex-wrap items-center gap-2 bg-soft-cloud p-3 rounded-2xl border border-hairline-soft text-xs">
                             <span class="text-mute font-bold uppercase tracking-wider text-[10px]">Filter Aktif:</span>
 
                             @if (request('category'))
-                                <span class="inline-flex items-center gap-1.5 bg-white border border-hairline px-3 py-1 rounded-full text-ink font-semibold shadow-2xs">
-                                    <span>Kategori: <strong>{{ $activeCategory?->name ?? request('category') }}</strong></span>
+                                <span
+                                    class="inline-flex items-center gap-1.5 bg-white border border-hairline px-3 py-1 rounded-full text-ink font-semibold shadow-2xs">
+                                    <span>Kategori:
+                                        <strong>{{ $activeCategory?->name ?? request('category') }}</strong></span>
                                     <a href="{{ route('shop.index', request()->except('category', 'page')) }}"
                                         class="text-stone hover:text-sale font-bold ml-1">&times;</a>
                                 </span>
                             @endif
 
                             @if (request('size'))
-                                <span class="inline-flex items-center gap-1.5 bg-white border border-hairline px-3 py-1 rounded-full text-ink font-semibold shadow-2xs">
+                                <span
+                                    class="inline-flex items-center gap-1.5 bg-white border border-hairline px-3 py-1 rounded-full text-ink font-semibold shadow-2xs">
                                     <span>Ukuran: <strong>{{ request('size') }}</strong></span>
                                     <a href="{{ route('shop.index', request()->except('size', 'page')) }}"
                                         class="text-stone hover:text-sale font-bold ml-1">&times;</a>
@@ -352,7 +345,8 @@
                             @endif
 
                             @if (request('type'))
-                                <span class="inline-flex items-center gap-1.5 bg-white border border-hairline px-3 py-1 rounded-full text-ink font-semibold shadow-2xs">
+                                <span
+                                    class="inline-flex items-center gap-1.5 bg-white border border-hairline px-3 py-1 rounded-full text-ink font-semibold shadow-2xs">
                                     <span>Tipe: <strong>{{ request('type') }}</strong></span>
                                     <a href="{{ route('shop.index', request()->except('type', 'page')) }}"
                                         class="text-stone hover:text-sale font-bold ml-1">&times;</a>
@@ -360,7 +354,8 @@
                             @endif
 
                             @if (request('search'))
-                                <span class="inline-flex items-center gap-1.5 bg-white border border-hairline px-3 py-1 rounded-full text-ink font-semibold shadow-2xs">
+                                <span
+                                    class="inline-flex items-center gap-1.5 bg-white border border-hairline px-3 py-1 rounded-full text-ink font-semibold shadow-2xs">
                                     <span>Cari: "<strong>{{ request('search') }}</strong>"</span>
                                     <a href="{{ route('shop.index', request()->except('search', 'page')) }}"
                                         class="text-stone hover:text-sale font-bold ml-1">&times;</a>
@@ -380,9 +375,12 @@
                         @forelse($products as $product)
                             <x-product-card :product="$product" />
                         @empty
-                            <div class="col-span-full text-center py-16 sm:py-20 bg-soft-cloud rounded-2xl border border-hairline space-y-4 px-4">
-                                <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center mx-auto shadow-2xs text-mute">
-                                    <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div
+                                class="col-span-full text-center py-16 sm:py-20 bg-soft-cloud rounded-2xl border border-hairline space-y-4 px-4">
+                                <div
+                                    class="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center mx-auto shadow-2xs text-mute">
+                                    <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                     </svg>
@@ -440,7 +438,8 @@
                     {{-- Drawer Header --}}
                     <div class="p-4 sm:p-5 border-b border-hairline-soft flex items-center justify-between">
                         <div>
-                            <h2 class="font-bold text-sm sm:text-base uppercase tracking-tight text-ink" id="slide-over-title">
+                            <h2 class="font-bold text-sm sm:text-base uppercase tracking-tight text-ink"
+                                id="slide-over-title">
                                 Filter Produk
                             </h2>
                             <p class="text-[11px] text-mute">Sesuaikan pencarian jersey impian Anda</p>

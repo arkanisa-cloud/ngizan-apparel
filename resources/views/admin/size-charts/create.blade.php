@@ -259,23 +259,32 @@
 <script>
     function sizeChartEditor() {
         return {
-            columns: ['Ukuran', 'Lebar Dada (cm)', 'Panjang Baju (cm)', 'Rekomendasi TB / BB'],
-            rows: [
-                { size: 'S', col1: '48 cm', col2: '68 cm', col3: '160-168 cm / 50-60 kg' },
-                { size: 'M', col1: '50 cm', col2: '70 cm', col3: '168-175 cm / 60-70 kg' },
-                { size: 'L', col1: '52 cm', col2: '72 cm', col3: '172-180 cm / 70-80 kg' },
-                { size: 'XL', col1: '54 cm', col2: '74 cm', col3: '178-185 cm / 80-90 kg' },
-            ],
+            columns: @json(old('columns', ['Ukuran', 'Lebar Dada (cm)', 'Panjang Baju (cm)', 'Rekomendasi TB / BB'])),
+            rows: @json(old('rows', [
+                ['size' => 'S', 'col1' => '48 cm', 'col2' => '68 cm', 'col3' => '160-168 cm / 50-60 kg'],
+                ['size' => 'M', 'col1' => '50 cm', 'col2' => '70 cm', 'col3' => '168-175 cm / 60-70 kg'],
+                ['size' => 'L', 'col1' => '52 cm', 'col2' => '72 cm', 'col3' => '172-180 cm / 70-80 kg'],
+                ['size' => 'XL', 'col1' => '54 cm', 'col2' => '74 cm', 'col3' => '178-185 cm / 80-90 kg'],
+            ])),
             addColumn() {
-                const nextNum = this.columns.length;
-                this.columns.push('Kolom ' + nextNum);
+                const nextIdx = this.columns.length;
+                this.columns.push('Kolom ' + nextIdx);
                 this.rows.forEach(r => {
-                    r['col' + (nextNum - 1)] = '';
+                    r['col' + nextIdx] = '';
                 });
             },
             removeColumn(index) {
                 if (this.columns.length <= 2) return;
                 this.columns.splice(index, 1);
+                this.rows.forEach(r => {
+                    delete r['col' + index];
+                    for (let i = index + 1; i <= this.columns.length + 1; i++) {
+                        if (r.hasOwnProperty('col' + i)) {
+                            r['col' + (i - 1)] = r['col' + i];
+                            delete r['col' + i];
+                        }
+                    }
+                });
             },
             addRow() {
                 const newRow = { size: '' };

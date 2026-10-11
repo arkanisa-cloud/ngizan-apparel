@@ -257,21 +257,46 @@
     </form>
 </div>
 
+@php
+    $initialColumns = old('columns', $sizeChart->columns ?? ['Ukuran', 'Lebar Dada (cm)', 'Panjang Baju (cm)']);
+    $rawInitialRows = old('rows', $sizeChart->rows ?? []);
+    if (empty($rawInitialRows)) {
+        $rawInitialRows = [['size' => 'S']];
+    }
+    $initialRows = [];
+    foreach ($rawInitialRows as $r) {
+        $rowObj = ['size' => $r['size'] ?? ''];
+        for ($i = 1; $i < count($initialColumns); $i++) {
+            $rowObj['col' . $i] = $r['col' . $i] ?? '';
+        }
+        $initialRows[] = $rowObj;
+    }
+@endphp
+
 <script>
     function sizeChartEditor() {
         return {
-            columns: @json($sizeChart->columns ?? ['Ukuran', 'Lebar Dada (cm)', 'Panjang Baju (cm)']),
-            rows: @json($sizeChart->rows ?? []),
+            columns: @json($initialColumns),
+            rows: @json($initialRows),
             addColumn() {
-                const nextNum = this.columns.length;
-                this.columns.push('Kolom ' + nextNum);
+                const nextIdx = this.columns.length;
+                this.columns.push('Kolom ' + nextIdx);
                 this.rows.forEach(r => {
-                    r['col' + (nextNum - 1)] = '';
+                    r['col' + nextIdx] = '';
                 });
             },
             removeColumn(index) {
                 if (this.columns.length <= 2) return;
                 this.columns.splice(index, 1);
+                this.rows.forEach(r => {
+                    delete r['col' + index];
+                    for (let i = index + 1; i <= this.columns.length + 1; i++) {
+                        if (r.hasOwnProperty('col' + i)) {
+                            r['col' + (i - 1)] = r['col' + i];
+                            delete r['col' + i];
+                        }
+                    }
+                });
             },
             addRow() {
                 const newRow = { size: '' };
