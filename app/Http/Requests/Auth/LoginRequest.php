@@ -31,7 +31,6 @@ class LoginRequest extends FormRequest
     {
         return [
             'email'    => ['required', 'string', 'email:rfc,dns'],
-            'phone'    => ['required', 'string', 'regex:/^(\+62|62|0)8[1-9][0-9]{7,11}$/'],
             'password' => ['required', 'string'],
         ];
     }
@@ -46,8 +45,6 @@ class LoginRequest extends FormRequest
         return [
             'email.required'    => 'Alamat email wajib diisi.',
             'email.email'       => 'Format email tidak valid atau domain email tidak aktif.',
-            'phone.required'    => 'Nomor HP wajib diisi.',
-            'phone.regex'       => 'Nomor HP harus berupa nomor seluler Indonesia yang valid (contoh: 081234567890 atau 6281234567890).',
             'password.required' => 'Password wajib diisi.',
         ];
     }
@@ -79,31 +76,7 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        // 3. Cek kesesuaian Nomor HP (Normalisasi awalan 62 / +62 / 0)
-        $inputPhone = preg_replace('/[^0-9]/', '', (string) $this->input('phone'));
-        if (str_starts_with($inputPhone, '62')) {
-            $inputPhone = '0' . substr($inputPhone, 2);
-        }
-
-        if (! empty($user->phone)) {
-            $userPhone = preg_replace('/[^0-9]/', '', (string) $user->phone);
-            if (str_starts_with($userPhone, '62')) {
-                $userPhone = '0' . substr($userPhone, 2);
-            }
-
-            if ($inputPhone !== $userPhone) {
-                RateLimiter::hit($this->throttleKey());
-
-                throw ValidationException::withMessages([
-                    'phone' => 'Nomor HP tidak cocok dengan data akun yang terdaftar.',
-                ]);
-            }
-        } else {
-            // Jika akun lama belum memiliki no HP, simpan nomor yang diinput
-            $user->update(['phone' => $inputPhone]);
-        }
-
-        // 4. Cek apakah password cocok
+        // 3. Cek apakah password cocok
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 

@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Masuk | Ngizan Apparel">
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -32,13 +32,6 @@
                 <x-input-label for="email" :value="__('Email')" />
                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="nama@email.com" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
-
-            <!-- Phone Number -->
-            <div>
-                <x-input-label for="phone" :value="__('Nomor HP (WhatsApp)')" />
-                <x-text-input id="phone" class="block mt-1 w-full" type="tel" name="phone" :value="old('phone')" required autocomplete="tel" placeholder="Contoh: 081234567890" />
-                <x-input-error :messages="$errors->get('phone')" class="mt-2" />
             </div>
 
             <!-- Password -->

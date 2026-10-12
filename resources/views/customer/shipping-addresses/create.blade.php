@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Tambah Alamat Baru · NGIZAN APPAREL')
+@section('title', 'Tambah Alamat | Ngizan Apparel')
 @section('meta_description', 'Tambahkan alamat pengiriman baru dengan pin point peta Leaflet akurat dan pengisian otomatis dari GPS.')
 
 @push('styles')

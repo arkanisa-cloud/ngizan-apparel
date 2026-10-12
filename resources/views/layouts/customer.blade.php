@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'NGIZAN APPAREL · Bespoke Football Kits & Archive Store')</title>
+    <title>@yield('title', 'Ngizan Apparel')</title>
     <meta name="description" content="@yield('meta_description', 'Ngizan Apparel - Toko jersey sepak bola autentik, edisi player issue, dan arsip retro terkurasi.')">
+
+    <link rel="icon" type="image/png" href="{{ asset('logo/ngizan-logo-white.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('logo/ngizan-logo-white.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>

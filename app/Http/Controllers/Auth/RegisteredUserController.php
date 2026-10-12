@@ -83,31 +83,21 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:'.User::class],
-            'phone'    => ['required', 'string', 'regex:/^(\+62|62|0)8[1-9][0-9]{7,11}$/', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
             'name.required'      => 'Nama lengkap wajib diisi.',
             'email.required'     => 'Alamat email wajib diisi.',
             'email.email'        => 'Format email tidak valid atau domain email tidak aktif.',
             'email.unique'       => 'Email ini sudah terdaftar. Silakan masuk atau gunakan email lain.',
-            'phone.required'     => 'Nomor HP wajib diisi.',
-            'phone.regex'        => 'Nomor HP harus berupa nomor seluler Indonesia yang valid (contoh: 081234567890 atau 6281234567890).',
-            'phone.unique'       => 'Nomor HP ini sudah terdaftar.',
             'password.required'  => 'Password wajib diisi.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         RateLimiter::hit($ipKey, 600);
 
-        $cleanPhone = preg_replace('/[^0-9]/', '', (string) $request->phone);
-        if (str_starts_with($cleanPhone, '62')) {
-            $cleanPhone = '0' . substr($cleanPhone, 2);
-        }
-
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
-            'phone'    => $cleanPhone,
             'password' => Hash::make($request->password),
         ]);
 

@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Hubungi Kami · Contact Us — NGIZAN APPAREL')
+@section('title', 'Kontak | Ngizan Apparel')
 @section('meta_description', 'Hubungi tim layanan pelanggan Ngizan Apparel untuk pertanyaan pesanan, konsultasi kustom jersey nameset & patch, serta bantuan operasional.')
 
 @section('content')

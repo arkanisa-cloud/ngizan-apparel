@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Profil Saya · NGIZAN APPAREL')
+@section('title', 'Profil | Ngizan Apparel')
 @section('meta_description', 'Kelola informasi profil, alamat tersimpan, dan riwayat belanja Anda di Ngizan Apparel.')
 
 @section('content')

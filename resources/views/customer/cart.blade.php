@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Tas Belanja · NGIZAN APPAREL')
+@section('title', 'Keranjang | Ngizan Apparel')
 @section('meta_description',
     'Periksa item jersey pesanan Anda, pilih produk yang ingin di-checkout, dan nikmati diskon
     member.')

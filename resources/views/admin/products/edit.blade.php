@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Produk: ' . $product->name . ' · NGIZAN APPAREL')
+@section('title', 'Edit ' . $product->name . ' | Admin Ngizan')
 
 @section('content')
 <div class="max-w-4xl space-y-6" x-data="{

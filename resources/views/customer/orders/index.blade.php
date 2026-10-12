@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Pesanan Saya · NGIZAN APPAREL')
+@section('title', 'Pesanan Saya | Ngizan Apparel')
 @section('meta_description',
     'Lacak status pesanan jersey, status pembayaran Midtrans, dan nomor resi pengiriman J&T
     Express Anda di Ngizan Apparel.')

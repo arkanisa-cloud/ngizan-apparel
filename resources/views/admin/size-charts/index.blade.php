@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Master Panduan Ukuran (Size Charts)')
+@section('title', 'Panduan Ukuran | Admin Ngizan')
 @section('header_title', 'Master Panduan Ukuran')
 
 @section('content')

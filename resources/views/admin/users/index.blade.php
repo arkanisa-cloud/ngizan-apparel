@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Akun & Sesi Pengguna · NGIZAN APPAREL')
+@section('title', 'Pengguna | Admin Ngizan')
 
 @section('content')
 <div class="space-y-6" x-data="{
@@ -322,9 +322,6 @@
                                             @endif
                                         </div>
                                         <span class="text-[11px] text-mute font-mono block truncate">{{ $u->email }}</span>
-                                        @if($u->phone)
-                                            <span class="text-[11px] text-neutral-400 font-mono block">{{ $u->phone }}</span>
-                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -409,7 +406,6 @@
                                     'id' => $u->id,
                                     'name' => $u->name,
                                     'email' => $u->email,
-                                    'phone' => $u->phone ?? '-',
                                     'role' => $u->role,
                                     'is_premium' => $u->isPremiumActive(),
                                     'premium_until' => $u->premium_until ? $u->premium_until->format('d M Y') : null,
@@ -575,19 +571,6 @@
 
                 {{-- Detail List --}}
                 <div class="space-y-3 bg-white p-4 rounded-2xl border border-hairline-soft">
-                    <div class="flex justify-between items-center py-1 border-b border-hairline-soft">
-                        <span class="text-mute font-medium">Nomor WhatsApp / HP</span>
-                        <div class="flex items-center gap-2">
-                            <span class="font-mono font-bold text-ink" x-text="selectedUser ? selectedUser.phone : '-'"></span>
-                            <template x-if="selectedUser && selectedUser.phone && selectedUser.phone !== '-'">
-                                <a :href="'https://wa.me/' + selectedUser.phone.replace(/[^0-9]/g, '')" target="_blank"
-                                   class="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-[10px] font-bold transition">
-                                    Chat WA
-                                </a>
-                            </template>
-                        </div>
-                    </div>
-
                     <div class="flex justify-between items-center py-1 border-b border-hairline-soft">
                         <span class="text-mute font-medium">Perangkat & Browser</span>
                         <span class="font-medium text-ink text-right" x-text="selectedUser ? selectedUser.device : '-'"></span>

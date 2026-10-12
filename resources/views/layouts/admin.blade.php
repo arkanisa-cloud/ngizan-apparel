@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin Backoffice · NGIZAN APPAREL')</title>
+    <title>@yield('title', 'Admin | Ngizan Apparel')</title>
+
+    <link rel="icon" type="image/png" href="{{ asset('logo/ngizan-logo-white.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('logo/ngizan-logo-white.png') }}">
 
     {{-- Preconnect & Google Fonts CDN --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">

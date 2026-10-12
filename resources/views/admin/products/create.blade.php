@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Kit Jersey Baru · NGIZAN APPAREL')
+@section('title', 'Tambah Produk | Admin Ngizan')
 
 @section('content')
 <div class="max-w-4xl space-y-6" x-data="{

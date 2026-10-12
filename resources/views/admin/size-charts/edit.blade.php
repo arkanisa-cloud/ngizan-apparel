@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Template Panduan Ukuran')
+@section('title', 'Edit Panduan Ukuran | Admin Ngizan')
 @section('header_title', 'Edit Template Ukuran')
 
 @section('content')

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Kelola Pesanan #' . $order->order_number . ' · NGIZAN APPAREL')
+@section('title', 'Pesanan #' . $order->order_number . ' | Admin Ngizan')
 
 @section('content')
 <div class="space-y-6">

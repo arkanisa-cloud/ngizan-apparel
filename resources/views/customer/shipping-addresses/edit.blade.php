@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Edit Alamat · NGIZAN APPAREL')
+@section('title', 'Edit Alamat | Ngizan Apparel')
 @section('meta_description', 'Perbarui detail alamat pengiriman tersimpan Anda di Ngizan Apparel dengan pin point lokasi presisi.')
 
 @push('styles')

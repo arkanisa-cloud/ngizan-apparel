@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Buku Alamat Pengiriman · NGIZAN APPAREL')
+@section('title', 'Alamat Pengiriman | Ngizan Apparel')
 @section('meta_description',
     'Kelola buku alamat pengiriman tersimpan Anda untuk kemudahan checkout presisi di Ngizan
     Apparel.')

@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Katalog Lengkap Jersey · NGIZAN APPAREL')
+@section('title', 'Katalog | Ngizan Apparel')
 @section('meta_description',
     'Jelajahi koleksi lengkap jersey sepak bola autentik, player issue, edisi retro, dan tim
     nasional dengan opsi kustomisasi sablon nama resmi.')

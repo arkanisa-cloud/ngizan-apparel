@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Konfirmasi Password | Ngizan Apparel">
     <div class="space-y-4 text-xs">
         <div class="text-center">
             <h2 class="text-xl font-medium text-ink">Konfirmasi Password</h2>

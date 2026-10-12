@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Lupa Password | Ngizan Apparel">
     <div class="space-y-4 text-xs">
         <div class="text-center">
             <h2 class="text-xl font-medium text-ink">Lupa Password</h2>

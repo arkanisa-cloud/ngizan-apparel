@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'NGIZAN APPAREL · Official Football Kits & Archive Store')
+@section('title', 'Ngizan Apparel')
 @section('meta_description',
     'Ngizan Apparel - Toko jersey sepak bola autentik, edisi player issue, tim nasional, dan
     arsip retro terkurasi.')

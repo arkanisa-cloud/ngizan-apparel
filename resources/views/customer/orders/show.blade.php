@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Detail Pesanan #' . $order->order_number . ' · NGIZAN APPAREL')
+@section('title', 'Pesanan #' . $order->order_number . ' | Ngizan Apparel')
 @section('meta_description', 'Detail pesanan, status pembayaran Midtrans, dan pelacakan langsung pengiriman J&T Express di Ngizan Apparel.')
 
 @section('content')

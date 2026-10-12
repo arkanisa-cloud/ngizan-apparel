@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Checkout & Pengiriman · NGIZAN APPAREL')
+@section('title', 'Checkout | Ngizan Apparel')
 @section('meta_description',
     'Lengkapi alamat pengiriman dengan pin point peta akurat, pilih kurir Biteship, dan bayar
     aman dengan Midtrans Snap.')

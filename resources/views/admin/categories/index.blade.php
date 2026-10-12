@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Kategori Produk · NGIZAN APPAREL')
+@section('title', 'Kategori | Admin Ngizan')
 
 @section('content')
 <div class="space-y-6">

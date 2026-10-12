@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', $product->name . ' · NGIZAN APPAREL')
+@section('title', $product->name . ' | Ngizan Apparel')
 @section('meta_description',
     'Beli ' .
     $product->name .

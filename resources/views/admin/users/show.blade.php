@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Pengguna: ' . $user->name . ' · NGIZAN APPAREL')
+@section('title', $user->name . ' | Admin Ngizan')
 
 @section('content')
 <div class="space-y-6">
@@ -27,7 +27,7 @@
                     </span>
                 @endif
             </div>
-            <p class="text-xs text-mute mt-1 font-mono">{{ $user->email }} @if($user->phone)&bull; {{ $user->phone }}@endif</p>
+            <p class="text-xs text-mute mt-1 font-mono">{{ $user->email }}</p>
         </div>
 
         <div class="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
@@ -73,19 +73,6 @@
 
                 {{-- Contact & Status Information --}}
                 <div class="space-y-3">
-                    <div class="flex justify-between items-center py-1 border-b border-hairline-soft">
-                        <span class="text-mute font-medium">WhatsApp / Telepon</span>
-                        <div class="flex items-center gap-2">
-                            <span class="font-mono font-bold text-ink">{{ $user->phone ?? '-' }}</span>
-                            @if($user->phone)
-                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $user->phone) }}" target="_blank"
-                                   class="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold transition">
-                                    WA
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-
                     <div class="flex justify-between items-center py-1 border-b border-hairline-soft">
                         <span class="text-mute font-medium">Status VIP Premium</span>
                         <span class="font-bold text-ink">

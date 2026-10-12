@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Gambar ' . $banner->name . ' · NGIZAN APPAREL')
+@section('title', 'Edit Banner | Admin Ngizan')
 
 @section('content')
 <div class="max-w-4xl space-y-6">

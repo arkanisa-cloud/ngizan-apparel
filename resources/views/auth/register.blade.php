@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Daftar | Ngizan Apparel">
     <div class="space-y-6">
         <div class="text-center">
             <h2 class="text-xl font-medium text-ink">Buat Akun Baru</h2>
@@ -41,13 +41,6 @@
                 <x-input-label for="email" :value="__('Email (Gmail, Yahoo, Outlook, dsb)')" />
                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="nama@gmail.com" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
-
-            <!-- Phone Number -->
-            <div>
-                <x-input-label for="phone" :value="__('Nomor HP (WhatsApp)')" />
-                <x-text-input id="phone" class="block mt-1 w-full" type="tel" name="phone" :value="old('phone')" required autocomplete="tel" placeholder="Contoh: 081234567890" />
-                <x-input-error :messages="$errors->get('phone')" class="mt-2" />
             </div>
 
             <!-- Password -->
